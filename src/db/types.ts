@@ -65,14 +65,12 @@ export type Experience = {
 };
 
 export enum TypeOptions {
-	BandVocalsLead = 'band_vocals_lead',
-	BandVocalsSupport = 'band_vocals_support',
 	BandVocals = 'band_vocals',
 	BandKeys = 'band_keys',
-	BandKeys2 = 'band_keys2',
 	BandBass = 'band_bass',
-	BandGuitarLead = 'band_guitar_lead',
-	BandGuitar2 = 'band_guitar2',
+	BandElectricGuitar = 'band_eletric_guitar',
+	BandAcousticGuitar = 'band_acoustic_guitar',
+	BandDrums = 'band_drums',
 	BandAux = 'band_aux',
 	TechGeneral = 'tech_general',
 	TechCameras = 'tech_cameras',
@@ -80,12 +78,8 @@ export enum TypeOptions {
 	TechAudio = 'tech_audio',
 	TechSlides = 'tech_slides',
 	TechVideoDirector = 'tech_video_director',
-	SocialGreeting = 'social_greeting',
-	SocialEgress = 'social_egress',
 	Prayer = 'prayer',
 	PastoralCare = 'pastoral_care',
-	Admin = 'admin',
-	SetupTeardown = 'setup_teardown',
 }
 
 enum LevelOptions {
