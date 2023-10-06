@@ -4,6 +4,13 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import ProTip from './ProTip';
+import { Event, ModeNight, WbSunny } from '@mui/icons-material';
+import EventEditor from '@/pages/eventEditor';
+import { ThemeProvider } from '@emotion/react';
+import { CssBaseline, Fab, useTheme } from '@mui/material';
+import { createTheme } from '@mui/material/styles';
+import { useState } from 'react';
+import "./app.scss"
 
 function Copyright() {
   return (
@@ -18,15 +25,29 @@ function Copyright() {
 }
 
 export default function App() {
+  const [isDarkTheme, setIsDarkTheme] = useState(true);
+  const theme = createTheme({
+    palette: {
+      mode: isDarkTheme ? 'dark' : 'light',
+    },
+  });
+  const themeIcon = () => {
+    if (isDarkTheme) return <WbSunny />
+    return <ModeNight/>
+  }
   return (
-    <Container maxWidth="sm">
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Container>
       <Box sx={{ my: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Material UI Vite.js example in TypeScript
-        </Typography>
-        <ProTip />
-        <Copyright />
+        <EventEditor/>
       </Box>
+        <Fab className={'fab'} size="small" aria-label="add" onClick={() => {
+          setIsDarkTheme(!isDarkTheme)
+        }}>
+          {!isDarkTheme ? <WbSunny /> : <ModeNight/>}
+        </Fab>
     </Container>
+    </ThemeProvider>
   );
 }
