@@ -61,13 +61,14 @@ enum AgeOptions {
 
 export type Experience = {
 	id: number;
+	// userId: number; // user_id
 	type: TypeOptions;
 	level: LevelOptions;
 	preference: PreferenceOptions;
 	details?: string;
 };
 
-enum TypeOptions {
+export enum TypeOptions {
 	BandVocalsLead = 'band_vocals_lead',
 	BandVocalsSupport = 'band_vocals_support',
 	BandVocals = 'band_vocals',
@@ -139,6 +140,8 @@ export type Thread = {
 
 export type Team = {
 	id: number;
+	title: string;
+	description?: string;
 	roles: number[]; // role_id[]
 	requirements?: number[]; // requirement_id[]
 	teamLead: number; // user_id
@@ -146,9 +149,10 @@ export type Team = {
 
 export type Role = {
 	id: number;
-	title: string;
+	// teamIds: number[]; // team_id[]
+	type: TypeOptions;
 	description?: string;
-	experienceRequired: number;
+	experienceRequired: number; //
 	user?: number; // user_id
 	// requirements?: number[]; // requirement_id[]
 };
