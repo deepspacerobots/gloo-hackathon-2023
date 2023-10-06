@@ -10,21 +10,17 @@ export type User = {
 	email: string;
 	password: string;
 	phone?: string;
-	memberStatus?: boolean;
 	profilePhoto?: string; // relative path to asset in /assets
-	ministryOfInterest?: number; // ministry_id
-	secondaryMinistryOfInterest?: number; // ministry_id
-	roleOfInterest?: number; // role_id
 	relatedVolunteer?: number; // user_id
 	teams?: number[]; // team_id[]
 	events?: number[]; // event_id[]
 	messages?: number[]; // message_id[]
-	blackoutDates: DateTime[];
+	blackoutDates?: DateTime[];
 	preferredNumWeeksServing: number;
 	experiences?: number[]; // experience_id[]
 };
 
-enum RoleOptions {
+export enum RoleOptions {
 	Admin = 'admin',
 	TeamLead = 'team_lead',
 	Volunteer = 'volunteer',
