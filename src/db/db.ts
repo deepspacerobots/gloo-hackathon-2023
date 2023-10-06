@@ -256,13 +256,6 @@ const preexistingData: DBSchema = {
 				'The pastoral care team helps campus pastors to care for the congregation',
 			teams: [3],
 		},
-		{
-			id: 3,
-			title: 'Social Ministry',
-			description:
-				'The social team greets and interacts with congregants as they are entering/leaving the building',
-			teams: [4],
-		},
 	],
 	teams: [
 		{
@@ -288,25 +281,17 @@ const preexistingData: DBSchema = {
 			roles: [7, 8],
 			teamLead: 3,
 		},
-		{
-			id: 4,
-			title: 'Greeting / Egress',
-			description:
-				'The Greeting/Egress team is responsible for greeting congregants as they enter and leave worship services',
-			roles: [9, 10],
-			teamLead: 4,
-		},
 	],
 	roles: [
 		{
 			id: 1,
-			type: TypeOptions.BandVocalsLead,
+			type: TypeOptions.BandVocals,
 			description: 'Lead vocalist',
 			experienceRequired: 3,
 		},
 		{
 			id: 2,
-			type: TypeOptions.BandGuitarLead,
+			type: TypeOptions.BandElectricGuitar,
 			description: 'Lead guitarist',
 			experienceRequired: 3,
 		},
@@ -338,7 +323,7 @@ const preexistingData: DBSchema = {
 			type: TypeOptions.PastoralCare,
 			description:
 				'Helps pastors care for the congregation during/around service times',
-			experienceRequired: 2,
+			experienceRequired: 3,
 		},
 		{
 			id: 8,
@@ -347,21 +332,16 @@ const preexistingData: DBSchema = {
 				'Available for the congregation if they need prayer during/around service times',
 			experienceRequired: 2,
 		},
+	],
+	requirements: [
 		{
-			id: 9,
-			type: TypeOptions.SocialGreeting,
-			description: 'Greet congregants as they enter the building/sanctuary',
-			experienceRequired: 1,
-		},
-		{
-			id: 10,
-			type: TypeOptions.SocialEgress,
-			description:
-				'Interact with congregants as they are leaving the building/sanctuary',
-			experienceRequired: 1,
+			id: 1,
+			title: 'Rehearsal Attendance',
+			description: 'Attend Thursday night rehearsal',
+			event: 1,
+			ministry: 1,
 		},
 	],
-	requirements: [],
 	users: [
 		{
 			id: 1,
