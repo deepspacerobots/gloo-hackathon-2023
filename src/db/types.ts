@@ -82,14 +82,14 @@ export enum TypeOptions {
 	PastoralCare = 'pastoral_care',
 }
 
-enum LevelOptions {
+export enum LevelOptions {
 	Beginner = 1,
 	Intermediate = 2,
 	Advanced = 3,
 	Expert = 4,
 }
 
-enum PreferenceOptions {
+export enum PreferenceOptions {
 	Low = 1,
 	Intermediate = 2,
 	High = 3,
