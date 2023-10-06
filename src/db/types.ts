@@ -11,13 +11,13 @@ export type User = {
 	password: string;
 	phone?: string;
 	profilePhoto?: string; // relative path to asset in /assets
-	relatedVolunteer?: number; // user_id
-	teams?: number[]; // team_id[]
-	events?: number[]; // event_id[]
-	messages?: number[]; // message_id[]
+	relatedVolunteer?: number | User;
+	teams?: number[] | Team[];
+	events?: number[] | MinistryEvent[];
+	messages?: number[] | Message[];
 	blackoutDates?: DateTime[];
 	preferredNumWeeksServing: number;
-	experiences?: number[]; // experience_id[]
+	experiences?: number[] | Experience[];
 };
 
 export enum RoleOptions {
@@ -28,9 +28,9 @@ export enum RoleOptions {
 
 export type Message = {
 	id: number;
-	thread: number; // thread_id
-	recipientId: number; // user_id
-	senderId: number; // user_id
+	thread: number | Thread;
+	recipientId: number | User;
+	senderId: number | User;
 	content: string;
 };
 
@@ -42,10 +42,10 @@ export type Requirement = {
 	description: string;
 	age?: AgeOptions | 'all_ages';
 	requirementSatisfaction?: boolean;
-	event?: number; // event_id
+	event?: number | MinistryEvent;
 	email?: string;
 	secondaryConfirmation?: boolean;
-	ministry: number; // ministry_id
+	ministry?: number | Ministry;
 	requireCandidateSignature?: boolean;
 };
 
@@ -65,14 +65,12 @@ export type Experience = {
 };
 
 export enum TypeOptions {
-	BandVocalsLead = 'band_vocals_lead',
-	BandVocalsSupport = 'band_vocals_support',
 	BandVocals = 'band_vocals',
 	BandKeys = 'band_keys',
-	BandKeys2 = 'band_keys2',
 	BandBass = 'band_bass',
-	BandGuitarLead = 'band_guitar_lead',
-	BandGuitar2 = 'band_guitar2',
+	BandElectricGuitar = 'band_eletric_guitar',
+	BandAcousticGuitar = 'band_acoustic_guitar',
+	BandDrums = 'band_drums',
 	BandAux = 'band_aux',
 	TechGeneral = 'tech_general',
 	TechCameras = 'tech_cameras',
@@ -80,22 +78,18 @@ export enum TypeOptions {
 	TechAudio = 'tech_audio',
 	TechSlides = 'tech_slides',
 	TechVideoDirector = 'tech_video_director',
-	SocialGreeting = 'social_greeting',
-	SocialEgress = 'social_egress',
 	Prayer = 'prayer',
 	PastoralCare = 'pastoral_care',
-	Admin = 'admin',
-	SetupTeardown = 'setup_teardown',
 }
 
-enum LevelOptions {
+export enum LevelOptions {
 	Beginner = 1,
 	Intermediate = 2,
 	Advanced = 3,
 	Expert = 4,
 }
 
-enum PreferenceOptions {
+export enum PreferenceOptions {
 	Low = 1,
 	Intermediate = 2,
 	High = 3,
@@ -111,8 +105,8 @@ export type MinistryEvent = {
 	where?: WhereOptions;
 	whatToBring?: string;
 	repeats?: RepeatOptions;
-	ministries: number[]; // ministry_id[]
-	teams?: number[]; // team_id[]
+	ministries: number[] | Ministry[];
+	teams?: number[] | Team[];
 };
 
 enum WhereOptions {
@@ -131,16 +125,16 @@ enum RepeatOptions {
 
 export type Thread = {
 	id: number;
-	messages: number[]; // message_id[]
+	messages: number[] | Message[];
 };
 
 export type Team = {
 	id: number;
 	title: string;
 	description?: string;
-	roles: number[]; // role_id[]
-	requirements?: number[]; // requirement_id[]
-	teamLead: number; // user_id
+	roles: number[] | Role[];
+	requirements?: number[] | Requirement[];
+	teamLead?: number | User;
 };
 
 export type Role = {
@@ -148,8 +142,8 @@ export type Role = {
 	// teamIds: number[]; // team_id[]
 	type: TypeOptions;
 	description?: string;
-	experienceRequired: number; //
-	user?: number; // user_id
+	experienceRequired: number;
+	user?: number | User;
 	// requirements?: number[]; // requirement_id[]
 };
 
@@ -157,9 +151,9 @@ export type Ministry = {
 	id: number;
 	title: string;
 	description: string;
-	logo?: string; // relative path to asset in /assets
-	bannerImage?: string; // relative path to asset in /assets
-	teams: number[]; // team_id[]
+	logo?: string; // relative path to asset in /public/img
+	bannerImage?: string; // relative path to asset in /public/img
+	teams: number[] | Team[];
 	// requirements?: number[]; // requirement_id[]
 };
 
@@ -168,8 +162,8 @@ export type Organization = {
 	name: string;
 	description: string;
 	address?: string;
-	seniorPastor: number; // user_id
-	logo?: string; // relative path to asset in /assets
+	seniorPastor?: number | User;
+	logo?: string; // relative path to asset in /public/img
 	website?: string;
 	brandColors?: string[];
 };
