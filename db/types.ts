@@ -1,4 +1,4 @@
-type User = {
+export type User = {
 	id: number;
 	firstName: string;
 	lastName: string;
@@ -30,7 +30,7 @@ enum RoleOptions {
 	Volunteer = 'volunteer',
 }
 
-type Message = {
+export type Message = {
 	id: number;
 	thread: number; // thread_id
 	recipientId: number; // user_id
@@ -40,7 +40,7 @@ type Message = {
 
 type DateTime = string;
 
-type Requirement = {
+export type Requirement = {
 	id: number;
 	title: string;
 	description: string;
@@ -59,7 +59,7 @@ enum AgeOptions {
 	EighteenPlus = 'eighteen_plus',
 }
 
-type Experience = {
+export type Experience = {
 	id: number;
 	type: TypeOptions;
 	level: LevelOptions;
@@ -105,7 +105,7 @@ enum PreferenceOptions {
 	VeryHigh = 4,
 }
 
-type MinistryEvent = {
+export type MinistryEvent = {
 	id: number;
 	title: string;
 	date: string;
@@ -132,19 +132,19 @@ enum RepeatOptions {
 	Monthly = 'monthly',
 }
 
-type Thread = {
+export type Thread = {
 	id: number;
 	messages: number[]; // message_id[]
 };
 
-type Team = {
+export type Team = {
 	id: number;
 	roles: number[]; // role_id[]
 	requirements?: number[]; // requirement_id[]
 	teamLead: number; // user_id
 };
 
-type Role = {
+export type Role = {
 	id: number;
 	title: string;
 	description?: string;
@@ -153,7 +153,7 @@ type Role = {
 	// requirements?: number[]; // requirement_id[]
 };
 
-type Ministry = {
+export type Ministry = {
 	id: number;
 	title: string;
 	description: string;
@@ -163,7 +163,7 @@ type Ministry = {
 	// requirements?: number[]; // requirement_id[]
 };
 
-type Organization = {
+export type Organization = {
 	id: number;
 	name: string;
 	description: string;
