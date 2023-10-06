@@ -13,6 +13,7 @@
 		"@emotion/styled": "latest",
 		"@mui/icons-material": "latest",
 		"@mui/material": "latest",
+		"openai": "^4.11.1",
 		"react": "latest",
 		"react-dom": "latest"
 	},
