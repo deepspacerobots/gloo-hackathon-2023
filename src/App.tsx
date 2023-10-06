@@ -38,8 +38,7 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Container>
-      <Box sx={{ my: 4 }}>
+      <Box sx={{ my: 4,mx:8 }}>
         <EventEditor/>
       </Box>
         <Fab className={'fab'} size="small" aria-label="add" onClick={() => {
@@ -47,7 +46,6 @@ export default function App() {
         }}>
           {!isDarkTheme ? <WbSunny /> : <ModeNight/>}
         </Fab>
-    </Container>
     </ThemeProvider>
   );
 }

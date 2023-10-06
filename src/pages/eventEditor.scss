@@ -5,3 +5,10 @@
 .position {
   border: 1px solid rgba(0, 0, 0, 1);
 }
+.outerAccordion {
+  box-shadow: none !important;
+}
+.dragOver {
+  background-color: rgba(0, 0, 0, 0.4);
+  background-blend-mode: darken;
+}
