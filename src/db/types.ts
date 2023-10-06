@@ -42,10 +42,10 @@ export type Requirement = {
 	description: string;
 	age?: AgeOptions | 'all_ages';
 	requirementSatisfaction?: boolean;
-	event?: number | Event;
+	event?: number | MinistryEvent;
 	email?: string;
 	secondaryConfirmation?: boolean;
-	ministry: number | Ministry;
+	ministry?: number | Ministry;
 	requireCandidateSignature?: boolean;
 };
 
@@ -134,7 +134,7 @@ export type Team = {
 	description?: string;
 	roles: number[] | Role[];
 	requirements?: number[] | Requirement[];
-	teamLead: number | User;
+	teamLead?: number | User;
 };
 
 export type Role = {
