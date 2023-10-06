@@ -168,7 +168,7 @@ export type Organization = {
 	name: string;
 	description: string;
 	address?: string;
-	seniorPastor: number | User;
+	seniorPastor?: number | User;
 	logo?: string; // relative path to asset in /public/img
 	website?: string;
 	brandColors?: string[];
