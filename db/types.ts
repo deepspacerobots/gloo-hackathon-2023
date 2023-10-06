@@ -11,7 +11,7 @@ export type User = {
 	password: string;
 	phone?: string;
 	memberStatus?: boolean;
-	profilePhoto?: File;
+	profilePhoto?: string; // relative path to asset in /assets
 	ministryOfInterest?: number; // ministry_id
 	secondaryMinistryOfInterest?: number; // ministry_id
 	roleOfInterest?: number; // role_id
@@ -157,8 +157,8 @@ export type Ministry = {
 	id: number;
 	title: string;
 	description: string;
-	logo?: File;
-	bannerImage?: File;
+	logo?: string; // relative path to asset in /assets
+	bannerImage?: string; // relative path to asset in /assets
 	teams: number[]; // team_id[]
 	// requirements?: number[]; // requirement_id[]
 };
@@ -169,7 +169,7 @@ export type Organization = {
 	description: string;
 	address?: string;
 	seniorPastor: number; // user_id
-	logo?: File;
+	logo?: string; // relative path to asset in /assets
 	website?: string;
 	brandColors?: string[];
 };
