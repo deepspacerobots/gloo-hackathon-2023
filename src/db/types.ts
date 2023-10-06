@@ -1,4 +1,4 @@
-type User = {
+export type User = {
 	id: number;
 	firstName: string;
 	lastName: string;
@@ -10,46 +10,42 @@ type User = {
 	email: string;
 	password: string;
 	phone?: string;
-	memberStatus?: boolean;
-	profilePhoto?: File;
-	ministryOfInterest?: number; // ministry_id
-	secondaryMinistryOfInterest?: number; // ministry_id
-	roleOfInterest?: number; // role_id
-	relatedVolunteer?: number; // user_id
-	teams?: number[]; // team_id[]
-	events?: number[]; // event_id[]
-	messages?: number[]; // message_id[]
-	blackoutDates: DateTime[];
+	profilePhoto?: string; // relative path to asset in /assets
+	relatedVolunteer?: number | User;
+	teams?: number[] | Team[];
+	events?: number[] | MinistryEvent[];
+	messages?: number[] | Message[];
+	blackoutDates?: DateTime[];
 	preferredNumWeeksServing: number;
-	experiences?: number[]; // experience_id[]
+	experiences?: number[] | Experience[];
 };
 
-enum RoleOptions {
+export enum RoleOptions {
 	Admin = 'admin',
 	TeamLead = 'team_lead',
 	Volunteer = 'volunteer',
 }
 
-type Message = {
+export type Message = {
 	id: number;
-	thread: number; // thread_id
-	recipientId: number; // user_id
-	senderId: number; // user_id
+	thread: number | Thread;
+	recipientId: number | User;
+	senderId: number | User;
 	content: string;
 };
 
 type DateTime = string;
 
-type Requirement = {
+export type Requirement = {
 	id: number;
 	title: string;
 	description: string;
 	age?: AgeOptions | 'all_ages';
 	requirementSatisfaction?: boolean;
-	event?: number; // event_id
+	event?: number | Event;
 	email?: string;
 	secondaryConfirmation?: boolean;
-	ministry: number; // ministry_id
+	ministry: number | Ministry;
 	requireCandidateSignature?: boolean;
 };
 
@@ -59,15 +55,16 @@ enum AgeOptions {
 	EighteenPlus = 'eighteen_plus',
 }
 
-type Experience = {
+export type Experience = {
 	id: number;
+	// userId: number; // user_id
 	type: TypeOptions;
 	level: LevelOptions;
 	preference: PreferenceOptions;
 	details?: string;
 };
 
-enum TypeOptions {
+export enum TypeOptions {
 	BandVocalsLead = 'band_vocals_lead',
 	BandVocalsSupport = 'band_vocals_support',
 	BandVocals = 'band_vocals',
@@ -105,7 +102,7 @@ enum PreferenceOptions {
 	VeryHigh = 4,
 }
 
-type MinistryEvent = {
+export type MinistryEvent = {
 	id: number;
 	title: string;
 	date: string;
@@ -114,8 +111,8 @@ type MinistryEvent = {
 	where?: WhereOptions;
 	whatToBring?: string;
 	repeats?: RepeatOptions;
-	ministries: number[]; // ministry_id[]
-	teams?: number[]; // team_id[]
+	ministries: number[] | Ministry[];
+	teams?: number[] | Team[];
 };
 
 enum WhereOptions {
@@ -132,44 +129,47 @@ enum RepeatOptions {
 	Monthly = 'monthly',
 }
 
-type Thread = {
+export type Thread = {
 	id: number;
-	messages: number[]; // message_id[]
+	messages: number[] | Message[];
 };
 
-type Team = {
-	id: number;
-	roles: number[]; // role_id[]
-	requirements?: number[]; // requirement_id[]
-	teamLead: number; // user_id
-};
-
-type Role = {
+export type Team = {
 	id: number;
 	title: string;
 	description?: string;
+	roles: number[] | Role[];
+	requirements?: number[] | Requirement[];
+	teamLead: number | User;
+};
+
+export type Role = {
+	id: number;
+	// teamIds: number[]; // team_id[]
+	type: TypeOptions;
+	description?: string;
 	experienceRequired: number;
-	user?: number; // user_id
+	user?: number | User;
 	// requirements?: number[]; // requirement_id[]
 };
 
-type Ministry = {
+export type Ministry = {
 	id: number;
 	title: string;
 	description: string;
-	logo?: File;
-	bannerImage?: File;
-	teams: number[]; // team_id[]
+	logo?: string; // relative path to asset in /public/img
+	bannerImage?: string; // relative path to asset in /public/img
+	teams: number[] | Team[];
 	// requirements?: number[]; // requirement_id[]
 };
 
-type Organization = {
+export type Organization = {
 	id: number;
 	name: string;
 	description: string;
 	address?: string;
-	seniorPastor: number; // user_id
-	logo?: File;
+	seniorPastor?: number | User;
+	logo?: string; // relative path to asset in /public/img
 	website?: string;
 	brandColors?: string[];
 };
