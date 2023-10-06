@@ -1,0 +1,175 @@
+type User = {
+	id: number;
+	firstName: string;
+	lastName: string;
+	role: RoleOptions;
+	address?: string;
+	city?: string;
+	state?: string;
+	zip?: string;
+	email: string;
+	password: string;
+	phone?: string;
+	memberStatus?: boolean;
+	profilePhoto?: File;
+	ministryOfInterest?: number; // ministry_id
+	secondaryMinistryOfInterest?: number; // ministry_id
+	roleOfInterest?: number; // role_id
+	relatedVolunteer?: number; // user_id
+	teams?: number[]; // team_id[]
+	events?: number[]; // event_id[]
+	messages?: number[]; // message_id[]
+	blackoutDates: DateTime[];
+	preferredNumWeeksServing: number;
+	experiences?: number[]; // experience_id[]
+};
+
+enum RoleOptions {
+	Admin = 'admin',
+	TeamLead = 'team_lead',
+	Volunteer = 'volunteer',
+}
+
+type Message = {
+	id: number;
+	thread: number; // thread_id
+	recipientId: number; // user_id
+	senderId: number; // user_id
+	content: string;
+};
+
+type DateTime = string;
+
+type Requirement = {
+	id: number;
+	title: string;
+	description: string;
+	age?: AgeOptions | 'all_ages';
+	requirementSatisfaction?: boolean;
+	event?: number; // event_id
+	email?: string;
+	secondaryConfirmation?: boolean;
+	ministry: number; // ministry_id
+	requireCandidateSignature?: boolean;
+};
+
+enum AgeOptions {
+	AllAges = 'all_ages',
+	TenPlus = 'ten_plus',
+	EighteenPlus = 'eighteen_plus',
+}
+
+type Experience = {
+	id: number;
+	type: TypeOptions;
+	level: LevelOptions;
+	preference: PreferenceOptions;
+	details?: string;
+};
+
+enum TypeOptions {
+	BandVocalsLead = 'band_vocals_lead',
+	BandVocalsSupport = 'band_vocals_support',
+	BandVocals = 'band_vocals',
+	BandKeys = 'band_keys',
+	BandKeys2 = 'band_keys2',
+	BandBass = 'band_bass',
+	BandGuitarLead = 'band_guitar_lead',
+	BandGuitar2 = 'band_guitar2',
+	BandAux = 'band_aux',
+	TechGeneral = 'tech_general',
+	TechCameras = 'tech_cameras',
+	TechLighting = 'tech_lighting',
+	TechAudio = 'tech_audio',
+	TechSlides = 'tech_slides',
+	TechVideoDirector = 'tech_video_director',
+	SocialGreeting = 'social_greeting',
+	SocialEgress = 'social_egress',
+	Prayer = 'prayer',
+	PastoralCare = 'pastoral_care',
+	Admin = 'admin',
+	SetupTeardown = 'setup_teardown',
+}
+
+enum LevelOptions {
+	Beginner = 1,
+	Intermediate = 2,
+	Advanced = 3,
+	Expert = 4,
+}
+
+enum PreferenceOptions {
+	Low = 1,
+	Intermediate = 2,
+	High = 3,
+	VeryHigh = 4,
+}
+
+type MinistryEvent = {
+	id: number;
+	title: string;
+	date: string;
+	time: string;
+	description: string;
+	where?: WhereOptions;
+	whatToBring?: string;
+	repeats?: RepeatOptions;
+	ministries: number[]; // ministry_id[]
+	teams?: number[]; // team_id[]
+};
+
+enum WhereOptions {
+	MainAuditorium = 'main_auditorium',
+	SecondaryAuditorium = 'secondary_auditorium',
+	KidsRoom = 'kids_room',
+	YouthRoom = 'youth_room',
+	Foyer = 'foyer',
+}
+
+enum RepeatOptions {
+	Weekly = 'weekly',
+	BiWeekly = 'bi_weekly',
+	Monthly = 'monthly',
+}
+
+type Thread = {
+	id: number;
+	messages: number[]; // message_id[]
+};
+
+type Team = {
+	id: number;
+	roles: number[]; // role_id[]
+	requirements?: number[]; // requirement_id[]
+	teamLead: number; // user_id
+};
+
+type Role = {
+	id: number;
+	title: string;
+	description?: string;
+	experienceRequired: number;
+	user?: number; // user_id
+	// requirements?: number[]; // requirement_id[]
+};
+
+type Ministry = {
+	id: number;
+	title: string;
+	description: string;
+	logo?: File;
+	bannerImage?: File;
+	teams: number[]; // team_id[]
+	// requirements?: number[]; // requirement_id[]
+};
+
+type Organization = {
+	id: number;
+	name: string;
+	description: string;
+	address?: string;
+	seniorPastor: number; // user_id
+	logo?: File;
+	website?: string;
+	brandColors?: string[];
+};
