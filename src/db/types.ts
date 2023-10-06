@@ -68,7 +68,7 @@ export enum TypeOptions {
 	BandVocals = 'band_vocals',
 	BandKeys = 'band_keys',
 	BandBass = 'band_bass',
-	BandElectricGuitar = 'band_eletric_guitar',
+	BandElectricGuitar = 'band_electric_guitar',
 	BandAcousticGuitar = 'band_acoustic_guitar',
 	BandDrums = 'band_drums',
 	BandAux = 'band_aux',
@@ -82,14 +82,14 @@ export enum TypeOptions {
 	PastoralCare = 'pastoral_care',
 }
 
-enum LevelOptions {
+export enum LevelOptions {
 	Beginner = 1,
 	Intermediate = 2,
 	Advanced = 3,
 	Expert = 4,
 }
 
-enum PreferenceOptions {
+export enum PreferenceOptions {
 	Low = 1,
 	Intermediate = 2,
 	High = 3,

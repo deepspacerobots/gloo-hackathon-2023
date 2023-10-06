@@ -1,3 +1,4 @@
+import { LevelOptions, TypeOptions } from '@/db/types';
 import OpenAI from 'openai';
 
 const openai = new OpenAI({
@@ -32,12 +33,12 @@ const users = [
         teams: ["Worship"],
         experiences: [
             {
-                type: "band_piano",
+                type: TypeOptions.BandKeys,
                 level: 2, // 1 = beginner, 2 = intermediate, 3 = advanced
                 preference: 3, // preference is measured 1-3, lowest to highest
             },
             {
-                type: "band_bass",
+                type: TypeOptions.BandBass,
                 level: 1,
                 preference: 2,
             }
@@ -61,12 +62,12 @@ const users = [
         teams: ["Worship"],
         experiences: [
             {
-                "type": "band_guitar",
+                "type": TypeOptions.BandElectricGuitar,
                 "level": 3,
                 "preference": 3
             },
             {
-                "type": "band_drums",
+                "type": TypeOptions.BandDrums,
                 "level": 2,
                 "preference": 2
             }
@@ -90,12 +91,12 @@ const users = [
         teams: ["Worship"],
         experiences: [
             {
-                "type": "vocals",
+                "type": TypeOptions.BandVocals,
                 "level": 3,
                 "preference": 3
             },
             {
-                "type": "band_guitar",
+                "type": TypeOptions.BandAcousticGuitar,
                 "level": 2,
                 "preference": 2
             }
@@ -114,12 +115,12 @@ const users = [
         teams: ["Worship"],
         experiences: [
             {
-                "type": "band_bass",
+                "type": TypeOptions.BandBass,
                 "level": 3,
                 "preference": 3
             },
             {
-                "type": "band_piano",
+                "type": TypeOptions.BandKeys,
                 "level": 2,
                 "preference": 2
             }
@@ -137,12 +138,12 @@ const users = [
         teams: ["Worship"],
         experiences: [
             {
-                "type": "band_drums",
+                "type": TypeOptions.BandDrums,
                 "level": 3,
                 "preference": 3
             },
             {
-                "type": "band_bass",
+                "type": TypeOptions.BandBass,
                 "level": 2,
                 "preference": 2
             }
@@ -161,12 +162,12 @@ const users = [
         teams: ["Worship"],
         experiences: [
             {
-                "type": "band_piano",
+                "type": TypeOptions.BandKeys,
                 "level": 3,
                 "preference": 3
             },
             {
-                "type": "vocals",
+                "type": TypeOptions.BandVocals,
                 "level": 2,
                 "preference": 2
             }
@@ -185,12 +186,12 @@ const users = [
         teams: ["Worship"],
         experiences: [
             {
-                "type": "band_guitar",
+                "type": TypeOptions.BandElectricGuitar,
                 "level": 2,
                 "preference": 3
             },
             {
-                "type": "band_bass",
+                "type": TypeOptions.BandBass,
                 "level": 1,
                 "preference": 2
             }
@@ -209,12 +210,12 @@ const users = [
         teams: ["Worship"],
         experiences: [
             {
-                "type": "band_drums",
+                "type": TypeOptions.BandDrums,
                 "level": 2,
                 "preference": 3
             },
             {
-                "type": "band_piano",
+                "type": TypeOptions.BandKeys,
                 "level": 1,
                 "preference": 2
             }
@@ -232,12 +233,12 @@ const users = [
         teams: ["Worship"],
         experiences: [
             {
-                "type": "vocals",
+                "type": TypeOptions.BandVocals,
                 "level": 3,
                 "preference": 3
             },
             {
-                "type": "band_bass",
+                "type": TypeOptions.BandBass,
                 "level": 2,
                 "preference": 2
             }
@@ -256,12 +257,12 @@ const users = [
         teams: ["Worship"],
         experiences: [
             {
-                "type": "band_piano",
+                "type": TypeOptions.BandKeys,
                 "level": 2,
                 "preference": 3
             },
             {
-                "type": "band_drums",
+                "type": TypeOptions.BandDrums,
                 "level": 1,
                 "preference": 2
             }
@@ -274,25 +275,42 @@ const buildVolunteerListPrompt = () => {
 
     users.forEach((user, index) => {
         const availability = `${user.preferredNumWeeksServing}x a month`;
-        const proficiencies = user.experiences.reduce((acc, xp) => acc + `${parseLevelToString(xp.level)} ${xp.type}, `, '');
-        const preference = `Prefers ${getMostPreferredType(user.experiences).type}`;
+        const proficiencies = user.experiences.reduce((acc, xp) => acc + `${parseLevelToString(xp.level)} ${parseTypeToString(xp.type)}, `, '');
+        const preference = `Prefers ${parseTypeToString(getMostPreferredType(user.experiences).type)}`;
         promptString += `${index+1}. ${user.firstName} ${user.lastName} (Availability: ${availability} | Proficiencies: ${proficiencies} | Preference: ${preference} | Served ${Math.floor(Math.random() * 5) + 1} times recently)\n`
     })
     return promptString;
 };
 
-const parseLevelToString = (level: number) => {
-    const levelMap: { [level: number]: string } = {
-        1: "Beginner",
-        2: "Intermediate",
-        3: "Advanced",
-        4: "Expert",
+const parseLevelToString = (level: LevelOptions): string => {
+    const levelMap: { [key in LevelOptions]: string } = {
+        [LevelOptions.Beginner]: "Beginner",
+        [LevelOptions.Intermediate]: "Intermediate",
+        [LevelOptions.Advanced]: "Advanced",
+        [LevelOptions.Expert]: "Expert",
     }
     return levelMap[level];
 };
 
-const parseTypeToString = (type: string) => {
-
+const parseTypeToString = (type: TypeOptions): string => {
+    const typeMap: { [key in TypeOptions]: string } = {
+        [TypeOptions.BandVocals]: 'Vocals',
+        [TypeOptions.BandKeys]: 'Keys',
+        [TypeOptions.BandBass]: 'Bass',
+        [TypeOptions.BandElectricGuitar]: 'Electric Guitar',
+        [TypeOptions.BandAcousticGuitar]: 'Acoustic Guitar',
+        [TypeOptions.BandDrums]: 'Drums',
+        [TypeOptions.BandAux]: 'Band Aux',
+        [TypeOptions.TechGeneral]: 'Tech General',
+        [TypeOptions.TechCameras]: 'Tech Cameras',
+        [TypeOptions.TechLighting]: 'Tech Lighting',
+        [TypeOptions.TechAudio]: 'Tech Audio',
+        [TypeOptions.TechSlides]: 'Tech Slides',
+        [TypeOptions.TechVideoDirector]: 'Tech Video Director',
+        [TypeOptions.Prayer]: 'Prayer',
+        [TypeOptions.PastoralCare]: 'Pastoral Care',
+    };
+    return typeMap[type];
 };
 
 const getMostPreferredType = (experiences: any[]) => {
