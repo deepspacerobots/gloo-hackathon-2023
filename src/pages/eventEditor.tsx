@@ -25,7 +25,6 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useEffect, useState } from 'react';
-import './eventEditor.scss';
 import { useDBContext } from '@/contexts/db.context';
 import { Database as DatabaseType } from '@/db/db';
 import { MinistryEvent, Role, Team, User } from '@/db/types';
@@ -56,10 +55,10 @@ export default function EventEditor() {
 }
 
 function EventCard({
-	eventId,
-	eventName,
-	db,
-}: {
+										 eventId,
+										 eventName,
+										 db,
+									 }: {
 	eventId: number;
 	eventName: string;
 	db: DatabaseType;
@@ -121,10 +120,10 @@ function EventCard({
 }
 
 function TeamCard({
-	teamName,
-	roles,
-	db,
-}: {
+										teamName,
+										roles,
+										db,
+									}: {
 	teamName: string;
 	roles: number[];
 	db: DatabaseType;
@@ -292,11 +291,12 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 													subheader={'Click and drag volunteers to manually assign them'} />
 							<CardContent>
 								<Grid container rowSpacing={1} spacing={1}>
-									{avatars.map((avatar) => {
+									{avatars.map((avatar, i) => {
 										return (
 											<Grid draggable
 														onDragStart={handleDragStart}
-														onDragEnd={handleDragEnd} item>
+														onDragEnd={handleDragEnd} item
+														key={`avatar ${i}`}>
 												{avatar}
 											</Grid>
 										);
