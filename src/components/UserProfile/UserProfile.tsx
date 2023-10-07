@@ -17,6 +17,7 @@ const UserProfile = (props: Props) => {
 	console.log(userId);
 	const db = useDBContext();
 	const user = db.getUser(userId);
+	console.log(user);
 
 	return (
 		user && (

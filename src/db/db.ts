@@ -176,7 +176,7 @@ export class Database {
 
 	getUser(userId: number): User | undefined {
 		const user = this.users.find((user: User) => user.id === userId);
-		console.log(user);
+
 		if (user) {
 			user.relatedVolunteer = this.users.find(
 				(userIteration: User) => user.relatedVolunteer === userIteration.id

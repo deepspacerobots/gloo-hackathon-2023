@@ -7,12 +7,10 @@ import App from './App';
 import DBProvider from './contexts/db.context';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-	<React.StrictMode>
-		<DBProvider>
-			<ThemeProvider theme={theme}>
-				<CssBaseline />
-				<App />
-			</ThemeProvider>
-		</DBProvider>
-	</React.StrictMode>
+	<DBProvider>
+		<ThemeProvider theme={theme}>
+			<CssBaseline />
+			<App />
+		</ThemeProvider>
+	</DBProvider>
 );
