@@ -55,10 +55,10 @@ export default function EventEditor() {
 }
 
 function EventCard({
-										 eventId,
-										 eventName,
-										 db,
-									 }: {
+	eventId,
+	eventName,
+	db,
+}: {
 	eventId: number;
 	eventName: string;
 	db: DatabaseType;
@@ -120,10 +120,10 @@ function EventCard({
 }
 
 function TeamCard({
-										teamName,
-										roles,
-										db,
-									}: {
+	teamName,
+	roles,
+	db,
+}: {
 	teamName: string;
 	roles: number[];
 	db: DatabaseType;
@@ -132,11 +132,11 @@ function TeamCard({
 
 	return (
 		<Grid item xs={4}>
-			<Card variant='outlined'>
+			<Card variant="outlined">
 				<CardContent>
 					<Typography mb={2}>Team: {teamName}</Typography>
 					<TableContainer component={Paper}>
-						<Table size='small' aria-label='a dense table'>
+						<Table size="small" aria-label="a dense table">
 							<TableHead>
 								<TableRow>
 									<TableCell>Position</TableCell>
@@ -164,7 +164,7 @@ function TeamCard({
 function TeamCardSecondary({ teamName }: { teamName: string }) {
 	return (
 		<Grid item xs={4}>
-			<Card variant='outlined'>
+			<Card variant="outlined">
 				<CardContent>
 					<Typography mb={2}>Team: {teamName}</Typography>
 				</CardContent>
@@ -174,9 +174,9 @@ function TeamCardSecondary({ teamName }: { teamName: string }) {
 }
 
 function EventPosition({
-												 position,
-												 volunteer,
-											 }: {
+	position,
+	volunteer,
+}: {
 	position: string;
 	volunteer: User | undefined;
 }) {
@@ -202,7 +202,7 @@ function EventPosition({
 				setStyle('');
 			}}
 		>
-			<TableCell component='th' scope='row'>
+			<TableCell component="th" scope="row">
 				{position}
 			</TableCell>
 
@@ -218,11 +218,11 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 	useEffect(() => {
 		const mArr = Array.from(
 			{ length: 99 },
-			(_, i) => `/public/img/profile-pics/man-${i + 1}.jpg`,
+			(_, i) => `/public/img/profile-pics/man-${i + 1}.jpg`
 		);
 		const wArr = Array.from(
 			{ length: 99 },
-			(_, i) => `/public/img/profile-pics/woman-${i + 1}.jpg`,
+			(_, i) => `/public/img/profile-pics/woman-${i + 1}.jpg`
 		);
 		const avatarCollection = [];
 		const avatarIcons = [];
@@ -238,39 +238,45 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 		}
 		setAvatars(avatarIcons);
 	}, []);
-	const handleDragStart = (e) => {
-	};
-	const handleDragEnd = (e) => {
-	};
+	const handleDragStart = (e) => {};
+	const handleDragEnd = (e) => {};
 	const [filter, setFilter] = useState<any>('All Teams');
 	return (
 		<Grid item className={'volunteerCard'}>
-			<Card variant='outlined'>
+			<Card variant="outlined">
 				<CardContent>
 					{/*<CardHeader title={'Assign Volunteers'}></CardHeader>*/}
 					<Stack spacing={1}>
 						<Card>
-							<CardHeader title={'Assistant'} subheader={'Let AI assign your volunteers'} />
+							<CardHeader
+								title={'Assistant'}
+								subheader={'Let AI assign your volunteers'}
+							/>
 							<CardContent>
 								<Grid container spacing={1}>
 									<Grid item>
-										<Button variant='contained' color='success'>AI Assign</Button>
+										<Button variant="contained" color="success">
+											AI Assign
+										</Button>
 									</Grid>
 									<Grid item>
-										<Button color='error'>Unassign All</Button>
+										<Button color="error">Unassign All</Button>
 									</Grid>
 								</Grid>
 							</CardContent>
 						</Card>
 						<Card>
-							<CardHeader title={'Filter'} subheader={'See only who is part of a selected team'} />
+							<CardHeader
+								title={'Filter'}
+								subheader={'See only who is part of a selected team'}
+							/>
 							<CardContent>
 								<FormControl fullWidth>
 									<InputLabel>Team</InputLabel>
 									<Select
-										size='small'
+										size="small"
 										value={filter}
-										label='Team'
+										label="Team"
 										onChange={(e) => {
 											console.log(e.target.value);
 											setFilter(e.target.value);
@@ -281,22 +287,32 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 										<MenuItem value={'Tech Team'}>Tech Team</MenuItem>
 									</Select>
 								</FormControl>
-								<Button color='error' onClick={() => {
-									setFilter('All Teams');
-								}}>Reset</Button>
+								<Button
+									color="error"
+									onClick={() => {
+										setFilter('All Teams');
+									}}
+								>
+									Reset
+								</Button>
 							</CardContent>
 						</Card>
 						<Card>
-							<CardHeader title={'Available Volunteers'}
-													subheader={'Click and drag volunteers to manually assign them'} />
+							<CardHeader
+								title={'Available Volunteers'}
+								subheader={'Click and drag volunteers to manually assign them'}
+							/>
 							<CardContent>
 								<Grid container rowSpacing={1} spacing={1}>
 									{avatars.map((avatar, i) => {
 										return (
-											<Grid draggable
-														onDragStart={handleDragStart}
-														onDragEnd={handleDragEnd} item
-														key={`avatar ${i}`}>
+											<Grid
+												draggable
+												onDragStart={handleDragStart}
+												onDragEnd={handleDragEnd}
+												item
+												key={`avatar ${i}`}
+											>
 												{avatar}
 											</Grid>
 										);
