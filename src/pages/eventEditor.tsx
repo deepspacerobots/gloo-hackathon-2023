@@ -308,12 +308,6 @@ function VolunteerCard({ volunteers }: { volunteers: User[] }) {
 	const handleDragEnd = () => {
 	};
 	const [filter, setFilter] = useState<any>('All Teams');
-<<<<<<< HEAD
-
-	const aiAssign = () => {
-		console.log('generate schedules using AI');
-	};
-=======
 	const [filteredVolunteers, setFilteredVolunteers] = useState(volunteers);
 	const [volunteerFilterInputValue, setVolunteerFilterInputValue] = useState('');
 	useEffect(() => {
@@ -321,7 +315,6 @@ function VolunteerCard({ volunteers }: { volunteers: User[] }) {
 			return volunteer.firstName.toLowerCase().includes(volunteerFilterInputValue) || volunteer.lastName.toLowerCase().includes(volunteerFilterInputValue.toLowerCase());
 		}));
 	}, [volunteerFilterInputValue]);
->>>>>>> 2461c9828df52d2fc3c6739f2b7cc958a07d9989
 	return (
 		<Grid item className={'volunteerCard'}>
 			<Card variant='outlined'>
