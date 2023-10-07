@@ -381,7 +381,7 @@ function VolunteerCard({ volunteers, userDragging, setUserDragging }: {
 									<Grid item>
 										<Button variant='contained' color='success' onClick={() => {
 										}}>
-											AI Assign
+											Assign All
 										</Button>
 									</Grid>
 									<Grid item>
