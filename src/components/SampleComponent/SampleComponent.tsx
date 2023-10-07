@@ -1,3 +1,4 @@
+import { useDBContext } from '@/contexts/db.context';
 import './SampleComponent.scss';
 interface Props {
 	title: string;
@@ -5,6 +6,8 @@ interface Props {
 }
 const SampleComponent = (props: Props) => {
 	const { title, subtitle } = props;
+	const db = useDBContext();
+	console.log(db);
 	return (
 		<div className="sample-component">
 			<h1>{title}</h1>

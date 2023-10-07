@@ -28,7 +28,7 @@ type DBSchema = {
 	messages?: Message[];
 };
 
-class Database {
+export class Database {
 	organizations: Organization[];
 	events: MinistryEvent[];
 	ministries: Ministry[];
@@ -219,7 +219,7 @@ class Database {
 	}
 }
 
-const preexistingData: DBSchema = {
+export const preexistingData: DBSchema = {
 	organizations: [
 		{
 			id: 1,

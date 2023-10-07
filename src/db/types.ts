@@ -21,9 +21,9 @@ export type User = {
 };
 
 export enum RoleOptions {
-	Admin = 'admin',
-	TeamLead = 'team_lead',
-	Volunteer = 'volunteer',
+	Admin = 'Admin',
+	TeamLead = 'Team Lead',
+	Volunteer = 'Volunteer',
 }
 
 export type Message = {
@@ -40,7 +40,7 @@ export type Requirement = {
 	id: number;
 	title: string;
 	description: string;
-	age?: AgeOptions | 'all_ages';
+	age?: AgeOptions | 'All Ages';
 	requirementSatisfaction?: boolean;
 	event?: number | MinistryEvent;
 	email?: string;
@@ -50,9 +50,9 @@ export type Requirement = {
 };
 
 enum AgeOptions {
-	AllAges = 'all_ages',
-	TenPlus = 'ten_plus',
-	EighteenPlus = 'eighteen_plus',
+	AllAges = 'All Ages',
+	TenPlus = '10+',
+	EighteenPlus = '18+',
 }
 
 export type Experience = {
@@ -65,21 +65,21 @@ export type Experience = {
 };
 
 export enum TypeOptions {
-	BandVocals = 'band_vocals',
-	BandKeys = 'band_keys',
-	BandBass = 'band_bass',
-	BandElectricGuitar = 'band_eletric_guitar',
-	BandAcousticGuitar = 'band_acoustic_guitar',
-	BandDrums = 'band_drums',
-	BandAux = 'band_aux',
-	TechGeneral = 'tech_general',
-	TechCameras = 'tech_cameras',
-	TechLighting = 'tech_lighting',
-	TechAudio = 'tech_audio',
-	TechSlides = 'tech_slides',
-	TechVideoDirector = 'tech_video_director',
-	Prayer = 'prayer',
-	PastoralCare = 'pastoral_care',
+	BandVocals = 'Vocals',
+	BandKeys = 'Keys',
+	BandBass = 'Bass',
+	BandElectricGuitar = 'Eletric Guitar',
+	BandAcousticGuitar = 'Acoustic Guitar',
+	BandDrums = 'Drums',
+	BandAux = 'Band Aux',
+	TechGeneral = 'Tech General',
+	TechCameras = 'Cameras',
+	TechLighting = 'Lighting',
+	TechAudio = 'Audio',
+	TechSlides = 'Slides',
+	TechVideoDirector = 'Video Director',
+	Prayer = 'Prayer',
+	PastoralCare = 'Pastoral Care',
 }
 
 export enum LevelOptions {
@@ -110,17 +110,17 @@ export type MinistryEvent = {
 };
 
 enum WhereOptions {
-	MainAuditorium = 'main_auditorium',
-	SecondaryAuditorium = 'secondary_auditorium',
-	KidsRoom = 'kids_room',
-	YouthRoom = 'youth_room',
-	Foyer = 'foyer',
+	MainAuditorium = 'Main Auditorium',
+	SecondaryAuditorium = 'Secondary Auditorium',
+	KidsRoom = 'Kids Room',
+	YouthRoom = 'Youth Room',
+	Foyer = 'Foyer',
 }
 
 enum RepeatOptions {
-	Weekly = 'weekly',
-	BiWeekly = 'bi_weekly',
-	Monthly = 'monthly',
+	Weekly = 'Weekly',
+	BiWeekly = 'Bi-Weekly',
+	Monthly = 'Monthly',
 }
 
 export type Thread = {
