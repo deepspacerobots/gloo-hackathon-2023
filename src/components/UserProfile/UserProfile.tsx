@@ -1,4 +1,4 @@
-import { Avatar, Box, Chip, Stack } from '@mui/material';
+import { Avatar, Box, Chip, Slider, Stack } from '@mui/material';
 import './UserProfile.scss';
 import { Experience, RoleOptions, Team } from '@/db/types';
 import Card from '@mui/material/Card';
@@ -58,14 +58,25 @@ const UserProfile = (props: Props) => {
 					<Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
 						Experiences:
 					</Typography>
+
 					<Box sx={{ display: 'flex' }}>
 						{(user.experiences as Experience[]).map((e: Experience) => {
 							return (
-								<Chip
-									key={`experience-${e.id}`}
-									label={e.type}
-									variant="outlined"
-								/>
+								<Box sx={{ display: 'flex' }}>
+									<Chip
+										key={`experience-${e.id}`}
+										label={e.type}
+										variant="outlined"
+									/>
+									<Slider
+										aria-label="Experience"
+										defaultValue={1}
+										step={1}
+										marks
+										min={1}
+										max={4}
+									/>
+								</Box>
 							);
 						})}
 					</Box>

@@ -10,12 +10,14 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
-		"@emotion/react": "latest",
-		"@emotion/styled": "latest",
-		"@mui/icons-material": "latest",
-		"@mui/material": "latest",
+		"@ambiot/material-ui-multiple-dates-picker": "^1.0.3",
+		"@emotion/react": "^11.11.1",
+		"@emotion/styled": "^11.11.0",
+		"@mui/icons-material": "^5.14.12",
+		"@mui/lab": "^5.0.0-alpha.147",
+		"@mui/material": "^5.14.12",
 		"openai": "^4.11.1",
-		"react": "latest",
+		"react": "^18.2.0",
 		"react-dom": "latest"
 	},
 	"devDependencies": {
