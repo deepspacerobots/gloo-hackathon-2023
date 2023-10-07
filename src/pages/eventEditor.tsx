@@ -40,11 +40,14 @@ import { Close } from '@mui/icons-material';
 
 export default function EventEditor() {
 	const db = useDBContext();
-	const events = db.getFutureEvents();
+	const [events, setEvents] = useState(db.getFutureEvents());
 	const teams = db.getAllTeams();
 	// starting to test schedule generation, just team 1 users
 	generateTeamSchedule(teams[0]);
 	const [allVolunteers, setAllVolunteers] = useState(db.getUsers());
+	useEffect(() => {
+		console.log(events);
+	}, []);
 
 	return (
 		<Grid container spacing={2}>
@@ -186,10 +189,10 @@ function EventCard({
 }
 
 function TeamCard({
-	teamName,
-	roles,
-	db,
-}: {
+										teamName,
+										roles,
+										db,
+									}: {
 	teamName: string;
 	roles: number[];
 	db: DatabaseType;
@@ -329,7 +332,8 @@ function VolunteerCard({ volunteers }: { volunteers: User[] }) {
 							<CardContent>
 								<Grid container spacing={1}>
 									<Grid item>
-										<Button variant='contained' color='success' onClick={aiAssign}>
+										<Button variant='contained' color='success' onClick={() => {
+										}}>
 											AI Assign
 										</Button>
 									</Grid>
