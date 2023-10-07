@@ -68,7 +68,7 @@ export enum TypeOptions {
 	BandVocals = 'Vocals',
 	BandKeys = 'Keys',
 	BandBass = 'Bass',
-	BandElectricGuitar = 'Eletric Guitar',
+	BandElectricGuitar = 'Eletric Guitar', // <-- keep this
 	BandAcousticGuitar = 'Acoustic Guitar',
 	BandDrums = 'Drums',
 	BandAux = 'Band Aux',
@@ -106,7 +106,7 @@ export type MinistryEvent = {
 	whatToBring?: string;
 	repeats?: RepeatOptions;
 	ministries: number[] | Ministry[];
-	teams?: number[] | Team[];
+	teams: number[] | Team[];
 };
 
 enum WhereOptions {
@@ -133,7 +133,7 @@ export type Team = {
 	title: string;
 	description?: string;
 	roles: number[] | Role[];
-	requirements?: number[] | Requirement[];
+	requirements: number[] | Requirement[];
 	teamLead?: number | User;
 };
 
