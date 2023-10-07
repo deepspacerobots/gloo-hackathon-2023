@@ -4,7 +4,6 @@ import {
 	Accordion,
 	AccordionDetails,
 	AccordionSummary,
-	Avatar,
 	Button,
 	Card,
 	CardContent,
@@ -45,26 +44,32 @@ export default function EventEditor() {
 	const teams = db.getAllTeams();
 	const [allVolunteers, setAllVolunteers] = useState(db.getUsers());
 	const [userDragging, setUserDragging] = useState<null | User>(null);
+	const [unassignedRoles, setUnassignedRoles] = useState(0);
 	useEffect(() => {
 		// add event teams to event
 		let newTeamId = 46;
+		let unassignedRolesCount = 0;
 		events.forEach((event) => {
 			event.teams.forEach((team) => {
-				const scheduledUsersInitial = [];
+				const scheduledUsersInitial: number[] = [];
+				// @ts-ignore
 				team.roles.forEach((a, index) => {
 					scheduledUsersInitial.push(index + 1);
+					unassignedRolesCount++;
 				});
 				// @ts-ignore
 				event.eventTeams.push({
 					id: newTeamId,
+					// @ts-ignore
 					team: team.id,
 					at_capacity: false,
 					scheduled_users: scheduledUsersInitial,
 				});
+				console.log(event.eventTeams);
 				newTeamId++;
 			});
+			setUnassignedRoles(unassignedRolesCount);
 		});
-		console.log(events);
 	}, []);
 
 	return (
@@ -88,7 +93,7 @@ export default function EventEditor() {
 												}}
 											>
 												<Typography variant={'h6'}>Events</Typography>
-												<Typography variant={'h2'} color={'secondary'}>
+												<Typography variant={'h2'} color={'success.main'}>
 													{events.length}
 												</Typography>
 											</div>
@@ -102,8 +107,8 @@ export default function EventEditor() {
 												}}
 											>
 												<Typography variant={'h6'}>Unassigned</Typography>
-												<Typography variant={'h2'} color={'secondary'}>
-													32
+												<Typography variant={'h2'} color={unassignedRoles === 0 ? 'success.main' : 'error.main'}>
+													{unassignedRoles}
 												</Typography>
 											</div>
 										</Grid>
@@ -116,7 +121,7 @@ export default function EventEditor() {
 												}}
 											>
 												<Typography variant={'h6'}>Volunteers</Typography>
-												<Typography variant={'h2'} color={'secondary'}>
+												<Typography variant={'h2'} color={'success.main'}>
 													{db.getUsers().length}
 												</Typography>
 											</div>
@@ -130,8 +135,8 @@ export default function EventEditor() {
 												}}
 											>
 												<Typography variant={'h6'}>Teams</Typography>
-												<Typography variant={'h2'} color={'secondary'}>
-													3
+												<Typography variant={'h2'} color={'success.main'}>
+													{db.getAllTeams().length}
 												</Typography>
 											</div>
 										</Grid>
@@ -169,16 +174,16 @@ export default function EventEditor() {
 }
 
 function EventCard({
-	eventId,
-	eventName,
-	eventDate,
-	db,
-	userDragging,
-	setUserDragging,
-	updateEvent,
-	setEvents,
-	events,
-}: {
+										 eventId,
+										 eventName,
+										 eventDate,
+										 db,
+										 userDragging,
+										 setUserDragging,
+										 updateEvent,
+										 setEvents,
+										 events,
+									 }: {
 	eventId: number;
 	eventName: string;
 	eventDate: string;
@@ -254,15 +259,15 @@ function EventCard({
 }
 
 function TeamCard({
-	teamName,
-	roles,
-	db,
-	userDragging,
-	setUserDragging,
-	eventId,
-	teamId,
-	setEvents,
-}: {
+										teamName,
+										roles,
+										db,
+										userDragging,
+										setUserDragging,
+										eventId,
+										teamId,
+										setEvents,
+									}: {
 	teamName: string;
 	roles: number[];
 	db: DatabaseType;
@@ -276,16 +281,16 @@ function TeamCard({
 	const fullRoles = roles.map((role: number) => db.getRole(role)) as Role[];
 	const event = db.getEvent(eventId);
 	const [usersInRoles, setUsersInRoles] = useState(
-		Array.from(fullRoles, () => null)
+		Array.from(fullRoles, () => null),
 	);
 
 	return (
 		<Grid item xs={12} md={4}>
-			<Card variant="outlined">
+			<Card variant='outlined'>
 				<CardContent>
 					<Typography mb={2}>Team: {teamName}</Typography>
 					<TableContainer component={Paper}>
-						<Table size="small" aria-label="a dense table">
+						<Table size='small' aria-label='a dense table'>
 							<TableHead>
 								<TableRow>
 									<TableCell>Position</TableCell>
@@ -297,7 +302,7 @@ function TeamCard({
 								{fullRoles?.map((role: Role, index) => {
 									const userObj = db.getUser(
 										event?.eventTeams.find((data) => data.team === teamId)
-											?.scheduled_users[index]
+											?.scheduled_users[index],
 									);
 									const userName = `${userObj?.firstName} ${userObj?.lastName}`;
 									return (
@@ -310,8 +315,8 @@ function TeamCard({
 											usersName={
 												usersInRoles[index] !== null
 													? `${db.getUser(usersInRoles[index])?.firstName} ${
-															db.getUser(usersInRoles[index])?.lastName
-													  }`
+														db.getUser(usersInRoles[index])?.lastName
+													}`
 													: ''
 											}
 											setUserToEvent={() => {
@@ -335,7 +340,7 @@ function TeamCard({
 function TeamCardSecondary({ teamName }: { teamName: string }) {
 	return (
 		<Grid item xs={12} md={4}>
-			<Card variant="outlined">
+			<Card variant='outlined'>
 				<CardContent>
 					<Typography mb={2}>Team: {teamName}</Typography>
 				</CardContent>
@@ -345,13 +350,13 @@ function TeamCardSecondary({ teamName }: { teamName: string }) {
 }
 
 function EventPosition({
-	position,
-	userDragging,
-	setUserDragging,
-	roleIndex,
-	setUserToEvent,
-	usersName,
-}: {
+												 position,
+												 userDragging,
+												 setUserDragging,
+												 roleIndex,
+												 setUserToEvent,
+												 usersName,
+											 }: {
 	position: string;
 	userDragging: null | User;
 	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
@@ -385,7 +390,7 @@ function EventPosition({
 				setUserToEvent();
 			}}
 		>
-			<TableCell component="th" scope="row">
+			<TableCell component='th' scope='row'>
 				<Typography>{position}</Typography>
 			</TableCell>
 
@@ -397,10 +402,10 @@ function EventPosition({
 }
 
 function VolunteerCard({
-	volunteers,
-	userDragging,
-	setUserDragging,
-}: {
+												 volunteers,
+												 userDragging,
+												 setUserDragging,
+											 }: {
 	volunteers: User[];
 	userDragging: null | User;
 	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
@@ -420,7 +425,7 @@ function VolunteerCard({
 						.toLowerCase()
 						.includes(volunteerFilterInputValue.toLowerCase())
 				);
-			})
+			}),
 		);
 	}, [volunteerFilterInputValue]);
 
@@ -436,7 +441,7 @@ function VolunteerCard({
 
 	return (
 		<Grid item className={'volunteerCard'}>
-			<Card variant="outlined">
+			<Card variant='outlined'>
 				<CardContent>
 					{/*<CardHeader title={'Assign Volunteers'}></CardHeader>*/}
 					<Stack spacing={1}>
@@ -458,7 +463,7 @@ function VolunteerCard({
 										</Button>
 									</Grid>
 									<Grid item>
-										<Button color="error">Unassign All</Button>
+										<Button color='error'>Unassign All</Button>
 									</Grid>
 								</Grid>
 							</CardContent>
@@ -473,9 +478,9 @@ function VolunteerCard({
 								<FormControl fullWidth>
 									<InputLabel>Team</InputLabel>
 									<Select
-										size="small"
+										size='small'
 										value={filter}
-										label="Team"
+										label='Team'
 										onChange={(e) => {
 											console.log(e.target.value);
 											setFilter(e.target.value);
@@ -487,7 +492,7 @@ function VolunteerCard({
 									</Select>
 								</FormControl>
 								<Button
-									color="error"
+									color='error'
 									onClick={() => {
 										setFilter('All Teams');
 									}}
@@ -508,7 +513,7 @@ function VolunteerCard({
 									<FormControl fullWidth>
 										<InputLabel
 											size={'small'}
-											htmlFor="search-for-volunteer-input"
+											htmlFor='search-for-volunteer-input'
 										>
 											Search For Volunteer
 										</InputLabel>
@@ -518,14 +523,14 @@ function VolunteerCard({
 											size={'small'}
 											label={'Search For Volunteer'}
 											endAdornment={
-												<InputAdornment position="end">
+												<InputAdornment position='end'>
 													<IconButton
 														size={'small'}
 														onClick={() => {
 															setVolunteerFilterInputValue('');
 														}}
 													>
-														<Close fontSize="inherit" />
+														<Close fontSize='inherit' />
 													</IconButton>
 												</InputAdornment>
 											}
@@ -539,19 +544,19 @@ function VolunteerCard({
 								<Grid container rowSpacing={1} spacing={1}>
 									{filteredVolunteers.map((user, i) => {
 										return (
-											<Grid
-												draggable
-												onDragStart={(e) => {
-													setUserDragging(user);
-												}}
-												onDragEnd={(e) => {}}
-												item
-												key={`avatar ${i}`}
-											>
-												<Tooltip title={`${user.firstName} ${user.lastName}`}>
+											<Tooltip title={`${user.firstName} ${user.lastName}`} key={`avatar ${i}`}>
+												<Grid
+													draggable
+													onDragStart={(e) => {
+														setUserDragging(user);
+													}}
+													onDragEnd={(e) => {
+													}}
+													item
+												>
 													<UserDialog user={user} />
-												</Tooltip>
-											</Grid>
+												</Grid>
+											</Tooltip>
 										);
 									})}
 								</Grid>
