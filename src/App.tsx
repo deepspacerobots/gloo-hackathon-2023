@@ -1,32 +1,61 @@
 import * as React from 'react';
-import Container from '@mui/material/Container';
+import { useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
+import { ModeNight, WbSunny } from '@mui/icons-material';
 import ProTip from './ProTip';
+import EventEditor from '@/pages/eventEditor';
+import { ThemeProvider } from '@emotion/react';
+import { AppBar, CssBaseline, IconButton, Toolbar } from '@mui/material';
+import { createTheme } from '@mui/material/styles';
+import "./app.scss"
+import UserProfile from './components/UserProfile/UserProfile';
 
 function Copyright() {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}.
-    </Typography>
-  );
+	return (
+		<Typography variant='body2' color='text.secondary' align='center'>
+			{'Copyright © '}
+			<Link color='inherit' href='https://mui.com/'>
+				Your Website
+			</Link>{' '}
+			{new Date().getFullYear()}.
+		</Typography>
+	);
 }
 
 export default function App() {
-  return (
-    <Container maxWidth="sm">
-      <Box sx={{ my: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Material UI Vite.js example in TypeScript
-        </Typography>
-        <ProTip />
-        <Copyright />
-      </Box>
-    </Container>
-  );
+	const [isDarkTheme, setIsDarkTheme] = useState(true);
+	const theme = createTheme({
+		palette: {
+			mode: isDarkTheme ? 'dark' : 'light',
+		},
+	});
+	const themeIcon = () => {
+		if (isDarkTheme) return <WbSunny />;
+		return <ModeNight />;
+	};
+	return (
+		<ThemeProvider theme={theme}>
+			<CssBaseline />
+			<Box sx={{ flexGrow: 1 }}>
+				<AppBar position='static'>
+					<Toolbar>
+						<Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
+							Hackathon App Name Here
+						</Typography>
+						<IconButton onClick={() => {
+							setIsDarkTheme(!isDarkTheme);
+						}}>
+							{!isDarkTheme ? <WbSunny /> : <ModeNight />}
+						</IconButton>
+
+					</Toolbar>
+				</AppBar>
+			</Box>
+			<Box sx={{ my: 4, mx: 8 }}>
+				<EventEditor />
+			</Box>
+		</ThemeProvider>
+	);
 }

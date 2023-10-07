@@ -12,12 +12,12 @@ export type User = {
 	phone?: string;
 	profilePhoto?: string; // relative path to asset in /assets
 	relatedVolunteer?: number | User;
-	teams?: number[] | Team[];
-	events?: number[] | MinistryEvent[];
-	messages?: number[] | Message[];
-	blackoutDates?: DateTime[];
+	teams: number[] | Team[];
+	events: number[] | MinistryEvent[];
+	messages: number[] | Message[];
+	blackoutDates: DateTime[];
 	preferredNumWeeksServing: number;
-	experiences?: number[] | Experience[];
+	experiences: number[] | Experience[];
 };
 
 export enum RoleOptions {
@@ -68,7 +68,28 @@ export enum TypeOptions {
 	BandVocals = 'Vocals',
 	BandKeys = 'Keys',
 	BandBass = 'Bass',
-	BandElectricGuitar = 'Electric Guitar',
+	//***CRITICAL*** vvvvvvvvvvvvvvvvvv
+	//***CRITICAL*** vvvvvvvvvvvvvvvvvv
+	//***CRITICAL*** vvvvvvvvvvvvvvvvvv
+	//***CRITICAL*** vvvvvvvvvvvvvvvvvv
+	//***CRITICAL*** vvvvvvvvvvvvvvvvvv
+	/**
+	 *  EEEE  L     EEEEE TTTTTTT RRRR   IIIII CCCCC 
+		E     L     E        T    R   R    I   C    
+		EEEE  L     EEEE     T    RRRR     I   C    
+		E     L     E        T    R  R     I   C    
+		EEEE  LLLLL EEEEE    T    R   RR IIIII CCCCC
+
+	 */
+	BandElectricGuitar = 'Eletric Guitar', // <-- keep this ***CRITICAL***
+	//***CRITICAL*** ^^^^^^^^^^^^^^^^^^
+	//***CRITICAL*** ^^^^^^^^^^^^^^^^^^
+	//***CRITICAL*** ^^^^^^^^^^^^^^^^^^
+	//***CRITICAL*** ^^^^^^^^^^^^^^^^^^
+	//***CRITICAL*** ^^^^^^^^^^^^^^^^^^
+	//***CRITICAL*** ^^^^^^^^^^^^^^^^^^
+	//***CRITICAL*** ^^^^^^^^^^^^^^^^^^
+	//***CRITICAL*** ^^^^^^^^^^^^^^^^^^
 	BandAcousticGuitar = 'Acoustic Guitar',
 	BandDrums = 'Drums',
 	BandAux = 'Band Aux',
@@ -107,7 +128,7 @@ export type MinistryEvent = {
 	repeats?: RepeatOptions;
 	ministries: number[] | Ministry[];
 	event_teams: number[] | EventTeam[];
-	teams?: number[] | Team[];
+	teams: number[] | Team[];
 };
 
 enum WhereOptions {
@@ -134,7 +155,7 @@ export type Team = {
 	title: string;
 	description?: string;
 	roles: number[] | Role[];
-	requirements?: number[] | Requirement[];
+	requirements: number[] | Requirement[];
 	teamLead?: number | User;
 };
 

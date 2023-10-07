@@ -30,7 +30,7 @@ type DBSchema = {
 	messages?: Message[];
 };
 
-class Database {
+export class Database {
 	organizations: Organization[];
 	events: MinistryEvent[];
 	event_teams: EventTeam[];
@@ -58,7 +58,7 @@ class Database {
 			(organization: Organization) => organization.id === organizationId
 		);
 
-		if (organization) {
+		if (typeof organization?.seniorPastor == 'number') {
 			organization.seniorPastor = this.users.find(
 				(user: User) => organization.seniorPastor === user.id
 			);
@@ -79,13 +79,17 @@ class Database {
 		);
 
 		if (event) {
-			event.ministries = this.ministries.filter((ministry: Ministry) =>
-				(event.ministries as number[]).includes(ministry.id)
-			);
+			if (event.ministries?.length && typeof event.ministries[0] === 'number') {
+				event.ministries = this.ministries.filter((ministry: Ministry) =>
+					(event.ministries as number[]).includes(ministry.id)
+				);
+			}
 
-			event.teams = this.teams.filter((team: Team) =>
-				(event.teams as number[]).includes(team.id)
-			);
+			if (event.teams?.length && typeof event.teams[0] === 'number') {
+				event.teams = this.teams.filter((team: Team) =>
+					(event.teams as number[]).includes(team.id)
+				);
+			}
 
 			if (event.event_teams?.length && typeof event.event_teams[0] === 'number') {
 				event.event_teams = this.event_teams.filter((eventTeam: EventTeam) => (event.event_teams as number[]).includes(eventTeam.id));
@@ -106,7 +110,7 @@ class Database {
 			(ministry: Ministry) => ministry.id === ministryId
 		);
 
-		if (ministry) {
+		if (ministry?.teams?.length && typeof ministry.teams[0] === 'number') {
 			ministry.teams = this.teams.filter((team: Team) =>
 				(ministry.teams as number[]).includes(team.id)
 			);
@@ -125,13 +129,17 @@ class Database {
 		const team = this.teams.find((team: Team) => team.id === teamId);
 
 		if (team) {
-			team.roles = this.roles.filter((role: Role) =>
-				(team.roles as number[]).includes(role.id)
-			);
+			if (team.roles?.length && typeof team.roles[0] === 'number') {
+				team.roles = this.roles.filter((role: Role) =>
+					(team.roles as number[]).includes(role.id)
+				);
+			}
 
-			team.teamLead = this.users.find(
-				(user: User) => team.teamLead === user.id
-			);
+			if (typeof team?.teamLead === 'number') {
+				team.teamLead = this.users.find(
+					(user: User) => team.teamLead === user.id
+				);
+			}
 		}
 
 		return team;
@@ -146,7 +154,7 @@ class Database {
 	getRole(roleId: number): Role | undefined {
 		const role = this.roles.find((role: Role) => role.id === roleId);
 
-		if (role) {
+		if (typeof role?.user === 'number') {
 			role.user = this.users.find((user: User) => role.user === user.id);
 		}
 
@@ -165,12 +173,17 @@ class Database {
 		);
 
 		if (requirement) {
-			requirement.event = this.events.find(
-				(event: MinistryEvent) => requirement.event === event.id
-			);
-			requirement.ministry = this.ministries.find(
-				(ministry: Ministry) => requirement.ministry === ministry.id
-			);
+			if (typeof requirement?.event === 'number') {
+				requirement.event = this.events.find(
+					(event: MinistryEvent) => requirement.event === event.id
+				);
+			}
+
+			if (typeof requirement?.ministry === 'number') {
+				requirement.ministry = this.ministries.find(
+					(ministry: Ministry) => requirement.ministry === ministry.id
+				);
+			}
 		}
 
 		return requirement;
@@ -186,21 +199,29 @@ class Database {
 		const user = this.users.find((user: User) => user.id === userId);
 
 		if (user) {
-			user.relatedVolunteer = this.users.find(
-				(userIteration: User) => user.relatedVolunteer === userIteration.id
-			);
+			if (typeof user?.relatedVolunteer === 'number') {
+				user.relatedVolunteer = this.users.find(
+					(userIteration: User) => user.relatedVolunteer === userIteration.id
+				);
+			}
 
-			user.teams = this.teams.filter((team: Team) =>
-				(user.teams as number[]).includes(team.id)
-			);
+			if (user.teams?.length && typeof user.teams[0] === 'number') {
+				user.teams = this.teams.filter((team: Team) =>
+					(user.teams as number[]).includes(team.id)
+				);
+			}
 
-			user.events = this.events.filter((event: MinistryEvent) =>
-				(user.events as number[]).includes(event.id)
-			);
+			if (user.events?.length && typeof user.events[0] === 'number') {
+				user.events = this.events.filter((event: MinistryEvent) =>
+					(user.events as number[]).includes(event.id)
+				);
+			}
 
-			user.experiences = this.experiences.filter((experience: Experience) =>
-				(user.experiences as number[]).includes(experience.id)
-			);
+			if (user.experiences?.length && typeof user.experiences[0] === 'number') {
+				user.experiences = this.experiences.filter((experience: Experience) =>
+					(user.experiences as number[]).includes(experience.id)
+				);
+			}
 		}
 
 		return user;
@@ -227,7 +248,7 @@ class Database {
 	}
 }
 
-const preexistingData: DBSchema = {
+export const preexistingData: DBSchema = {
 	organizations: [
 		{
 			id: 1,
@@ -304,6 +325,7 @@ const preexistingData: DBSchema = {
 			id: 1,
 			title: 'Worship Team',
 			roles: [1, 2, 3],
+			requirements: [],
 			teamLead: 1,
 		},
 		{
@@ -321,6 +343,7 @@ const preexistingData: DBSchema = {
 			description:
 				'The pastoral care team is responsible for helping the lead/associate pastors care for the congregation',
 			roles: [7, 8],
+			requirements: [],
 			teamLead: 3,
 		},
 	],
@@ -475,6 +498,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 3,
 			teams: [1],
 			experiences: [1, 2],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 2,
@@ -492,6 +518,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [1],
 			experiences: [3],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 3,
@@ -509,6 +538,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [1],
 			experiences: [1, 2],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 4,
@@ -521,6 +553,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 4,
 			teams: [2, 3],
 			experiences: [4, 5, 6],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 5,
@@ -533,6 +568,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [2, 3],
 			experiences: [7, 8],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 6,
@@ -546,6 +584,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 3,
 			teams: [3],
 			experiences: [25, 26],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 7,
@@ -558,6 +599,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [2],
 			experiences: [9],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 8,
@@ -571,6 +615,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 4,
 			teams: [2],
 			experiences: [10],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 9,
@@ -583,6 +630,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [1],
 			experiences: [11],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 10,
@@ -596,6 +646,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [3],
 			experiences: [25, 26],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 11,
@@ -608,6 +661,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 3,
 			teams: [1],
 			experiences: [12, 13, 14],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 12,
@@ -621,6 +677,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [2],
 			experiences: [15],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 13,
@@ -632,6 +691,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [2],
 			experiences: [16],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 14,
@@ -645,6 +707,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 4,
 			teams: [2],
 			experiences: [17],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 15,
@@ -656,6 +721,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [2],
 			experiences: [18],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 16,
@@ -669,6 +737,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 3,
 			teams: [1],
 			experiences: [70],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 17,
@@ -681,6 +752,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [1],
 			experiences: [1, 60],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 18,
@@ -694,6 +768,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 4,
 			teams: [1],
 			experiences: [1, 46],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 19,
@@ -706,6 +783,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [2, 3],
 			experiences: [19, 20, 21, 22],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 20,
@@ -719,6 +799,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [1],
 			experiences: [23],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 21,
@@ -730,6 +813,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [2, 3],
 			experiences: [24, 25],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 22,
@@ -743,6 +829,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [3],
 			experiences: [25, 26],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 23,
@@ -754,6 +843,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [3],
 			experiences: [26],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 24,
@@ -766,6 +858,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 3,
 			teams: [1, 2],
 			experiences: [27, 28],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 25,
@@ -778,6 +873,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [2],
 			experiences: [29],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 26,
@@ -791,6 +889,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 4,
 			teams: [3],
 			experiences: [25, 26],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 27,
@@ -803,6 +904,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [2],
 			experiences: [30],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 28,
@@ -815,6 +919,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 4,
 			teams: [1],
 			experiences: [31, 32],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 29,
@@ -826,6 +933,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [1, 2],
 			experiences: [33, 34, 35],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 30,
@@ -839,6 +949,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [3],
 			experiences: [25, 26],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 31,
@@ -851,6 +964,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [2, 3],
 			experiences: [36, 37, 38],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 32,
@@ -863,6 +979,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [2],
 			experiences: [39],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 33,
@@ -875,6 +994,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [2],
 			experiences: [40],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 34,
@@ -887,6 +1009,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 3,
 			teams: [2],
 			experiences: [41, 42, 43, 44],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 35,
@@ -899,6 +1024,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [1],
 			experiences: [45, 46],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 36,
@@ -912,6 +1040,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 4,
 			teams: [1],
 			experiences: [47],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 37,
@@ -923,6 +1054,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [3],
 			experiences: [25, 26],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 38,
@@ -935,6 +1069,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 4,
 			teams: [3],
 			experiences: [25, 26],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 39,
@@ -947,6 +1084,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [3],
 			experiences: [25, 26],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 40,
@@ -960,6 +1100,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [1],
 			experiences: [48, 49],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 41,
@@ -972,6 +1115,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [1],
 			experiences: [50],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 42,
@@ -985,6 +1131,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [1, 2],
 			experiences: [51, 52],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 43,
@@ -996,6 +1145,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [2],
 			experiences: [53],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 44,
@@ -1009,6 +1161,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 3,
 			teams: [2],
 			experiences: [54],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 45,
@@ -1021,6 +1176,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [3],
 			experiences: [55, 56],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 46,
@@ -1033,6 +1191,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 4,
 			teams: [2],
 			experiences: [57, 58, 59],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 47,
@@ -1043,6 +1204,11 @@ const preexistingData: DBSchema = {
 			password: 'password567',
 			profilePhoto: '/img/profile-pics/man-33.jpg',
 			preferredNumWeeksServing: 2,
+			teams: [],
+			experiences: [],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 48,
@@ -1056,6 +1222,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 4,
 			teams: [1],
 			experiences: [60, 61],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 49,
@@ -1067,6 +1236,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [2],
 			experiences: [62],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 50,
@@ -1079,6 +1251,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [2, 3],
 			experiences: [63, 64, 65],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 51,
@@ -1089,6 +1264,11 @@ const preexistingData: DBSchema = {
 			password: 'password123',
 			profilePhoto: '/img/profile-pics/man-34.jpg',
 			preferredNumWeeksServing: 1,
+			teams: [],
+			experiences: [],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 52,
@@ -1102,6 +1282,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [2],
 			experiences: [66],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 53,
@@ -1114,6 +1297,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [1, 2],
 			experiences: [67, 68, 69],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 54,
@@ -1127,6 +1313,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 3,
 			teams: [1],
 			experiences: [70, 71],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 55,
@@ -1138,6 +1327,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [2],
 			experiences: [72],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 56,
@@ -1150,6 +1342,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 4,
 			teams: [2],
 			experiences: [73],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 57,
@@ -1162,6 +1357,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [2],
 			experiences: [74],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 58,
@@ -1173,6 +1371,11 @@ const preexistingData: DBSchema = {
 			phone: '555-555-5586',
 			profilePhoto: '/img/profile-pics/woman-88.jpg',
 			preferredNumWeeksServing: 4,
+			teams: [],
+			experiences: [],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 59,
@@ -1185,6 +1388,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [2, 3],
 			experiences: [75, 76, 77, 78, 79],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 60,
@@ -1198,6 +1404,9 @@ const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [1],
 			experiences: [80],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 	],
 	experiences: [
