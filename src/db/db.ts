@@ -176,7 +176,7 @@ export class Database {
 
 	getUser(userId: number): User | undefined {
 		const user = this.users.find((user: User) => user.id === userId);
-
+		console.log(user);
 		if (user) {
 			user.relatedVolunteer = this.users.find(
 				(userIteration: User) => user.relatedVolunteer === userIteration.id
@@ -361,6 +361,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 3,
 			teams: [1],
 			experiences: [1, 2],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 2,
@@ -378,6 +381,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [1],
 			experiences: [3],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 3,
@@ -393,6 +399,11 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5557',
 			profilePhoto: '/img/profile-pics/man-2.jpg',
 			preferredNumWeeksServing: 1,
+			teams: [],
+			experiences: [],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 4,
@@ -405,6 +416,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 4,
 			teams: [2, 3],
 			experiences: [4, 5, 6],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 5,
@@ -417,6 +431,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [2, 3],
 			experiences: [7, 8],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 6,
@@ -428,6 +445,11 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5559',
 			profilePhoto: '/img/profile-pics/woman-12.jpg',
 			preferredNumWeeksServing: 3,
+			teams: [],
+			experiences: [],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 7,
@@ -440,6 +462,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [2],
 			experiences: [9],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 8,
@@ -453,6 +478,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 4,
 			teams: [2],
 			experiences: [10],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 9,
@@ -465,6 +493,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [1],
 			experiences: [11],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 10,
@@ -476,6 +507,11 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5562',
 			profilePhoto: '/img/profile-pics/woman-17.jpg',
 			preferredNumWeeksServing: 2,
+			teams: [],
+			experiences: [],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 11,
@@ -488,6 +524,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 3,
 			teams: [1],
 			experiences: [12, 13, 14],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 12,
@@ -501,6 +540,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [2],
 			experiences: [15],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 13,
@@ -512,6 +554,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [2],
 			experiences: [16],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 14,
@@ -525,6 +570,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 4,
 			teams: [2],
 			experiences: [17],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 15,
@@ -536,6 +584,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [2],
 			experiences: [18],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 16,
@@ -547,6 +598,11 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5565',
 			profilePhoto: '/img/profile-pics/woman-22.jpg',
 			preferredNumWeeksServing: 3,
+			teams: [],
+			experiences: [],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 17,
@@ -557,6 +613,11 @@ export const preexistingData: DBSchema = {
 			password: 'password567',
 			profilePhoto: '/img/profile-pics/man-18.jpg',
 			preferredNumWeeksServing: 2,
+			teams: [],
+			experiences: [],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 18,
@@ -568,6 +629,11 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5566',
 			profilePhoto: '/img/profile-pics/woman-8.jpg',
 			preferredNumWeeksServing: 4,
+			teams: [],
+			experiences: [],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 19,
@@ -580,6 +646,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [2, 3],
 			experiences: [19, 20, 21, 22],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 20,
@@ -593,6 +662,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [1],
 			experiences: [23],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 21,
@@ -604,6 +676,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [2, 3],
 			experiences: [24, 25],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 22,
@@ -615,6 +690,11 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5568',
 			profilePhoto: '/img/profile-pics/woman-26.jpg',
 			preferredNumWeeksServing: 2,
+			teams: [],
+			experiences: [],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 23,
@@ -626,6 +706,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [3],
 			experiences: [26],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 24,
@@ -638,6 +721,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 3,
 			teams: [1, 2],
 			experiences: [27, 28],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 25,
@@ -650,6 +736,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [2],
 			experiences: [29],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 26,
@@ -661,6 +750,11 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5570',
 			profilePhoto: '/img/profile-pics/woman-27.jpg',
 			preferredNumWeeksServing: 4,
+			teams: [],
+			experiences: [],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 27,
@@ -673,6 +767,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [2],
 			experiences: [30],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 28,
@@ -685,6 +782,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 4,
 			teams: [1],
 			experiences: [31, 32],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 29,
@@ -696,6 +796,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [1, 2],
 			experiences: [33, 34, 35],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 30,
@@ -707,6 +810,11 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5572',
 			profilePhoto: '/img/profile-pics/woman-28.jpg',
 			preferredNumWeeksServing: 2,
+			teams: [],
+			experiences: [],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 31,
@@ -719,6 +827,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [2, 3],
 			experiences: [36, 37, 38],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 32,
@@ -731,6 +842,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [2],
 			experiences: [39],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 33,
@@ -743,6 +857,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [2],
 			experiences: [40],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 34,
@@ -755,6 +872,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 3,
 			teams: [2],
 			experiences: [41, 42, 43, 44],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 35,
@@ -767,6 +887,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [1],
 			experiences: [45, 46],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 36,
@@ -780,6 +903,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 4,
 			teams: [1],
 			experiences: [47],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 37,
@@ -789,6 +915,11 @@ export const preexistingData: DBSchema = {
 			email: 'samuel@example.com',
 			password: 'password567',
 			preferredNumWeeksServing: 2,
+			teams: [],
+			experiences: [],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 38,
@@ -799,6 +930,11 @@ export const preexistingData: DBSchema = {
 			password: 'password890',
 			phone: '555-555-5576',
 			preferredNumWeeksServing: 4,
+			teams: [],
+			experiences: [],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 39,
@@ -809,6 +945,11 @@ export const preexistingData: DBSchema = {
 			password: 'password123',
 			profilePhoto: '/img/profile-pics/man-27.jpg',
 			preferredNumWeeksServing: 1,
+			teams: [],
+			experiences: [],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 40,
@@ -822,6 +963,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [1],
 			experiences: [48, 49],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 41,
@@ -834,6 +978,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [1],
 			experiences: [50],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 42,
@@ -847,6 +994,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [1, 2],
 			experiences: [51, 52],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 43,
@@ -858,6 +1008,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [2],
 			experiences: [53],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 44,
@@ -871,6 +1024,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 3,
 			teams: [2],
 			experiences: [54],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 45,
@@ -883,6 +1039,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [3],
 			experiences: [55, 56],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 46,
@@ -895,6 +1054,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 4,
 			teams: [2],
 			experiences: [57, 58, 59],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 47,
@@ -905,6 +1067,11 @@ export const preexistingData: DBSchema = {
 			password: 'password567',
 			profilePhoto: '/img/profile-pics/man-33.jpg',
 			preferredNumWeeksServing: 2,
+			teams: [],
+			experiences: [],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 48,
@@ -918,6 +1085,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 4,
 			teams: [1],
 			experiences: [60, 61],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 49,
@@ -929,6 +1099,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [2],
 			experiences: [62],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 50,
@@ -941,6 +1114,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [2, 3],
 			experiences: [63, 64, 65],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 51,
@@ -951,6 +1127,11 @@ export const preexistingData: DBSchema = {
 			password: 'password123',
 			profilePhoto: '/img/profile-pics/man-34.jpg',
 			preferredNumWeeksServing: 1,
+			teams: [],
+			experiences: [],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 52,
@@ -964,6 +1145,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [2],
 			experiences: [66],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 53,
@@ -976,6 +1160,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [1, 2],
 			experiences: [67, 68, 69],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 54,
@@ -989,6 +1176,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 3,
 			teams: [1],
 			experiences: [70, 71],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 55,
@@ -1000,6 +1190,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [2],
 			experiences: [72],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 56,
@@ -1012,6 +1205,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 4,
 			teams: [2],
 			experiences: [73],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 57,
@@ -1024,6 +1220,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [2],
 			experiences: [74],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 58,
@@ -1035,6 +1234,11 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5586',
 			profilePhoto: '/img/profile-pics/woman-88.jpg',
 			preferredNumWeeksServing: 4,
+			teams: [],
+			experiences: [],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 59,
@@ -1047,6 +1251,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 1,
 			teams: [2, 3],
 			experiences: [75, 76, 77, 78, 79],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 		{
 			id: 60,
@@ -1060,6 +1267,9 @@ export const preexistingData: DBSchema = {
 			preferredNumWeeksServing: 2,
 			teams: [1],
 			experiences: [80],
+			events: [],
+			messages: [],
+			blackoutDates: [],
 		},
 	],
 	experiences: [

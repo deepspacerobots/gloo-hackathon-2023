@@ -12,12 +12,12 @@ export type User = {
 	phone?: string;
 	profilePhoto?: string; // relative path to asset in /assets
 	relatedVolunteer?: number | User;
-	teams?: number[] | Team[];
-	events?: number[] | MinistryEvent[];
-	messages?: number[] | Message[];
-	blackoutDates?: DateTime[];
+	teams: number[] | Team[];
+	events: number[] | MinistryEvent[];
+	messages: number[] | Message[];
+	blackoutDates: DateTime[];
 	preferredNumWeeksServing: number;
-	experiences?: number[] | Experience[];
+	experiences: number[] | Experience[];
 };
 
 export enum RoleOptions {
