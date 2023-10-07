@@ -1,5 +1,5 @@
 import DB from '@/db/db';
-import { Experience, LevelOptions, MinistryEvent, Team, TypeOptions, User } from '@/db/types';
+import { LevelOptions, MinistryEvent, Proficiency, Team, User } from '@/db/types';
 import OpenAI from 'openai';
 
 const openai = new OpenAI({
@@ -26,8 +26,8 @@ const buildVolunteerListPrompt = (users: (UserWithServeHistory | undefined)[]) =
     users.forEach((user, index) => {
         const availability = `${user?.preferredNumWeeksServing}x a month`;
         //@ts-ignore
-        const proficiencies = user?.experiences.reduce((acc: string, xp: Experience) => acc + `${parseLevelToString(xp.level)} ${xp.type}, `, '');
-        const preference = `Prefers ${getMostPreferredType(user?.experiences)}`;
+        const proficiencies = user?.proficiencies.reduce((acc: string, prof: Proficiency) => acc + `${parseExperienceToString(prof.experience)} ${prof.type}, `, '');
+        const preference = `Prefers ${getMostPreferredType(user?.proficiencies)}`;
         const numTimesServed = `Served ${user?.numTimesServed} times recently`;
         promptString += `${index+1}. ${user?.firstName} ${user?.lastName} id: ${user?.id} (Availability: ${availability} | Proficiencies: ${proficiencies} | Preference: ${preference} | Recent Serve Amount: ${numTimesServed})\n`
     });
@@ -60,18 +60,18 @@ const buildTeamRequirementsPrompt = (team: Team) => {
     return promptString;
 };
 
-const parseLevelToString = (level: LevelOptions): string => {
-	const levelMap: { [key in LevelOptions]: string } = {
+const parseExperienceToString = (experience: LevelOptions): string => {
+	const expMap: { [key in LevelOptions]: string } = {
 		[LevelOptions.Beginner]: 'Beginner',
 		[LevelOptions.Intermediate]: 'Intermediate',
 		[LevelOptions.Advanced]: 'Advanced',
 		[LevelOptions.Expert]: 'Expert',
 	};
-	return levelMap[level];
+	return expMap[experience];
 };
 
-const getMostPreferredType = (experiences?: any[]): TypeOptions => {
-	const preferredExp = experiences?.reduce((highest, current) => {
+const getMostPreferredType = (proficiencies?: any[]): Proficiency => {
+	const preferredExp = proficiencies?.reduce((highest, current) => {
 		return current.preference > highest.preference ? current : highest;
 	});
 	return preferredExp.type;
