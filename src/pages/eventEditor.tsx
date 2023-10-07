@@ -32,7 +32,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useEffect, useState } from 'react';
 import { useDBContext } from '@/contexts/db.context';
 import { Database as DatabaseType } from '@/db/db';
-import { MinistryEvent, Role, Team, User } from '@/db/types';
+import { EventTeam, MinistryEvent, Role, Team, User } from '@/db/types';
 import Box from '@mui/material/Box';
 import { generateTeamSchedule } from '@/api/gpt-service';
 import { Close } from '@mui/icons-material';
@@ -40,7 +40,8 @@ import UserDialog from '@/components/UserDialog/UserDialog';
 
 export default function EventEditor() {
 	const db = useDBContext();
-	const [events, setEvents] = useState(db.getFutureEvents());
+	// const [events, setEvents] = useState(db.getFutureEvents());
+	const events = db.getFutureEvents();
 	const teams = db.getAllTeams();
 	// starting to test schedule generation, just team 1 users
 	generateTeamSchedule(teams[0], events);
@@ -67,7 +68,6 @@ export default function EventEditor() {
 					at_capacity: false,
 					scheduled_users: scheduledUsersInitial,
 				});
-				console.log(event.eventTeams);
 				newTeamId++;
 			});
 			setUnassignedRoles(unassignedRolesCount);
@@ -163,7 +163,6 @@ export default function EventEditor() {
 							db={db}
 							userDragging={userDragging}
 							setUserDragging={setUserDragging}
-							setEvents={setEvents}
 							events={events}
 						/>
 					))}
@@ -183,30 +182,30 @@ export default function EventEditor() {
 }
 
 function EventCard({
-	eventId,
-	eventName,
-	eventDate,
-	db,
-	userDragging,
-	setUserDragging,
-	updateEvent,
-	setEvents,
-	events,
-}: {
+										 eventId,
+										 eventName,
+										 eventDate,
+										 userDragging,
+										 setUserDragging,
+										 events,
+									 }: {
 	eventId: number;
 	eventName: string;
 	eventDate: string;
 	db: DatabaseType;
 	userDragging: null | User;
 	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
-	setEvents: React.Dispatch<React.SetStateAction<MinistryEvent[]>>;
 	events: MinistryEvent[];
 }) {
+	const db = useDBContext();
 	const [isExpanded, setIsExpanded] = useState(false);
 
-	const event = db.getEvent(eventId);
+	const fadfasdfgarstgewrrhtawegrtwe = db.getEvent(eventId);
+	const event = events.find(e => e.id === eventId);
+	console.log(event);
 	const formattedEventDate = new Date(eventDate).toDateString();
 	const teams = event?.teams as Team[];
+	const teams2 = event?.eventTeams as EventTeam[];
 
 	return (
 		<Grid item xs={12}>
@@ -251,13 +250,12 @@ function EventCard({
 								key={team.id}
 								teamName={team.title}
 								roles={team.roles as number[]}
-								db={db}
 								userDragging={userDragging}
 								setUserDragging={setUserDragging}
 								eventId={eventId}
 								teamId={team.id}
-								setEvents={setEvents}
 								events={events}
+								event={event as MinistryEvent}
 							/>
 						))}
 					</Grid>
@@ -268,27 +266,28 @@ function EventCard({
 }
 
 function TeamCard({
-	teamName,
-	roles,
-	db,
-	userDragging,
-	setUserDragging,
-	eventId,
-	teamId,
-	setEvents,
-}: {
+										teamName,
+										roles,
+										userDragging,
+										setUserDragging,
+										eventId,
+										teamId,
+										events,
+										event,
+									}: {
 	teamName: string;
 	roles: number[];
-	db: DatabaseType;
 	userDragging: null | User;
 	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
 	eventId: number;
 	teamId: number;
-	setEvents: React.Dispatch<React.SetStateAction<MinistryEvent[]>>;
 	events: MinistryEvent[];
+	event: MinistryEvent
 }) {
+	const db = useDBContext();
+	console.log(roles);
 	const fullRoles = roles.map((role: number) => db.getRole(role)) as Role[];
-	const event = db.getEvent(eventId);
+	// const event = db.getEvent(eventId);
 	const [usersInRoles, setUsersInRoles] = useState(
 		Array.from(fullRoles, () => null)
 	);
@@ -299,7 +298,7 @@ function TeamCard({
 				<CardContent>
 					<Typography mb={2}>Team: {teamName}</Typography>
 					<TableContainer component={Paper}>
-						<Table size="small" aria-label="a dense table">
+						<Table size='small'>
 							<TableHead>
 								<TableRow>
 									<TableCell>Position</TableCell>
@@ -313,7 +312,11 @@ function TeamCard({
 										event?.eventTeams.find((data) => data.team === teamId)
 											?.scheduled_users[index]
 									);
-									const userName = `${userObj?.firstName} ${userObj?.lastName}`;
+									const userName = usersInRoles[index] !== null
+										? `${db.getUser(usersInRoles[index])?.firstName} ${
+											db.getUser(usersInRoles[index])?.lastName
+										}`
+										: '';
 									return (
 										<EventPosition
 											key={role.id}
@@ -321,18 +324,15 @@ function TeamCard({
 											userDragging={userDragging}
 											setUserDragging={setUserDragging}
 											roleIndex={index}
-											usersName={
-												usersInRoles[index] !== null
-													? `${db.getUser(usersInRoles[index])?.firstName} ${
-															db.getUser(usersInRoles[index])?.lastName
-													  }`
-													: ''
-											}
+											usersName={userName}
 											setUserToEvent={() => {
 												const newUsersInRoles = [...usersInRoles];
 												newUsersInRoles[index] = userDragging.id;
 												setUsersInRoles(newUsersInRoles);
-												// setEvents();
+												const newEventObj = JSON.parse(JSON.stringify(events));
+												const allEventTeamsForEvent = newEventObj[newEventObj.findIndex(e => e.id === eventId)].eventTeams;
+												const eventTeamForEvent = allEventTeamsForEvent.findIndex(e => e.id === teamId);
+												console.log(eventTeamForEvent, teamId);
 											}}
 										/>
 									);
