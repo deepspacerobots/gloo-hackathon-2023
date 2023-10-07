@@ -22,13 +22,27 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useEffect, useState } from 'react';
+import './eventEditor.scss';
+import { useDBContext } from '@/contexts/db.context';
+import { Database as DatabaseType } from '@/db/db';
+import { MinistryEvent, Role, Team, User } from '@/db/types';
+
 export default function EventEditor() {
+	const db = useDBContext();
+	const { events } = db;
+
 	return (
 		<Grid container spacing={2}>
 			<Grid item xs={8}>
 				<Grid container rowSpacing={1}>
-					<EventCard eventName={'Sunday Morning Service 1'} />
-					<EventCard eventName={'Sunday Morning Service 2'} />
+					{events?.map((event: MinistryEvent) => (
+						<EventCard
+							key={event.id}
+							eventId={event.id}
+							eventName={event.title}
+							db={db}
+						/>
+					))}
 				</Grid>
 			</Grid>
 			<Grid item xs={4}>
@@ -38,8 +52,20 @@ export default function EventEditor() {
 	);
 }
 
-function EventCard({ eventName }: { eventName: string }) {
+function EventCard({
+	eventId,
+	eventName,
+	db,
+}: {
+	eventId: number;
+	eventName: string;
+	db: DatabaseType;
+}) {
 	const [isExpanded, setIsExpanded] = useState(false);
+
+	const event = db.getEvent(eventId);
+	const teams = event?.teams as Team[];
+
 	return (
 		<Grid item xs={12}>
 			<Accordion
@@ -62,25 +88,28 @@ function EventCard({ eventName }: { eventName: string }) {
 							<AccordionSummary
 								style={{ height: 0, minHeight: 0 }}
 							></AccordionSummary>
+
 							<AccordionDetails>
 								<Grid container spacing={2}>
-									<TeamCardSecondary teamName={'Tech Team'} positions={[]} />
-									<TeamCardSecondary teamName={'Tech Team'} positions={[]} />
-									<TeamCardSecondary teamName={'Tech Team'} positions={[]} />
-									<TeamCardSecondary teamName={'Tech Team'} positions={[]} />
-									<TeamCardSecondary teamName={'Tech Team'} positions={[]} />
+									{teams?.map((team: Team) => (
+										<TeamCardSecondary key={team.id} teamName={team.title} />
+									))}
 								</Grid>
 							</AccordionDetails>
 						</Accordion>
 					</Stack>
 				</AccordionSummary>
+
 				<AccordionDetails>
 					<Grid container rowSpacing={1} spacing={1}>
-						<TeamCard teamName={'Tech Team'} positions={[]} />
-						<TeamCard teamName={'Tech Team'} positions={[]} />
-						<TeamCard teamName={'Tech Team'} positions={[]} />
-						<TeamCard teamName={'Tech Team'} positions={[]} />
-						<TeamCard teamName={'Tech Team'} positions={[]} />
+						{teams?.map((team: Team) => (
+							<TeamCard
+								key={team.id}
+								teamName={team.title}
+								roles={team.roles as number[]}
+								db={db}
+							/>
+						))}
 					</Grid>
 				</AccordionDetails>
 			</Accordion>
@@ -90,12 +119,15 @@ function EventCard({ eventName }: { eventName: string }) {
 
 function TeamCard({
 	teamName,
-	positions,
+	roles,
+	db,
 }: {
 	teamName: string;
-	positions: string[];
+	roles: number[];
+	db: DatabaseType;
 }) {
-	// @ts-ignore
+	const fullRoles = roles.map((role: number) => db.getRole(role)) as Role[];
+
 	return (
 		<Grid item xs={4}>
 			<Card variant="outlined">
@@ -109,20 +141,15 @@ function TeamCard({
 									<TableCell>Volunteer</TableCell>
 								</TableRow>
 							</TableHead>
+
 							<TableBody>
-								<EventPosition
-									position={'Sound Engineer'}
-									volunteer={'Daniel'}
-								/>
-								<EventPosition
-									position={'Lighting Engineer'}
-									volunteer={'Roger'}
-								/>
-								<EventPosition position={'Slides'} volunteer={'Patrick'} />
-								<EventPosition
-									position={'Video Director'}
-									volunteer={'Andrew'}
-								/>
+								{fullRoles?.map((role: Role) => (
+									<EventPosition
+										key={role.id}
+										position={role.type}
+										volunteer={role?.user as User}
+									/>
+								))}
 							</TableBody>
 						</Table>
 					</TableContainer>
@@ -132,14 +159,7 @@ function TeamCard({
 	);
 }
 
-function TeamCardSecondary({
-	teamName,
-	positions,
-}: {
-	teamName: string;
-	positions: string[];
-}) {
-	// @ts-ignore
+function TeamCardSecondary({ teamName }: { teamName: string }) {
 	return (
 		<Grid item xs={4}>
 			<Card variant="outlined">
@@ -156,7 +176,7 @@ function EventPosition({
 	volunteer,
 }: {
 	position: string;
-	volunteer: string;
+	volunteer: User | undefined;
 }) {
 	const [styles, setStyle] = useState('');
 	return (
@@ -183,7 +203,10 @@ function EventPosition({
 			<TableCell component="th" scope="row">
 				{position}
 			</TableCell>
-			<TableCell>{volunteer}</TableCell>
+
+			<TableCell>
+				{volunteer?.firstName} {volunteer?.lastName}
+			</TableCell>
 		</TableRow>
 	);
 }
