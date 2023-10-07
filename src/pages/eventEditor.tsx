@@ -242,7 +242,7 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 							</CardContent>
 						</Card>
 						<Card>
-							<CardHeader title={'Filters'} />
+							<CardHeader title={'Filter'} subheader={'See only who is part of a selected team'} />
 							<CardContent>
 								<FormControl fullWidth>
 									<InputLabel>Team</InputLabel>
