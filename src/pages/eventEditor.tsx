@@ -457,7 +457,8 @@ function VolunteerCard({
 		const filteredVolunteersByName = filterVolunteersByName(
 			filteredVolunteersByTeam
 		);
-	}, [volunteerFilterInputValue]);
+		setFilteredVolunteers(filteredVolunteersByName);
+	}, [filter, volunteerFilterInputValue]);
 
 	const db = useDBContext();
 	const [events, setEvents] = useState(db.getFutureEvents());
