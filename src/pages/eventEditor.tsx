@@ -490,11 +490,7 @@ function VolunteerCard({
 										<Button
 											variant="contained"
 											color="success"
-<<<<<<< HEAD
 											onClick={() => {aiAssignAll()}}
-=======
-											onClick={() => {}}
->>>>>>> 1c5adc53b3a79bde447407cbe575ade102838f6e
 										>
 											Assign All
 										</Button>
