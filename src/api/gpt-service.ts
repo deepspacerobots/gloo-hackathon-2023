@@ -115,6 +115,7 @@ export const generateTeamSchedule = (team: Team, events: MinistryEvent[]) => {
     ${buildTeamRequirementsPrompt(team)}
 
     I need to schedule ${events.length} events, ensuring we have a mix of experience levels and no one is overworked. Who should be scheduled for the upcoming events, considering volunteer availability, experience, preferences, and recent scheduling patterns?
+    Also include your reasoning for scheduling each person.
 
     Return the data in a format as depicted in the following example. Return only JSON.
     [
@@ -126,7 +127,17 @@ export const generateTeamSchedule = (team: Team, events: MinistryEvent[]) => {
                     id: 46,
                     team: 1,
                     at_capacity: true,
-                    scheduled_users: [1, 9, 20, 24, 35, 41, 53, 60, 62]
+                    scheduled_users: [
+                        {id: 1, reason: "I scheduled this person because..."},
+                        {id: 9, reason: "I scheduled this person because..."},
+                        {id: 20, reason: "I scheduled this person because..."},
+                        {id: 24, reason: "I scheduled this person because..."},
+                        {id: 35, reason: "I scheduled this person because..."},
+                        {id: 41, reason: "I scheduled this person because..."},
+                        {id: 53, reason: "I scheduled this person because..."},
+                        {id: 60, reason: "I scheduled this person because..."},
+                        {id: 62, reason: "I scheduled this person because..."}
+                    ]
                 },
             },
             {
@@ -136,7 +147,17 @@ export const generateTeamSchedule = (team: Team, events: MinistryEvent[]) => {
                     id: 34,
                     team: 1,
                     at_capacity: true,
-                    scheduled_users: [1, 9, 20, 24, 35, 41, 53, 60, 62]
+                    scheduled_users: [
+                        {id: 1, reason: "I scheduled this person because..."},
+                        {id: 9, reason: "I scheduled this person because..."},
+                        {id: 20, reason: "I scheduled this person because..."},
+                        {id: 24, reason: "I scheduled this person because..."},
+                        {id: 35, reason: "I scheduled this person because..."},
+                        {id: 41, reason: "I scheduled this person because..."},
+                        {id: 53, reason: "I scheduled this person because..."},
+                        {id: 60, reason: "I scheduled this person because..."},
+                        {id: 62, reason: "I scheduled this person because..."}
+                    ]
                 },
             },
             {
@@ -146,7 +167,17 @@ export const generateTeamSchedule = (team: Team, events: MinistryEvent[]) => {
                     id: 34,
                     team: 1,
                     at_capacity: true,
-                    scheduled_users: [1, 9, 20, 24, 35, 41, 53, 60, 62]
+                    scheduled_users: [
+                        {id: 1, reason: "I scheduled this person because..."},
+                        {id: 9, reason: "I scheduled this person because..."},
+                        {id: 20, reason: "I scheduled this person because..."},
+                        {id: 24, reason: "I scheduled this person because..."},
+                        {id: 35, reason: "I scheduled this person because..."},
+                        {id: 41, reason: "I scheduled this person because..."},
+                        {id: 53, reason: "I scheduled this person because..."},
+                        {id: 60, reason: "I scheduled this person because..."},
+                        {id: 62, reason: "I scheduled this person because..."}
+                    ]
                 },
             },
         ]
