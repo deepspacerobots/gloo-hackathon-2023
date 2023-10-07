@@ -31,7 +31,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useEffect, useState } from 'react';
 import { useDBContext } from '@/contexts/db.context';
-import { Database as DatabaseType } from '@/db/db';
+import { Database as DatabaseType, preexistingData } from '@/db/db';
 import { MinistryEvent, Role, Team, User } from '@/db/types';
 import Box from '@mui/material/Box';
 import { generateTeamSchedule } from '@/api/gpt-service';
@@ -42,8 +42,6 @@ export default function EventEditor() {
 	const db = useDBContext();
 	const [events, setEvents] = useState(db.getFutureEvents());
 	const teams = db.getAllTeams();
-	// starting to test schedule generation, just team 1 users
-	generateTeamSchedule(teams[0], events);
 	const [allVolunteers, setAllVolunteers] = useState(db.getUsers());
 	const [userDragging, setUserDragging] = useState<null | User>(null);
 	const [unassignedRoles, setUnassignedRoles] = useState(0);
@@ -458,8 +456,20 @@ function VolunteerCard({
 		const filteredVolunteersByName = filterVolunteersByName(
 			filteredVolunteersByTeam
 		);
-		setFilteredVolunteers(filteredVolunteersByName);
-	}, [filter, volunteerFilterInputValue]);
+	}, [volunteerFilterInputValue]);
+
+	const db = useDBContext();
+	const [events, setEvents] = useState(db.getFutureEvents());
+	const teams = db.getAllTeams();
+
+	const aiAssignAll = async () => {
+		let schedules = [];
+		for (const team of teams) {
+			const teamSchedule = await generateTeamSchedule(team, events);
+			schedules.push(teamSchedule);
+		}
+		console.log({schedules})
+	};
 
 	return (
 		<Grid item className={'volunteerCard'}>
@@ -480,7 +490,7 @@ function VolunteerCard({
 										<Button
 											variant="contained"
 											color="success"
-											onClick={() => {}}
+											onClick={() => {aiAssignAll()}}
 										>
 											Assign All
 										</Button>

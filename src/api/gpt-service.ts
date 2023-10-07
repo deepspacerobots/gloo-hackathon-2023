@@ -2,19 +2,23 @@ import DB from '@/db/db';
 import { Experience, LevelOptions, MinistryEvent, Team, TypeOptions, User } from '@/db/types';
 import OpenAI from 'openai';
 
-// const openai = new OpenAI({
-//   apiKey: 'my api key', // defaults to process.env["OPENAI_API_KEY"]
-//   dangerouslyAllowBrowser: true
-// });
+const openai = new OpenAI({
+  apiKey: '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',
+  dangerouslyAllowBrowser: true
+});
 
-// export const submitPrompt = async (prompt: string) => {
-//     const chatCompletion = await openai.chat.completions.create({
-//         messages: [{ role: 'user', content: prompt }],
-//         model: 'gpt-3.5-turbo',
-//     });
+export const submitPrompt = async (prompt: string) => {
+    const chatCompletion = await openai.chat.completions.create({
+        messages: [{ role: 'user', content: prompt }],
+        model: 'gpt-3.5-turbo',
+    });
 
-//     console.log(chatCompletion.choices);
-// }
+    if (chatCompletion.choices[0].message.content) {
+        // console.log(chatCompletion.choices[0].message.content)
+        // console.log(JSON.parse(chatCompletion.choices[0].message.content));
+        return JSON.parse(chatCompletion.choices[0].message.content);
+    }
+}
 
 const buildVolunteerListPrompt = (users: (UserWithServeHistory | undefined)[]) => {
     let promptString = '';
@@ -34,17 +38,15 @@ const buildEventDetailsPrompt = (events: MinistryEvent[]) => {
     let promptString = '';
 
     events.forEach((ministryEvent, index) => {
-        promptString += `${index+1}. id: ${ministryEvent.id}, date: ${ministryEvent.date}\n`;
+        promptString += `${index+1}. id: ${ministryEvent.id}, date: ${ministryEvent.date}, event_team_id: ${45 + index}\n`;
     });
     return promptString;
 };
 
 const buildTeamRequirementsPrompt = (team: Team) => {
-    console.log({team})
     const requiredRoles = team.roles_required.map((roleId) => {
         return DB.getRole(roleId as number);
     });
-    console.log(requiredRoles)
 
     const roleCounts = requiredRoles.reduce((acc, role) => {
         acc[role.type] = (acc[role.type] || 0) + 1;
@@ -79,7 +81,32 @@ type UserWithServeHistory = User & {
     numTimesServed: number;
 };
 
-export const generateTeamSchedule = (team: Team, events: MinistryEvent[]) => {
+export type AISingleTeamSchedule = {
+    events: [
+        {
+            id: number;
+            date: string;
+            eventTeam: {
+                id: number,
+                team: 1,
+                at_capacity: true,
+                scheduled_users: [
+                    {id: 1, reason: "I scheduled this person because..."},
+                    {id: 9, reason: "I scheduled this person because..."},
+                    {id: 20, reason: "I scheduled this person because..."},
+                    {id: 24, reason: "I scheduled this person because..."},
+                    {id: 35, reason: "I scheduled this person because..."},
+                    {id: 41, reason: "I scheduled this person because..."},
+                    {id: 53, reason: "I scheduled this person because..."},
+                    {id: 60, reason: "I scheduled this person because..."},
+                    {id: 62, reason: "I scheduled this person because..."}
+                ]
+            }
+        }
+    ]
+};
+
+export const generateTeamSchedule = async (team: Team, events: MinistryEvent[]) => {
     const teamMemberIds = team.users;
     const fullUsers = teamMemberIds.map((id) => DB.getUser(id as number));
     const pastEvents = DB.getPastEvents();
@@ -117,13 +144,13 @@ export const generateTeamSchedule = (team: Team, events: MinistryEvent[]) => {
     I need to schedule ${events.length} events, ensuring we have a mix of experience levels and no one is overworked. Who should be scheduled for the upcoming events, considering volunteer availability, experience, preferences, and recent scheduling patterns?
     Also include your reasoning for scheduling each person.
 
-    Return the data in a format as depicted in the following example. Return only JSON.
-    [
+    Return the data in a format as depicted in the following example. Return only a JSON string.
+    {
         events: [
             {
                 id: 5,
                 date: '2023-10-08',
-                eventTeams: {
+                eventTeam: {
                     id: 46,
                     team: 1,
                     at_capacity: true,
@@ -143,7 +170,7 @@ export const generateTeamSchedule = (team: Team, events: MinistryEvent[]) => {
             {
                 id: 49,
                 date: '2023-10-15',
-                eventTeams: {
+                eventTeam: {
                     id: 34,
                     team: 1,
                     at_capacity: true,
@@ -163,7 +190,7 @@ export const generateTeamSchedule = (team: Team, events: MinistryEvent[]) => {
             {
                 id: 52,
                 date: '2023-10-22',
-                eventTeams: {
+                eventTeam: {
                     id: 34,
                     team: 1,
                     at_capacity: true,
@@ -181,11 +208,12 @@ export const generateTeamSchedule = (team: Team, events: MinistryEvent[]) => {
                 },
             },
         ]
-    ]
+    }
     `;
 
 	// console.log(prompt);
-	// return submitPrompt(prompt);
+    console.log('Submitting to GPT API...');
+	return await submitPrompt(prompt);
 };
 
 /**
@@ -225,9 +253,9 @@ export const generateTeamSchedule = (team: Team, events: MinistryEvent[]) => {
     20. Quinn id: 20 (Availability: 1x a month | Proficiencies: Beginner Drums, Beginner Piano | Preference: Prefers Drums | Recent Serve Amount: Served 2 times recently)
 
   Events To Schedule For:
-    1. id: 5, date: 2023-10-08
-    2. id: 6, date: 2023-10-15
-    3. id: 7, date: 2023-10-22
+    1. id: 5, date: 2023-10-08, event_team_id: 46
+    2. id: 6, date: 2023-10-15, event_team_id: 47
+    3. id: 7, date: 2023-10-22, event_team_id: 48
 
   Team Requirements:
   - Role: Vocals. Number needed: 4
