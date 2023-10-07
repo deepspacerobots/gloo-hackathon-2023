@@ -11,17 +11,18 @@ import { CssBaseline, Fab, useTheme } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import { useState } from 'react';
 import "./app.scss"
+import UserProfile from './components/UserProfile/UserProfile';
 
 function Copyright() {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}.
-    </Typography>
-  );
+	return (
+		<Typography variant="body2" color="text.secondary" align="center">
+			{'Copyright © '}
+			<Link color="inherit" href="https://mui.com/">
+				Your Website
+			</Link>{' '}
+			{new Date().getFullYear()}.
+		</Typography>
+	);
 }
 
 export default function App() {
