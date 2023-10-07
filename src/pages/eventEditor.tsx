@@ -13,8 +13,11 @@ import {
 	FormControl,
 	Grid,
 	Hidden,
+	IconButton,
+	InputAdornment,
 	InputLabel,
 	MenuItem,
+	OutlinedInput,
 	Paper,
 	Select,
 	Stack,
@@ -32,6 +35,7 @@ import { useDBContext } from '@/contexts/db.context';
 import { Database as DatabaseType } from '@/db/db';
 import { MinistryEvent, Role, Team, User } from '@/db/types';
 import Box from '@mui/material/Box';
+import { Close } from '@mui/icons-material';
 
 export default function EventEditor() {
 	const db = useDBContext();
@@ -272,7 +276,6 @@ function EventPosition({
 }
 
 function VolunteerCard({ volunteers }: { volunteers: User[] }) {
-	console.log(volunteers);
 	const [avatars, setAvatars] = useState<any[]>([]);
 	useEffect(() => {
 		const mArr = Array.from(
@@ -301,6 +304,13 @@ function VolunteerCard({ volunteers }: { volunteers: User[] }) {
 	const handleDragEnd = () => {
 	};
 	const [filter, setFilter] = useState<any>('All Teams');
+	const [filteredVolunteers, setFilteredVolunteers] = useState(volunteers);
+	const [volunteerFilterInputValue, setVolunteerFilterInputValue] = useState('');
+	useEffect(() => {
+		setFilteredVolunteers(volunteers.filter(volunteer => {
+			return volunteer.firstName.toLowerCase().includes(volunteerFilterInputValue) || volunteer.lastName.toLowerCase().includes(volunteerFilterInputValue.toLowerCase());
+		}));
+	}, [volunteerFilterInputValue]);
 	return (
 		<Grid item className={'volunteerCard'}>
 			<Card variant='outlined'>
@@ -361,11 +371,27 @@ function VolunteerCard({ volunteers }: { volunteers: User[] }) {
 						<Card>
 							<CardHeader
 								title={'Available Volunteers'}
-								subheader={'Click title={} and drag volunteers to manually assign them'}
+								subheader={'Click and drag volunteers to manually assign them'}
 							/>
 							<CardContent>
+								<Box mb={2}>
+									<FormControl fullWidth>
+										<InputLabel size={'small'} htmlFor='search-for-volunteer-input'>Search For Volunteer</InputLabel>
+										<OutlinedInput id={'search-for-volunteer-input'} value={volunteerFilterInputValue} size={'small'}
+																	 label={'Search For Volunteer'}
+																	 endAdornment={<InputAdornment
+																		 position='end'><IconButton size={'small'} onClick={() => {
+																		 setVolunteerFilterInputValue('');
+																	 }}><Close
+																		 fontSize='inherit' /></IconButton></InputAdornment>}
+																	 onChange={(e) => {
+																		 setVolunteerFilterInputValue(e.target.value);
+																	 }} />
+									</FormControl>
+								</Box>
+
 								<Grid container rowSpacing={1} spacing={1}>
-									{volunteers.map((user, i) => {
+									{filteredVolunteers.map((user, i) => {
 										return (
 											<Grid
 												draggable
