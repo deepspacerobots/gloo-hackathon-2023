@@ -9,6 +9,7 @@ import {
 	Card,
 	CardContent,
 	CardHeader,
+	Divider,
 	FormControl,
 	Grid,
 	InputLabel,
@@ -28,6 +29,7 @@ import { useEffect, useState } from 'react';
 import { useDBContext } from '@/contexts/db.context';
 import { Database as DatabaseType } from '@/db/db';
 import { MinistryEvent, Role, Team, User } from '@/db/types';
+import Box from '@mui/material/Box';
 
 export default function EventEditor() {
 	const db = useDBContext();
@@ -37,6 +39,51 @@ export default function EventEditor() {
 		<Grid container spacing={2}>
 			<Grid item xs={8}>
 				<Grid container rowSpacing={1}>
+					<Grid item xs={12}>
+						<Box>
+							<Card>
+								{/*<CardHeader title={'Overview'} />*/}
+								<CardContent>
+									<Typography variant={'h6'}>Overview</Typography>
+									<Divider />
+									<Grid container>
+										<Grid item xs={3}>
+											<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+												<Typography variant={'h6'}>
+													Events
+												</Typography>
+												<Typography variant={'h2'} color={'secondary'}>1</Typography>
+											</div>
+										</Grid>
+										<Grid item xs={3}>
+											<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+												<Typography variant={'h6'}>
+													Unfilled Positions
+												</Typography>
+												<Typography variant={'h2'} color={'secondary'}>32</Typography>
+											</div>
+										</Grid>
+										<Grid item xs={3}>
+											<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+												<Typography variant={'h6'}>
+													Volunteers
+												</Typography>
+												<Typography variant={'h2'} color={'secondary'}>100</Typography>
+											</div>
+										</Grid>
+										<Grid item xs={3}>
+											<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+												<Typography variant={'h6'}>
+													Teams
+												</Typography>
+												<Typography variant={'h2'} color={'secondary'}>3</Typography>
+											</div>
+										</Grid>
+									</Grid>
+								</CardContent>
+							</Card>
+						</Box>
+					</Grid>
 					{events?.map((event: MinistryEvent) => (
 						<EventCard
 							key={event.id}
@@ -56,11 +103,11 @@ export default function EventEditor() {
 }
 
 function EventCard({
-	eventId,
-	eventName,
-	eventDate,
-	db,
-}: {
+										 eventId,
+										 eventName,
+										 eventDate,
+										 db,
+									 }: {
 	eventId: number;
 	eventName: string;
 	eventDate: string;
@@ -126,10 +173,10 @@ function EventCard({
 }
 
 function TeamCard({
-	teamName,
-	roles,
-	db,
-}: {
+										teamName,
+										roles,
+										db,
+									}: {
 	teamName: string;
 	roles: number[];
 	db: DatabaseType;
@@ -138,11 +185,11 @@ function TeamCard({
 
 	return (
 		<Grid item xs={4}>
-			<Card variant="outlined">
+			<Card variant='outlined'>
 				<CardContent>
 					<Typography mb={2}>Team: {teamName}</Typography>
 					<TableContainer component={Paper}>
-						<Table size="small" aria-label="a dense table">
+						<Table size='small' aria-label='a dense table'>
 							<TableHead>
 								<TableRow>
 									<TableCell>Position</TableCell>
@@ -170,7 +217,7 @@ function TeamCard({
 function TeamCardSecondary({ teamName }: { teamName: string }) {
 	return (
 		<Grid item xs={4}>
-			<Card variant="outlined">
+			<Card variant='outlined'>
 				<CardContent>
 					<Typography mb={2}>Team: {teamName}</Typography>
 				</CardContent>
@@ -180,9 +227,9 @@ function TeamCardSecondary({ teamName }: { teamName: string }) {
 }
 
 function EventPosition({
-	position,
-	volunteer,
-}: {
+												 position,
+												 volunteer,
+											 }: {
 	position: string;
 	volunteer: User | undefined;
 }) {
@@ -208,7 +255,7 @@ function EventPosition({
 				setStyle('');
 			}}
 		>
-			<TableCell component="th" scope="row">
+			<TableCell component='th' scope='row'>
 				{position}
 			</TableCell>
 
@@ -224,11 +271,11 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 	useEffect(() => {
 		const mArr = Array.from(
 			{ length: 99 },
-			(_, i) => `/img/profile-pics/man-${i + 1}.jpg`
+			(_, i) => `/img/profile-pics/man-${i + 1}.jpg`,
 		);
 		const wArr = Array.from(
 			{ length: 99 },
-			(_, i) => `/img/profile-pics/woman-${i + 1}.jpg`
+			(_, i) => `/img/profile-pics/woman-${i + 1}.jpg`,
 		);
 		const avatarCollection = [];
 		const avatarIcons = [];
@@ -244,12 +291,14 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 		}
 		setAvatars(avatarIcons);
 	}, []);
-	const handleDragStart = (e) => {};
-	const handleDragEnd = (e) => {};
+	const handleDragStart = (e) => {
+	};
+	const handleDragEnd = (e) => {
+	};
 	const [filter, setFilter] = useState<any>('All Teams');
 	return (
 		<Grid item className={'volunteerCard'}>
-			<Card variant="outlined">
+			<Card variant='outlined'>
 				<CardContent>
 					{/*<CardHeader title={'Assign Volunteers'}></CardHeader>*/}
 					<Stack spacing={1}>
@@ -261,12 +310,12 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 							<CardContent>
 								<Grid container spacing={1}>
 									<Grid item>
-										<Button variant="contained" color="success">
+										<Button variant='contained' color='success'>
 											AI Assign
 										</Button>
 									</Grid>
 									<Grid item>
-										<Button color="error">Unassign All</Button>
+										<Button color='error'>Unassign All</Button>
 									</Grid>
 								</Grid>
 							</CardContent>
@@ -280,9 +329,9 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 								<FormControl fullWidth>
 									<InputLabel>Team</InputLabel>
 									<Select
-										size="small"
+										size='small'
 										value={filter}
-										label="Team"
+										label='Team'
 										onChange={(e) => {
 											console.log(e.target.value);
 											setFilter(e.target.value);
@@ -294,7 +343,7 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 									</Select>
 								</FormControl>
 								<Button
-									color="error"
+									color='error'
 									onClick={() => {
 										setFilter('All Teams');
 									}}
