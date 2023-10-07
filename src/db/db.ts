@@ -91,8 +91,13 @@ export class Database {
 				);
 			}
 
-			if (event.event_teams?.length && typeof event.event_teams[0] === 'number') {
-				event.event_teams = this.event_teams.filter((eventTeam: EventTeam) => (event.event_teams as number[]).includes(eventTeam.id));
+			if (
+				event.event_teams?.length &&
+				typeof event.event_teams[0] === 'number'
+			) {
+				event.event_teams = this.event_teams.filter((eventTeam: EventTeam) =>
+					(event.event_teams as number[]).includes(eventTeam.id)
+				);
 			}
 		}
 
@@ -266,7 +271,7 @@ export const preexistingData: DBSchema = {
 			id: 1,
 			title: 'Sunday Morning Worship Service',
 			description: 'Join us every Sunday for a vibrant worship experience.',
-			date: '2023-09-10',
+			date: '2023-10-15',
 			time: '11:00 AM',
 			ministries: [1, 2],
 			teams: [1, 2, 3],
@@ -276,7 +281,7 @@ export const preexistingData: DBSchema = {
 			id: 2,
 			title: 'Sunday Morning Worship Service',
 			description: 'Join us every Sunday for a vibrant worship experience.',
-			date: '2023-09-17',
+			date: '2023-10-22',
 			time: '11:00 AM',
 			ministries: [1, 2],
 			teams: [1, 2, 3],
@@ -286,7 +291,7 @@ export const preexistingData: DBSchema = {
 			id: 3,
 			title: 'Sunday Morning Worship Service',
 			description: 'Join us every Sunday for a vibrant worship experience.',
-			date: '2023-09-24',
+			date: '2023-10-29',
 			time: '11:00 AM',
 			ministries: [1, 2],
 			teams: [1, 2, 3],
@@ -296,7 +301,7 @@ export const preexistingData: DBSchema = {
 			id: 4,
 			title: 'Sunday Morning Worship Service',
 			description: 'Join us every Sunday for a vibrant worship experience.',
-			date: '2023-10-01',
+			date: '2023-11-05',
 			time: '11:00 AM',
 			ministries: [1, 2],
 			teams: [1, 2, 3],
@@ -419,7 +424,7 @@ export const preexistingData: DBSchema = {
 			team: 3,
 			at_capacity: true,
 			scheduled_users: [22, 23, 26, 30],
-		}
+		},
 	],
 	roles: [
 		{
