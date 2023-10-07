@@ -1,324 +1,167 @@
+import DB from '@/db/db';
+import { Experience, LevelOptions, MinistryEvent, Team, TypeOptions, User } from '@/db/types';
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey: 'my api key', // defaults to process.env["OPENAI_API_KEY"]
-});
+// const openai = new OpenAI({
+//   apiKey: 'my api key', // defaults to process.env["OPENAI_API_KEY"]
+//   dangerouslyAllowBrowser: true
+// });
 
-export const submitPrompt = async (prompt: string) => {
-    const chatCompletion = await openai.chat.completions.create({
-        messages: [{ role: 'user', content: prompt }],
-        model: 'gpt-3.5-turbo',
-    });
+// export const submitPrompt = async (prompt: string) => {
+//     const chatCompletion = await openai.chat.completions.create({
+//         messages: [{ role: 'user', content: prompt }],
+//         model: 'gpt-3.5-turbo',
+//     });
 
-    console.log(chatCompletion.choices);
-}
+//     console.log(chatCompletion.choices);
+// }
 
-const users = [
-    {
-        id: 1,
-        firstName: 'John',
-        lastName: 'Doe',
-        role: "volunteer",
-        address: '123 Main St',
-        city: 'Anytown',
-        state: 'CA',
-        zip: '12345',
-        email: 'john@example.com',
-        password: 'password123',
-        phone: '555-555-5555',
-        memberStatus: true,
-        profilePhoto: '/public/img/profile-pics/man-1.jpg',
-        preferredNumWeeksServing: 3,
-        teams: ["Worship"],
-        experiences: [
-            {
-                type: "band_piano",
-                level: 2, // 1 = beginner, 2 = intermediate, 3 = advanced
-                preference: 3, // preference is measured 1-3, lowest to highest
-            },
-            {
-                type: "band_bass",
-                level: 1,
-                preference: 2,
-            }
-        ],
-    },
-    {
-        id: 2,
-        firstName: 'Alice',
-        lastName: 'Smith',
-        role: "volunteer",
-        address: '456 Elm St',
-        city: 'Smallville',
-        state: 'NY',
-        zip: '54321',
-        email: 'alice@example.com',
-        password: 'password456',
-        phone: '555-555-5556',
-        memberStatus: false,
-        profilePhoto: '/public/img/profile-pics/woman-1.jpg',
-        preferredNumWeeksServing: 2,
-        teams: ["Worship"],
-        experiences: [
-            {
-                "type": "band_guitar",
-                "level": 3,
-                "preference": 3
-            },
-            {
-                "type": "band_drums",
-                "level": 2,
-                "preference": 2
-            }
-        ]
-    },
-    {
-        id: 3,
-        firstName: 'Michael',
-        lastName: 'Johnson',
-        role: "volunteer",
-        address: '789 Oak Ave',
-        city: 'Hometown',
-        state: 'TX',
-        zip: '98765',
-        email: 'michael@example.com',
-        password: 'password789',
-        phone: '555-555-5557',
-        memberStatus: true,
-        profilePhoto: '/public/img/profile-pics/man-2.jpg',
-        preferredNumWeeksServing: 1,
-        teams: ["Worship"],
-        experiences: [
-            {
-                "type": "vocals",
-                "level": 3,
-                "preference": 3
-            },
-            {
-                "type": "band_guitar",
-                "level": 2,
-                "preference": 2
-            }
-        ]
-    },
-    {
-        id: 4,
-        firstName: 'Sarah',
-        lastName: 'Brown',
-        role: "volunteer",
-        email: 'sarah@example.com',
-        password: 'password890',
-        phone: '555-555-5558',
-        memberStatus: false,
-        preferredNumWeeksServing: 4,
-        teams: ["Worship"],
-        experiences: [
-            {
-                "type": "band_bass",
-                "level": 3,
-                "preference": 3
-            },
-            {
-                "type": "band_piano",
-                "level": 2,
-                "preference": 2
-            }
-        ]
-    },
-    {
-        id: 5,
-        firstName: 'David',
-        lastName: 'Wilson',
-        role: "volunteer",
-        email: 'david@example.com',
-        password: 'password901',
-        memberStatus: true,
-        preferredNumWeeksServing: 2,
-        teams: ["Worship"],
-        experiences: [
-            {
-                "type": "band_drums",
-                "level": 3,
-                "preference": 3
-            },
-            {
-                "type": "band_bass",
-                "level": 2,
-                "preference": 2
-            }
-        ]
-    },
-    {
-        id: 6,
-        firstName: 'Emily',
-        lastName: 'Davis',
-        role: "volunteer",
-        email: 'emily@example.com',
-        password: 'password234',
-        phone: '555-555-5559',
-        memberStatus: false,
-        preferredNumWeeksServing: 3,
-        teams: ["Worship"],
-        experiences: [
-            {
-                "type": "band_piano",
-                "level": 3,
-                "preference": 3
-            },
-            {
-                "type": "vocals",
-                "level": 2,
-                "preference": 2
-            }
-        ]
-    },
-    {
-        id: 7,
-        firstName: 'James',
-        lastName: 'Clark',
-        role: "volunteer",
-        email: 'james@example.com',
-        password: 'password567',
-        phone: '555-555-5560',
-        memberStatus: true,
-        preferredNumWeeksServing: 2,
-        teams: ["Worship"],
-        experiences: [
-            {
-                "type": "band_guitar",
-                "level": 2,
-                "preference": 3
-            },
-            {
-                "type": "band_bass",
-                "level": 1,
-                "preference": 2
-            }
-        ]
-    },
-    {
-        id: 8,
-        firstName: 'Olivia',
-        lastName: 'Martinez',
-        role: "volunteer",
-        email: 'olivia@example.com',
-        password: 'password890',
-        phone: '555-555-5561',
-        memberStatus: false,
-        preferredNumWeeksServing: 4,
-        teams: ["Worship"],
-        experiences: [
-            {
-                "type": "band_drums",
-                "level": 2,
-                "preference": 3
-            },
-            {
-                "type": "band_piano",
-                "level": 1,
-                "preference": 2
-            }
-        ]
-    },
-    {
-        id: 9,
-        firstName: 'Liam',
-        lastName: 'Lee',
-        role: "volunteer",
-        email: 'liam@example.com',
-        password: 'password123',
-        memberStatus: true,
-        preferredNumWeeksServing: 1,
-        teams: ["Worship"],
-        experiences: [
-            {
-                "type": "vocals",
-                "level": 3,
-                "preference": 3
-            },
-            {
-                "type": "band_bass",
-                "level": 2,
-                "preference": 2
-            }
-        ]
-    },
-    {
-        id: 10,
-        firstName: 'Ava',
-        lastName: 'Garcia',
-        role: "volunteer",
-        email: 'ava@example.com',
-        password: 'password456',
-        phone: '555-555-5562',
-        memberStatus: false,
-        preferredNumWeeksServing: 2,
-        teams: ["Worship"],
-        experiences: [
-            {
-                "type": "band_piano",
-                "level": 2,
-                "preference": 3
-            },
-            {
-                "type": "band_drums",
-                "level": 1,
-                "preference": 2
-            }
-        ]
-    },
-];
-
-const buildVolunteerListPrompt = () => {
+const buildVolunteerListPrompt = (users: (UserWithServeHistory | undefined)[]) => {
     let promptString = '';
 
     users.forEach((user, index) => {
-        const availability = `${user.preferredNumWeeksServing}x a month`;
-        const proficiencies = user.experiences.reduce((acc, xp) => acc + `${parseLevelToString(xp.level)} ${xp.type}, `, '');
-        const preference = `Prefers ${getMostPreferredType(user.experiences).type}`;
-        promptString += `${index+1}. ${user.firstName} ${user.lastName} (Availability: ${availability} | Proficiencies: ${proficiencies} | Preference: ${preference} | Served ${Math.floor(Math.random() * 5) + 1} times recently)\n`
-    })
+        const availability = `${user?.preferredNumWeeksServing}x a month`;
+        //@ts-ignore
+        const proficiencies = user?.experiences.reduce((acc: string, xp: Experience) => acc + `${parseLevelToString(xp.level)} ${xp.type}, `, '');
+        const preference = `Prefers ${getMostPreferredType(user?.experiences)}`;
+        const numTimesServed = `Served ${user?.numTimesServed} times recently`;
+        promptString += `${index+1}. ${user?.firstName} ${user?.lastName} id: ${user?.id} (Availability: ${availability} | Proficiencies: ${proficiencies} | Preference: ${preference} | Recent Serve Amount: ${numTimesServed})\n`
+    });
     return promptString;
 };
 
-const parseLevelToString = (level: number) => {
-    const levelMap: { [level: number]: string } = {
-        1: "Beginner",
-        2: "Intermediate",
-        3: "Advanced",
-        4: "Expert",
+const buildEventDetailsPrompt = (events: MinistryEvent[]) => {
+    let promptString = '';
+
+    events.forEach((ministryEvent, index) => {
+        promptString += `${index+1}. id: ${ministryEvent.id}, date: ${ministryEvent.date}\n`;
+    });
+    return promptString;
+};
+
+const buildTeamRequirementsPrompt = (team: Team) => {
+    console.log({team})
+    const requiredRoles = team.roles_required.map((roleId) => {
+        return DB.getRole(roleId as number);
+    });
+    console.log(requiredRoles)
+
+    const roleCounts = requiredRoles.reduce((acc, role) => {
+        acc[role.type] = (acc[role.type] || 0) + 1;
+        return acc;
+    }, {});
+
+    const promptString = Object.keys(roleCounts)
+        .map(role => `- Role: ${role}, Number needed: ${roleCounts[role]}`)
+        .join('\n  ');
+
+    return promptString;
+};
+
+const parseLevelToString = (level: LevelOptions): string => {
+    const levelMap: { [key in LevelOptions]: string } = {
+        [LevelOptions.Beginner]: "Beginner",
+        [LevelOptions.Intermediate]: "Intermediate",
+        [LevelOptions.Advanced]: "Advanced",
+        [LevelOptions.Expert]: "Expert",
     }
     return levelMap[level];
 };
 
-const parseTypeToString = (type: string) => {
-
-};
-
-const getMostPreferredType = (experiences: any[]) => {
-    return experiences.reduce((highest, current) => {
+const getMostPreferredType = (experiences?: any[]): TypeOptions => {
+    const preferredExp = experiences?.reduce((highest, current) => {
         return current.preference > highest.preference ? current : highest;
     });
+    return preferredExp.type;
 };
 
+type UserWithServeHistory = User & {
+    numTimesServed: number;
+};
 
-const generateSchedule = () => {
+export const generateTeamSchedule = (team: Team, events: MinistryEvent[]) => {
+    const teamMemberIds = team.users;
+    const fullUsers = teamMemberIds.map((id) => DB.getUser(id as number));
+    const pastEvents = DB.getPastEvents();
+    const usersWithServeHistory: UserWithServeHistory[] = fullUsers.map((user) => {
+        const numTimesServed = pastEvents.reduce((total, event) => {
+            let numTimesScheduled = 0;
+            event.eventTeams.forEach((eventTeam) => {
+                const event_team = DB.getEventTeam(eventTeam as number);
+                //@ts-ignore
+                const userWasScheduled = event_team?.scheduled_users.includes(user.id);
+                userWasScheduled && numTimesScheduled++;
+            })
+            return total + numTimesScheduled;
+        }, 0);
+
+        return {
+            ...(user as User),
+            numTimesServed
+        }
+    });
+    
     let prompt = `
     Given the following volunteer and scheduling information:
 
-    We have 20 volunteers with different levels of experience, different availability, different proficiencies, and different preferences, detailed below:
+    We have ${teamMemberIds.length} volunteers with different levels of experience, different availability, different proficiencies, and different preferences, detailed below:
 
-    ${buildVolunteerListPrompt()}
+    ${buildVolunteerListPrompt(usersWithServeHistory)}
+
+    Events To Schedule For:
+    ${buildEventDetailsPrompt(events)}
+
+    Team Requirements:
+    ${buildTeamRequirementsPrompt(team)}
+
+    I need to schedule ${events.length} events, ensuring we have a mix of experience levels and no one is overworked. Who should be scheduled for the upcoming events, considering volunteer availability, experience, preferences, and recent scheduling patterns?
+
+    Return the data in a format as depicted in the following example. Return only JSON.
+    [
+        events: [
+            {
+                id: 5,
+                date: '2023-10-08',
+                eventTeams: {
+                    id: 46,
+                    team: 1,
+                    at_capacity: true,
+                    scheduled_users: [1, 9, 20, 24, 35, 41, 53, 60, 62]
+                },
+            },
+            {
+                id: 49,
+                date: '2023-10-15',
+                eventTeams: {
+                    id: 34,
+                    team: 1,
+                    at_capacity: true,
+                    scheduled_users: [1, 9, 20, 24, 35, 41, 53, 60, 62]
+                },
+            },
+            {
+                id: 52,
+                date: '2023-10-22',
+                eventTeams: {
+                    id: 34,
+                    team: 1,
+                    at_capacity: true,
+                    scheduled_users: [1, 9, 20, 24, 35, 41, 53, 60, 62]
+                },
+            },
+        ]
+    ]
     `;
 
-    return submitPrompt(prompt);
+    console.log(prompt);
+    // return submitPrompt(prompt);
 };
 
 /**
  * TODOS
- * - Prepare list of volunteers in prompt format
- * - Prepare list of events in prompt format
- * - Prepare team requirements
+ * - Prepare list of volunteers in prompt format - DONE
+ * - Prepare event and team requirements
+ * - Figure out how to handle existing manual scheduling
  */
 
 /**
@@ -329,49 +172,77 @@ const generateSchedule = () => {
 
   We have 20 volunteers with different levels of experience, different availability, different proficiencies, and different preferences, detailed below:
 
-    1. John Doe (Availability: 3x a month | Proficiencies: Intermediate Piano, Beginner Bass | Preference: Prefers Piano | Served 5 times recently)
-    2. Alice Smith (Availability: 2x a month | Proficiencies: Advanced Guitar, Intermediate Drums | Preference: Prefers Guitar | Served 3 times recently)
-    3. Michael Johnson (Availability: 1x a month | Proficiencies: Advanced Vocals, Intermediate Guitar | Preference: Prefers Vocals | Served 4 times recently)
-    4. Sarah Brown (Availability: 4x a month | Proficiencies: Advanced Bass, Intermediate Piano | Preference: Prefers Bass | Served 2 times recently)
-    5. David Wilson (Availability: 2x a month | Proficiencies: Advanced Drums, Intermediate Bass | Preference: Prefers Drums | Served 6 times recently)
-    6. Emily Davis (Availability: 3x a month | Proficiencies: Advanced Piano, Intermediate Vocals | Preference: Prefers Piano | Served 5 times recently)
-    7. James Clark (Availability: 2x a month | Proficiencies: Intermediate Guitar, Beginner Bass | Preference: Prefers Guitar | Served 4 times recently)
-    8. Olivia Martinez (Availability: 4x a month | Proficiencies: Intermediate Drums, Beginner Piano | Preference: Prefers Drums | Served 2 times recently)
-    9. Liam Lee (Availability: 1x a month | Proficiencies: Advanced Vocals, Intermediate Bass | Preference: Prefers Vocals | Served 3 times recently)
-    10. Ava Garcia (Availability: 2x a month | Proficiencies: Intermediate Piano, Beginner Drums | Preference: Prefers Piano | Served 4 times recently)
-    11. Ivy (Availability: 1x a month | Proficiencies: Intermediate Bass, Beginner Guitar | Preference: Prefers Bass | Served 2 times recently)
-    12. James (Availability: 4x a month | Proficiencies: Advanced Drums, Intermediate Piano | Preference: Prefers Drums | Served 3 times recently)
-    13. Katie (Availability: 2x a month | Proficiencies: Intermediate Vocals, Beginner Bass | Preference: Prefers Vocals | Served 4 times recently)
-    14. Liam (Availability: 1x a month | Proficiencies: Beginner Piano, Beginner Drums | Preference: Prefers Piano | Served 2 times recently)
-    15. Mia (Availability: 4x a month | Proficiencies: Intermediate Bass, Beginner Guitar | Preference: Prefers Bass | Served 3 times recently)
-    16. Noah (Availability: 2x a month | Proficiencies: Beginner Drums, Beginner Piano | Preference: Prefers Drums | Served 1 time recently)
-    17. Olivia (Availability: 1x a month | Proficiencies: Beginner Vocals, Beginner Bass | Preference: Prefers Vocals | Served 2 times recently)
-    18. Patrick (Availability: 4x a month | Proficiencies: Intermediate Piano, Beginner Drums | Preference: Prefers Piano | Served 3 times recently)
-    19. Peter (Availability: 2x a month | Proficiencies: Beginner Bass, Beginner Guitar | Preference: Prefers Bass | Served 1 time recently)
-    20. Quinn (Availability: 1x a month | Proficiencies: Beginner Drums, Beginner Piano | Preference: Prefers Drums | Served 2 times recently)
+    1. John Doe id: 1 (Availability: 3x a month | Proficiencies: Intermediate Piano, Beginner Bass | Preference: Prefers Piano | Recent Serve Amount: Served 5 times recently)
+    2. Alice Smith id: 2 (Availability: 2x a month | Proficiencies: Advanced Guitar, Intermediate Drums | Preference: Prefers Guitar | Recent Serve Amount: Served 3 times recently)
+    3. Michael Johnson id: 3 (Availability: 1x a month | Proficiencies: Advanced Vocals, Intermediate Guitar | Preference: Prefers Vocals | Recent Serve Amount: Served 4 times recently)
+    4. Sarah Brown id: 4 (Availability: 4x a month | Proficiencies: Advanced Bass, Intermediate Piano | Preference: Prefers Bass | Recent Serve Amount: Served 2 times recently)
+    5. David Wilson id: 5 (Availability: 2x a month | Proficiencies: Advanced Drums, Intermediate Bass | Preference: Prefers Drums | Recent Serve Amount: Served 6 times recently)
+    6. Emily Davis id: 6 (Availability: 3x a month | Proficiencies: Advanced Piano, Intermediate Vocals | Preference: Prefers Piano | Recent Serve Amount: Served 5 times recently)
+    7. James Clark id: 7 (Availability: 2x a month | Proficiencies: Intermediate Guitar, Beginner Bass | Preference: Prefers Guitar | Recent Serve Amount: Served 4 times recently)
+    8. Olivia Martinez id: 8 (Availability: 4x a month | Proficiencies: Intermediate Drums, Beginner Piano | Preference: Prefers Drums | Recent Serve Amount: Served 2 times recently)
+    9. Liam Lee id: 9 (Availability: 1x a month | Proficiencies: Advanced Vocals, Intermediate Bass | Preference: Prefers Vocals | Recent Serve Amount: Served 3 times recently)
+    10. Ava Garcia id: 10 (Availability: 2x a month | Proficiencies: Intermediate Piano, Beginner Drums | Preference: Prefers Piano | Recent Serve Amount: Served 4 times recently)
+    11. Ivy id: 11 (Availability: 1x a month | Proficiencies: Intermediate Bass, Beginner Guitar | Preference: Prefers Bass | Recent Serve Amount: Served 2 times recently)
+    12. James id: 12 (Availability: 4x a month | Proficiencies: Advanced Band Aux, Intermediate Piano | Preference: Prefers Drums | Recent Serve Amount: Served 3 times recently)
+    13. Katie id: 13 (Availability: 2x a month | Proficiencies: Intermediate Vocals, Beginner Bass | Preference: Prefers Vocals | Recent Serve Amount: Served 4 times recently)
+    14. Liam id: 14 (Availability: 1x a month | Proficiencies: Beginner Piano, Beginner Drums | Preference: Prefers Piano | Recent Serve Amount: Served 2 times recently)
+    15. Mia id: 15 (Availability: 4x a month | Proficiencies: Intermediate Bass, Beginner Guitar | Preference: Prefers Bass | Recent Serve Amount: Served 3 times recently)
+    16. Noah id: 16 (Availability: 2x a month | Proficiencies: Beginner Drums, Beginner Piano | Preference: Prefers Drums | Recent Serve Amount: Served 1 time recently)
+    17. Olivia id: 17 (Availability: 1x a month | Proficiencies: Beginner Vocals, Beginner Bass | Preference: Prefers Vocals | Recent Serve Amount: Served 2 times recently)
+    18. Patrick id: 18 (Availability: 4x a month | Proficiencies: Intermediate Piano, Beginner Drums | Preference: Prefers Piano | Recent Serve Amount: Served 3 times recently)
+    19. Peter id: 19 (Availability: 2x a month | Proficiencies: Beginner Bass, Beginner Guitar | Preference: Prefers Bass | Recent Serve Amount: Served 1 time recently)
+    20. Quinn id: 20 (Availability: 1x a month | Proficiencies: Beginner Drums, Beginner Piano | Preference: Prefers Drums | Recent Serve Amount: Served 2 times recently)
   
-  Event Dates:
-  - 10/08/2023, 10/15/2023, 10/22/2023, 10/29/2023
+  Events To Schedule For:
+    1. id: 5, date: 2023-10-08
+    2. id: 6, date: 2023-10-15
+    3. id: 7, date: 2023-10-22
 
   Team Requirements:
-  - I need 8 people for each event; 1 drummer, 1 bassist, 1 guitarist, 1 piano, and 4 vocalists.
+  - Role: Vocals. Number needed: 4
+  - Role: Keys, Number needed: 1
+  - Role: Bass, Number needed: 1
+  - Role: Electric Guitar, Number needed: 1
+  - Role: Acoustic Guitar Number needed: 1
+  - Role: Drums, Number needed: 1
+  - Role: Band Aux, Number needed: 1
 
-  I need to schedule 4 events for this month, ensuring we have a mix of experience levels and no one is overworked. Who should be scheduled for the upcoming events, considering volunteer availability, experience, preferences, and recent scheduling patterns?
+  I need to schedule 3 events for this month, ensuring we have a mix of experience levels and no one is overworked. Who should be scheduled for the upcoming events, considering volunteer availability, experience, preferences, and recent scheduling patterns?
 
-  Return the data in this format:
+  Return the data in a format as depicted in the following example. Return only JSON.
   [
-    event: {
-      volunteers: []
-    },
-    event: {
-      volunteers: []
-    },
-    event: {
-      volunteers: []
-    },
-    event: {
-      volunteers: []
-    },
+    events: [
+        {
+            id: 5,
+			date: '2023-10-08',
+            eventTeams: {
+                id: 46,
+                team: 1,
+                at_capacity: true,
+                scheduled_users: [1, 9, 20, 24, 35, 41, 53, 60, 62]
+            },
+        },
+        {
+            id: 49,
+			date: '2023-10-15',
+            eventTeams: {
+                id: 34,
+                team: 1,
+                at_capacity: true,
+                scheduled_users: [1, 9, 20, 24, 35, 41, 53, 60, 62]
+            },
+        },
+        {
+            id: 52,
+			date: '2023-10-22',
+            eventTeams: {
+                id: 34,
+                team: 1,
+                at_capacity: true,
+                scheduled_users: [1, 9, 20, 24, 35, 41, 53, 60, 62]
+            },
+        },
+    ]
   ]
 
  */

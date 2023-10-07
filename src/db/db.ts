@@ -1,18 +1,19 @@
 import {
-	Organization,
-	MinistryEvent,
-	Ministry,
-	Team,
-	Role,
-	Requirement,
-	User,
+	EventTeam,
 	Experience,
-	Thread,
-	Message,
-	RoleOptions,
-	TypeOptions,
 	LevelOptions,
+	Message,
+	Ministry,
+	MinistryEvent,
+	Organization,
 	PreferenceOptions,
+	Requirement,
+	Role,
+	RoleOptions,
+	Team,
+	Thread,
+	TypeOptions,
+	User,
 } from './types';
 
 type DBSchema = {
@@ -20,6 +21,7 @@ type DBSchema = {
 	events: MinistryEvent[];
 	ministries: Ministry[];
 	teams: Team[];
+	eventTeams: EventTeam[];
 	roles: Role[];
 	requirements: Requirement[];
 	users: User[];
@@ -31,6 +33,7 @@ type DBSchema = {
 export class Database {
 	organizations: Organization[];
 	events: MinistryEvent[];
+	eventTeams: EventTeam[];
 	ministries: Ministry[];
 	teams: Team[];
 	roles: Role[];
@@ -43,6 +46,7 @@ export class Database {
 		this.events = preexistingData.events;
 		this.ministries = preexistingData.ministries;
 		this.teams = preexistingData.teams;
+		this.eventTeams = preexistingData.eventTeams;
 		this.roles = preexistingData.roles;
 		this.requirements = preexistingData.requirements;
 		this.users = preexistingData.users;
@@ -51,12 +55,12 @@ export class Database {
 
 	getOrganization(organizationId: number): Organization | undefined {
 		const organization = this.organizations.find(
-			(organization: Organization) => organization.id === organizationId
+			(organization: Organization) => organization.id === organizationId,
 		);
 
-		if (organization) {
+		if (typeof organization?.seniorPastor == 'number') {
 			organization.seniorPastor = this.users.find(
-				(user: User) => organization.seniorPastor === user.id
+				(user: User) => organization.seniorPastor === user.id,
 			);
 		}
 
@@ -71,20 +75,50 @@ export class Database {
 
 	getEvent(eventId: number): MinistryEvent | undefined {
 		const event = this.events.find(
-			(event: MinistryEvent) => event.id === eventId
+			(event: MinistryEvent) => event.id === eventId,
 		);
 
 		if (event) {
-			event.ministries = this.ministries.filter((ministry: Ministry) =>
-				(event.ministries as number[]).includes(ministry.id)
-			);
+			if (event.ministries?.length && typeof event.ministries[0] === 'number') {
+				event.ministries = this.ministries.filter((ministry: Ministry) =>
+					(event.ministries as number[]).includes(ministry.id),
+				);
+			}
 
-			event.teams = this.teams.filter((team: Team) =>
-				(event.teams as number[]).includes(team.id)
-			);
+			if (event.teams?.length && typeof event.teams[0] === 'number') {
+				event.teams = this.teams.filter((team: Team) =>
+					(event.teams as number[]).includes(team.id),
+				);
+			}
+
+			if (event.eventTeams?.length && typeof event.eventTeams[0] === 'number') {
+				event.eventTeams = this.eventTeams.filter((eventTeam: EventTeam) =>
+					(event.eventTeams as number[]).includes(eventTeam.id),
+				);
+			}
 		}
 
 		return event;
+	}
+
+	getPastEvents(): MinistryEvent[] {
+		const events = this.events;
+		const now = new Date();
+
+		return events.filter((event: MinistryEvent) => {
+			const eventDate = new Date(event.date);
+			return now > eventDate;
+		});
+	}
+
+	getFutureEvents(): MinistryEvent[] {
+		const events = this.events;
+		const now = new Date();
+
+		return events.filter((event: MinistryEvent) => {
+			const eventDate = new Date(event.date);
+			return now < eventDate;
+		});
 	}
 
 	setEvent(payload: MinistryEvent): MinistryEvent {
@@ -93,14 +127,20 @@ export class Database {
 		return payload;
 	}
 
+	getEventTeam(eventTeamId: number): EventTeam | undefined {
+		const eventTeam = this.eventTeams.find(eventTeam => eventTeam.id === eventTeamId);
+
+		return eventTeam;
+	}
+
 	getMinistry(ministryId: number): Ministry | undefined {
 		const ministry = this.ministries.find(
-			(ministry: Ministry) => ministry.id === ministryId
+			(ministry: Ministry) => ministry.id === ministryId,
 		);
 
-		if (ministry) {
+		if (ministry?.teams?.length && typeof ministry.teams[0] === 'number') {
 			ministry.teams = this.teams.filter((team: Team) =>
-				(ministry.teams as number[]).includes(team.id)
+				(ministry.teams as number[]).includes(team.id),
 			);
 		}
 
@@ -117,16 +157,30 @@ export class Database {
 		const team = this.teams.find((team: Team) => team.id === teamId);
 
 		if (team) {
-			team.roles = this.roles.filter((role: Role) =>
-				(team.roles as number[]).includes(role.id)
-			);
+			if (team.roles?.length && typeof team.roles[0] === 'number') {
+				team.roles = this.roles.filter((role: Role) =>
+					(team.roles as number[]).includes(role.id),
+				);
+			}
 
-			team.teamLead = this.users.find(
-				(user: User) => team.teamLead === user.id
-			);
+			if (typeof team?.teamLead === 'number') {
+				team.teamLead = this.users.find(
+					(user: User) => team.teamLead === user.id,
+				);
+			}
+
+			if (team.users.length) {
+				team.users = this.users.filter(
+					(user: User) => (team.users as number[]).includes(user.id)
+				);
+			}
 		}
 
 		return team;
+	}
+
+	getAllTeams(): Team[] {
+		return this.teams;
 	}
 
 	setTeam(payload: Team): Team {
@@ -138,7 +192,7 @@ export class Database {
 	getRole(roleId: number): Role | undefined {
 		const role = this.roles.find((role: Role) => role.id === roleId);
 
-		if (role) {
+		if (typeof role?.user === 'number') {
 			role.user = this.users.find((user: User) => role.user === user.id);
 		}
 
@@ -153,16 +207,21 @@ export class Database {
 
 	getRequirement(requirementId: number): Requirement | undefined {
 		const requirement = this.requirements.find(
-			(requirement: Requirement) => requirement.id === requirementId
+			(requirement: Requirement) => requirement.id === requirementId,
 		);
 
 		if (requirement) {
-			requirement.event = this.events.find(
-				(event: MinistryEvent) => requirement.event === event.id
-			);
-			requirement.ministry = this.ministries.find(
-				(ministry: Ministry) => requirement.ministry === ministry.id
-			);
+			if (typeof requirement?.event === 'number') {
+				requirement.event = this.events.find(
+					(event: MinistryEvent) => requirement.event === event.id,
+				);
+			}
+
+			if (typeof requirement?.ministry === 'number') {
+				requirement.ministry = this.ministries.find(
+					(ministry: Ministry) => requirement.ministry === ministry.id,
+				);
+			}
 		}
 
 		return requirement;
@@ -178,24 +237,36 @@ export class Database {
 		const user = this.users.find((user: User) => user.id === userId);
 
 		if (user) {
-			user.relatedVolunteer = this.users.find(
-				(userIteration: User) => user.relatedVolunteer === userIteration.id
-			);
+			if (typeof user?.relatedVolunteer === 'number') {
+				user.relatedVolunteer = this.users.find(
+					(userIteration: User) => user.relatedVolunteer === userIteration.id,
+				);
+			}
 
-			user.teams = this.teams.filter((team: Team) =>
-				(user.teams as number[]).includes(team.id)
-			);
+			if (user.teams?.length && typeof user.teams[0] === 'number') {
+				user.teams = this.teams.filter((team: Team) =>
+					(user.teams as number[]).includes(team.id),
+				);
+			}
 
-			user.events = this.events.filter((event: MinistryEvent) =>
-				(user.events as number[]).includes(event.id)
-			);
+			if (user.events?.length && typeof user.events[0] === 'number') {
+				user.events = this.events.filter((event: MinistryEvent) =>
+					(user.events as number[]).includes(event.id),
+				);
+			}
 
-			user.experiences = this.experiences.filter((experience: Experience) =>
-				(user.experiences as number[]).includes(experience.id)
-			);
+			if (user.experiences?.length && typeof user.experiences[0] === 'number') {
+				user.experiences = this.experiences.filter((experience: Experience) =>
+					(user.experiences as number[]).includes(experience.id),
+				);
+			}
 		}
 
 		return user;
+	}
+
+	getUsers(): User[] {
+		return this.users;
 	}
 
 	setUser(payload: User): User {
@@ -206,7 +277,7 @@ export class Database {
 
 	getExperience(experienceId: number): Experience | undefined {
 		const experience = this.experiences.find(
-			(experience: Experience) => experience.id === experienceId
+			(experience: Experience) => experience.id === experienceId,
 		);
 
 		return experience;
@@ -237,9 +308,71 @@ export const preexistingData: DBSchema = {
 			id: 1,
 			title: 'Sunday Morning Worship Service',
 			description: 'Join us every Sunday for a vibrant worship experience.',
-			date: '2023-10-31',
+			date: '2023-09-10',
 			time: '11:00 AM',
-			ministries: [1],
+			ministries: [1, 2],
+			teams: [1, 2, 3],
+			eventTeams: [34, 35, 36],
+		},
+		{
+			id: 2,
+			title: 'Sunday Morning Worship Service',
+			description: 'Join us every Sunday for a vibrant worship experience.',
+			date: '2023-09-17',
+			time: '11:00 AM',
+			ministries: [1, 2],
+			teams: [1, 2, 3],
+			eventTeams: [37, 38, 39],
+		},
+		{
+			id: 3,
+			title: 'Sunday Morning Worship Service',
+			description: 'Join us every Sunday for a vibrant worship experience.',
+			date: '2023-09-24',
+			time: '11:00 AM',
+			ministries: [1, 2],
+			teams: [1, 2, 3],
+			eventTeams: [40, 41, 42],
+		},
+		{
+			id: 4,
+			title: 'Sunday Morning Worship Service',
+			description: 'Join us every Sunday for a vibrant worship experience.',
+			date: '2023-10-01',
+			time: '11:00 AM',
+			ministries: [1, 2],
+			teams: [1, 2, 3],
+			eventTeams: [43, 44, 45],
+		},
+		{
+			id: 5,
+			title: 'Sunday Morning Worship Service',
+			description: 'Join us every Sunday for a vibrant worship experience.',
+			date: '2023-10-08',
+			time: '11:00 AM',
+			ministries: [1, 2],
+			teams: [1, 2, 3],
+			eventTeams: [],
+		},
+		{
+			id: 6,
+			title: 'Sunday Morning Worship Service',
+			description: 'Join us every Sunday for a vibrant worship experience.',
+			date: '2023-10-15',
+			time: '11:00 AM',
+			ministries: [1, 2],
+			teams: [1, 2, 3],
+			eventTeams: [],
+		},
+		{
+			id: 7,
+			title: 'Sunday Morning Worship Service',
+			description: 'Join us every Sunday for a vibrant worship experience.',
+			date: '2023-10-22',
+			time: '11:00 AM',
+			ministries: [1, 2],
+			teams: [1, 2, 3],
+			eventTeams: [],
 		},
 	],
 	ministries: [
@@ -263,25 +396,107 @@ export const preexistingData: DBSchema = {
 		{
 			id: 1,
 			title: 'Worship Team',
-			roles: [1, 2, 3],
-			teamLead: 1,
+			roles: [1, 2, 3, 4, 5, 6, 7],
+			roles_required: [1, 1, 1, 1, 2, 3, 4, 5, 6, 7],
+			users: [1, 2, 9, 11, 16, 17, 18, 20, 24, 28, 29, 35, 36, 40, 41, 42, 48, 53, 54, 60],
+			requirements: [],
+			teamLead: 54,
 		},
 		{
 			id: 2,
 			title: 'Front of House',
 			description:
 				'FOH handles audio and lighting engineering, as well as managing slides',
-			roles: [4, 5, 6],
+			roles: [8, 9, 10, 11, 12, 13],
+			roles_required: [8, 9, 9, 10, 11, 12, 13],
+			users: [4, 5, 7, 8, 12, 13, 14, 15, 19, 21, 25, 27, 31, 32, 33, 34, 43, 44, 46, 49, 50, 52, 55, 56, 57, 59],
 			requirements: [1],
-			teamLead: 2,
+			teamLead: 59,
 		},
 		{
 			id: 3,
 			title: 'Pastoral Care Team',
 			description:
 				'The pastoral care team is responsible for helping the lead/associate pastors care for the congregation',
-			roles: [7, 8],
-			teamLead: 3,
+			roles: [14, 15],
+			roles_required: [14, 14, 14, 15, 15],
+			users: [6, 10, 22, 23, 26, 30, 37, 38, 39, 45],
+			requirements: [],
+			teamLead: 58,
+		},
+	],
+	eventTeams: [
+		{
+			id: 34,
+			team: 1,
+			at_capacity: true,
+			scheduled_users: [1, 9, 20, 24, 35, 41, 53, 60],
+		},
+		{
+			id: 35,
+			team: 2,
+			at_capacity: true,
+			scheduled_users: [4, 5, 7, 8, 12, 13, 14],
+		},
+		{
+			id: 36,
+			team: 3,
+			at_capacity: true,
+			scheduled_users: [6, 10, 22, 23],
+		},
+		{
+			id: 37,
+			team: 1,
+			at_capacity: true,
+			scheduled_users: [2, 11, 28, 35, 40, 48, 53, 60],
+		},
+		{
+			id: 38,
+			team: 2,
+			at_capacity: true,
+			scheduled_users: [15, 19, 21, 25, 27, 31, 32],
+		},
+		{
+			id: 39,
+			team: 3,
+			at_capacity: true,
+			scheduled_users: [26, 30, 37, 38],
+		},
+		{
+			id: 40,
+			team: 1,
+			at_capacity: true,
+			scheduled_users: [16, 17, 18, 36, 40, 41, 48, 54],
+		},
+		{
+			id: 41,
+			team: 2,
+			at_capacity: true,
+			scheduled_users: [33, 34, 43, 44, 46, 49, 50],
+		},
+		{
+			id: 42,
+			team: 3,
+			at_capacity: true,
+			scheduled_users: [39, 45, 6, 10],
+		},
+		{
+			id: 43,
+			team: 1,
+			at_capacity: true,
+			scheduled_users: [1, 2, 9, 11, 20, 24, 29, 35],
+		},
+		{
+			id: 44,
+			team: 2,
+			at_capacity: true,
+			scheduled_users: [52, 55, 56, 57, 59, 4, 5],
+		},
+		{
+			id: 45,
+			team: 3,
+			at_capacity: true,
+			scheduled_users: [22, 23, 26, 30],
 		},
 	],
 	roles: [
@@ -293,46 +508,83 @@ export const preexistingData: DBSchema = {
 		},
 		{
 			id: 2,
+			type: TypeOptions.BandKeys,
+			experienceRequired: 3,
+		},
+		{
+			id: 3,
+			type: TypeOptions.BandBass,
+			experienceRequired: 3,
+		},
+		{
+			id: 4,
 			type: TypeOptions.BandElectricGuitar,
 			description: 'Lead guitarist',
 			experienceRequired: 3,
 		},
 		{
-			id: 3,
-			type: TypeOptions.BandKeys,
+			id: 5,
+			type: TypeOptions.BandAcousticGuitar,
 			experienceRequired: 3,
 		},
 		{
-			id: 4,
-			type: TypeOptions.TechAudio,
+			id: 6,
+			type: TypeOptions.BandDrums,
+			experienceRequired: 3,
+		},
+		{
+			id: 7,
+			type: TypeOptions.BandAux,
+			experienceRequired: 3,
+		},
+		{
+			id: 8,
+			type: TypeOptions.TechGeneral,
+			experienceRequired: 2,
+		},
+		{
+			id: 9,
+			type: TypeOptions.TechCameras,
 			description: 'Audio engineer',
 			experienceRequired: 2,
 		},
 		{
-			id: 5,
+			id: 10,
 			type: TypeOptions.TechLighting,
 			description: 'Lighting engineer',
 			experienceRequired: 3,
 		},
 		{
-			id: 6,
+			id: 11,
+			type: TypeOptions.TechAudio,
+			description: 'Audio engineer',
+			experienceRequired: 2,
+		},
+		{
+			id: 12,
 			type: TypeOptions.TechSlides,
 			description: 'Controls slides throughout service for worship and sermon',
 			experienceRequired: 2,
 		},
 		{
-			id: 7,
-			type: TypeOptions.PastoralCare,
-			description:
-				'Helps pastors care for the congregation during/around service times',
-			experienceRequired: 3,
+			id: 13,
+			type: TypeOptions.TechVideoDirector,
+			description: 'Controls slides throughout service for worship and sermon',
+			experienceRequired: 2,
 		},
 		{
-			id: 8,
+			id: 14,
 			type: TypeOptions.Prayer,
 			description:
 				'Available for the congregation if they need prayer during/around service times',
 			experienceRequired: 2,
+		},
+		{
+			id: 15,
+			type: TypeOptions.PastoralCare,
+			description:
+				'Helps pastors care for the congregation during/around service times',
+			experienceRequired: 3,
 		},
 	],
 	requirements: [
@@ -399,8 +651,8 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5557',
 			profilePhoto: '/img/profile-pics/man-2.jpg',
 			preferredNumWeeksServing: 1,
-			teams: [],
-			experiences: [],
+			teams: [1],
+			experiences: [1, 2],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -445,8 +697,8 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5559',
 			profilePhoto: '/img/profile-pics/woman-12.jpg',
 			preferredNumWeeksServing: 3,
-			teams: [],
-			experiences: [],
+			teams: [3],
+			experiences: [25, 26],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -507,8 +759,8 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5562',
 			profilePhoto: '/img/profile-pics/woman-17.jpg',
 			preferredNumWeeksServing: 2,
-			teams: [],
-			experiences: [],
+			teams: [3],
+			experiences: [25, 26],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -598,8 +850,8 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5565',
 			profilePhoto: '/img/profile-pics/woman-22.jpg',
 			preferredNumWeeksServing: 3,
-			teams: [],
-			experiences: [],
+			teams: [1],
+			experiences: [70],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -613,8 +865,8 @@ export const preexistingData: DBSchema = {
 			password: 'password567',
 			profilePhoto: '/img/profile-pics/man-18.jpg',
 			preferredNumWeeksServing: 2,
-			teams: [],
-			experiences: [],
+			teams: [1],
+			experiences: [1, 60],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -629,8 +881,8 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5566',
 			profilePhoto: '/img/profile-pics/woman-8.jpg',
 			preferredNumWeeksServing: 4,
-			teams: [],
-			experiences: [],
+			teams: [1],
+			experiences: [1, 46],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -690,8 +942,8 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5568',
 			profilePhoto: '/img/profile-pics/woman-26.jpg',
 			preferredNumWeeksServing: 2,
-			teams: [],
-			experiences: [],
+			teams: [3],
+			experiences: [25, 26],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -750,8 +1002,8 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5570',
 			profilePhoto: '/img/profile-pics/woman-27.jpg',
 			preferredNumWeeksServing: 4,
-			teams: [],
-			experiences: [],
+			teams: [3],
+			experiences: [25, 26],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -810,8 +1062,8 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5572',
 			profilePhoto: '/img/profile-pics/woman-28.jpg',
 			preferredNumWeeksServing: 2,
-			teams: [],
-			experiences: [],
+			teams: [3],
+			experiences: [25, 26],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -915,8 +1167,8 @@ export const preexistingData: DBSchema = {
 			email: 'samuel@example.com',
 			password: 'password567',
 			preferredNumWeeksServing: 2,
-			teams: [],
-			experiences: [],
+			teams: [3],
+			experiences: [25, 26],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -930,8 +1182,8 @@ export const preexistingData: DBSchema = {
 			password: 'password890',
 			phone: '555-555-5576',
 			preferredNumWeeksServing: 4,
-			teams: [],
-			experiences: [],
+			teams: [3],
+			experiences: [25, 26],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -945,8 +1197,8 @@ export const preexistingData: DBSchema = {
 			password: 'password123',
 			profilePhoto: '/img/profile-pics/man-27.jpg',
 			preferredNumWeeksServing: 1,
-			teams: [],
-			experiences: [],
+			teams: [3],
+			experiences: [25, 26],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1234,8 +1486,8 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5586',
 			profilePhoto: '/img/profile-pics/woman-88.jpg',
 			preferredNumWeeksServing: 4,
-			teams: [],
-			experiences: [],
+			teams: [3],
+			experiences: [76],
 			events: [],
 			messages: [],
 			blackoutDates: [],

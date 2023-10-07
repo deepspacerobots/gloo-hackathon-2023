@@ -68,7 +68,28 @@ export enum TypeOptions {
 	BandVocals = 'Vocals',
 	BandKeys = 'Keys',
 	BandBass = 'Bass',
-	BandElectricGuitar = 'Eletric Guitar',
+	//***CRITICAL*** vvvvvvvvvvvvvvvvvv
+	//***CRITICAL*** vvvvvvvvvvvvvvvvvv
+	//***CRITICAL*** vvvvvvvvvvvvvvvvvv
+	//***CRITICAL*** vvvvvvvvvvvvvvvvvv
+	//***CRITICAL*** vvvvvvvvvvvvvvvvvv
+	/**
+	 *  EEEE  L     EEEEE TTTTTTT RRRR   IIIII CCCCC 
+		E     L     E        T    R   R    I   C    
+		EEEE  L     EEEE     T    RRRR     I   C    
+		E     L     E        T    R  R     I   C    
+		EEEE  LLLLL EEEEE    T    R   RR IIIII CCCCC
+
+	 */
+	BandElectricGuitar = 'Eletric Guitar', // <-- keep this ***CRITICAL***
+	//***CRITICAL*** ^^^^^^^^^^^^^^^^^^
+	//***CRITICAL*** ^^^^^^^^^^^^^^^^^^
+	//***CRITICAL*** ^^^^^^^^^^^^^^^^^^
+	//***CRITICAL*** ^^^^^^^^^^^^^^^^^^
+	//***CRITICAL*** ^^^^^^^^^^^^^^^^^^
+	//***CRITICAL*** ^^^^^^^^^^^^^^^^^^
+	//***CRITICAL*** ^^^^^^^^^^^^^^^^^^
+	//***CRITICAL*** ^^^^^^^^^^^^^^^^^^
 	BandAcousticGuitar = 'Acoustic Guitar',
 	BandDrums = 'Drums',
 	BandAux = 'Band Aux',
@@ -106,7 +127,8 @@ export type MinistryEvent = {
 	whatToBring?: string;
 	repeats?: RepeatOptions;
 	ministries: number[] | Ministry[];
-	teams?: number[] | Team[];
+	eventTeams: number[] | EventTeam[];
+	teams: number[] | Team[];
 };
 
 enum WhereOptions {
@@ -133,8 +155,17 @@ export type Team = {
 	title: string;
 	description?: string;
 	roles: number[] | Role[];
-	requirements?: number[] | Requirement[];
+	roles_required: number[] | Role[];
+	users: number[] | User[];
+	requirements: number[] | Requirement[];
 	teamLead?: number | User;
+};
+
+export type EventTeam = {
+	id: number;
+	team: number | Team;
+	at_capacity: boolean;
+	scheduled_users: number[] | User[];
 };
 
 export type Role = {
