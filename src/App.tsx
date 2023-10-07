@@ -21,7 +21,7 @@ function Copyright() {
 export default function App() {
 	return (
 		<div>
-			<UserProfile />
+			<UserProfile userId={5} />
 		</div>
 	);
 }
