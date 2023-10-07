@@ -42,8 +42,6 @@ export default function EventEditor() {
 	const db = useDBContext();
 	const [events, setEvents] = useState(db.getFutureEvents());
 	const teams = db.getAllTeams();
-	// starting to test schedule generation, just team 1 users
-	generateTeamSchedule(teams[0], events);
 	const [allVolunteers, setAllVolunteers] = useState(db.getUsers());
 	const [userDragging, setUserDragging] = useState<null | User>(null);
 	useEffect(() => {
@@ -364,6 +362,17 @@ function VolunteerCard({ volunteers, userDragging, setUserDragging }: {
 			return volunteer.firstName.toLowerCase().includes(volunteerFilterInputValue) || volunteer.lastName.toLowerCase().includes(volunteerFilterInputValue.toLowerCase());
 		}));
 	}, [volunteerFilterInputValue]);
+
+	const db = useDBContext();
+	const [events, setEvents] = useState(db.getFutureEvents());
+	const teams = db.getAllTeams();
+	// starting to test schedule generation, just team 1 users
+	// generateTeamSchedule(teams[0], events);
+
+	const aiAssignAll = () => {
+
+	};
+
 	return (
 		<Grid item className={'volunteerCard'}>
 			<Card variant='outlined'>
@@ -379,8 +388,7 @@ function VolunteerCard({ volunteers, userDragging, setUserDragging }: {
 							<CardContent>
 								<Grid container spacing={1}>
 									<Grid item>
-										<Button variant='contained' color='success' onClick={() => {
-										}}>
+										<Button variant='contained' color='success' onClick={aiAssignAll}>
 											Assign All
 										</Button>
 									</Grid>

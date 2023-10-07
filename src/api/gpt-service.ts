@@ -2,19 +2,22 @@ import DB from '@/db/db';
 import { Experience, LevelOptions, MinistryEvent, Team, TypeOptions, User } from '@/db/types';
 import OpenAI from 'openai';
 
-// const openai = new OpenAI({
-//   apiKey: 'my api key', // defaults to process.env["OPENAI_API_KEY"]
-//   dangerouslyAllowBrowser: true
-// });
+const openai = new OpenAI({
+  apiKey: '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',
+  dangerouslyAllowBrowser: true
+});
 
-// export const submitPrompt = async (prompt: string) => {
-//     const chatCompletion = await openai.chat.completions.create({
-//         messages: [{ role: 'user', content: prompt }],
-//         model: 'gpt-3.5-turbo',
-//     });
+export const submitPrompt = async (prompt: string) => {
+    const chatCompletion = await openai.chat.completions.create({
+        messages: [{ role: 'user', content: prompt }],
+        model: 'gpt-3.5-turbo',
+    });
 
-//     console.log(chatCompletion.choices);
-// }
+    if (chatCompletion.choices[0].message.content) {
+        // console.log(chatCompletion.choices[0].message.content)
+        console.log(JSON.parse(chatCompletion.choices[0].message.content));
+    }
+}
 
 const buildVolunteerListPrompt = (users: (UserWithServeHistory | undefined)[]) => {
     let promptString = '';
@@ -44,7 +47,6 @@ const buildTeamRequirementsPrompt = (team: Team) => {
     const requiredRoles = team.roles_required.map((roleId) => {
         return DB.getRole(roleId as number);
     });
-    console.log(requiredRoles)
 
     const roleCounts = requiredRoles.reduce((acc, role) => {
         acc[role.type] = (acc[role.type] || 0) + 1;
@@ -79,7 +81,7 @@ type UserWithServeHistory = User & {
     numTimesServed: number;
 };
 
-export const generateTeamSchedule = (team: Team, events: MinistryEvent[]) => {
+export const generateTeamSchedule = async (team: Team, events: MinistryEvent[]) => {
     const teamMemberIds = team.users;
     const fullUsers = teamMemberIds.map((id) => DB.getUser(id as number));
     const pastEvents = DB.getPastEvents();
@@ -117,8 +119,8 @@ export const generateTeamSchedule = (team: Team, events: MinistryEvent[]) => {
     I need to schedule ${events.length} events, ensuring we have a mix of experience levels and no one is overworked. Who should be scheduled for the upcoming events, considering volunteer availability, experience, preferences, and recent scheduling patterns?
     Also include your reasoning for scheduling each person.
 
-    Return the data in a format as depicted in the following example. Return only JSON.
-    [
+    Return the data in a format as depicted in the following example. Return only a JSON string.
+    {
         events: [
             {
                 id: 5,
@@ -181,11 +183,12 @@ export const generateTeamSchedule = (team: Team, events: MinistryEvent[]) => {
                 },
             },
         ]
-    ]
+    }
     `;
 
 	// console.log(prompt);
-	// return submitPrompt(prompt);
+    console.log('Submitting to GPT API...');
+	return await submitPrompt(prompt);
 };
 
 /**
