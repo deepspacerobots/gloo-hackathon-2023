@@ -1,3 +1,4 @@
+import DB from '@/db/db';
 import { LevelOptions, TypeOptions } from '@/db/types';
 import OpenAI from 'openai';
 
@@ -270,13 +271,15 @@ const users = [
     },
 ];
 
+const pastEvents = DB.events;
+
 const buildVolunteerListPrompt = () => {
     let promptString = '';
 
     users.forEach((user, index) => {
         const availability = `${user.preferredNumWeeksServing}x a month`;
-        const proficiencies = user.experiences.reduce((acc, xp) => acc + `${parseLevelToString(xp.level)} ${parseTypeToString(xp.type)}, `, '');
-        const preference = `Prefers ${parseTypeToString(getMostPreferredType(user.experiences).type)}`;
+        const proficiencies = user.experiences.reduce((acc, xp) => acc + `${parseLevelToString(xp.level)} ${xp.type}, `, '');
+        const preference = `Prefers ${getMostPreferredType(user.experiences)}`;
         promptString += `${index+1}. ${user.firstName} ${user.lastName} (Availability: ${availability} | Proficiencies: ${proficiencies} | Preference: ${preference} | Served ${Math.floor(Math.random() * 5) + 1} times recently)\n`
     })
     return promptString;
@@ -292,31 +295,11 @@ const parseLevelToString = (level: LevelOptions): string => {
     return levelMap[level];
 };
 
-const parseTypeToString = (type: TypeOptions): string => {
-    const typeMap: { [key in TypeOptions]: string } = {
-        [TypeOptions.BandVocals]: 'Vocals',
-        [TypeOptions.BandKeys]: 'Keys',
-        [TypeOptions.BandBass]: 'Bass',
-        [TypeOptions.BandElectricGuitar]: 'Electric Guitar',
-        [TypeOptions.BandAcousticGuitar]: 'Acoustic Guitar',
-        [TypeOptions.BandDrums]: 'Drums',
-        [TypeOptions.BandAux]: 'Band Aux',
-        [TypeOptions.TechGeneral]: 'Tech General',
-        [TypeOptions.TechCameras]: 'Tech Cameras',
-        [TypeOptions.TechLighting]: 'Tech Lighting',
-        [TypeOptions.TechAudio]: 'Tech Audio',
-        [TypeOptions.TechSlides]: 'Tech Slides',
-        [TypeOptions.TechVideoDirector]: 'Tech Video Director',
-        [TypeOptions.Prayer]: 'Prayer',
-        [TypeOptions.PastoralCare]: 'Pastoral Care',
-    };
-    return typeMap[type];
-};
-
-const getMostPreferredType = (experiences: any[]) => {
-    return experiences.reduce((highest, current) => {
+const getMostPreferredType = (experiences: any[]): TypeOptions => {
+    const preferredExp = experiences.reduce((highest, current) => {
         return current.preference > highest.preference ? current : highest;
     });
+    return preferredExp.type;
 };
 
 

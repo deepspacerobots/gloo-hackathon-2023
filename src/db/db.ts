@@ -13,6 +13,7 @@ import {
 	TypeOptions,
 	LevelOptions,
 	PreferenceOptions,
+	EventTeam,
 } from './types';
 
 type DBSchema = {
@@ -20,6 +21,7 @@ type DBSchema = {
 	events: MinistryEvent[];
 	ministries: Ministry[];
 	teams: Team[];
+	event_teams: EventTeam[];
 	roles: Role[];
 	requirements: Requirement[];
 	users: User[];
@@ -31,6 +33,7 @@ type DBSchema = {
 class Database {
 	organizations: Organization[];
 	events: MinistryEvent[];
+	event_teams: EventTeam[];
 	ministries: Ministry[];
 	teams: Team[];
 	roles: Role[];
@@ -43,6 +46,7 @@ class Database {
 		this.events = preexistingData.events;
 		this.ministries = preexistingData.ministries;
 		this.teams = preexistingData.teams;
+		this.event_teams = preexistingData.event_teams;
 		this.roles = preexistingData.roles;
 		this.requirements = preexistingData.requirements;
 		this.users = preexistingData.users;
@@ -82,6 +86,10 @@ class Database {
 			event.teams = this.teams.filter((team: Team) =>
 				(event.teams as number[]).includes(team.id)
 			);
+
+			if (event.event_teams?.length && typeof event.event_teams[0] === 'number') {
+				event.event_teams = this.event_teams.filter((eventTeam: EventTeam) => (event.event_teams as number[]).includes(eventTeam.id));
+			}
 		}
 
 		return event;
@@ -237,9 +245,41 @@ const preexistingData: DBSchema = {
 			id: 1,
 			title: 'Sunday Morning Worship Service',
 			description: 'Join us every Sunday for a vibrant worship experience.',
-			date: '2023-10-31',
+			date: '2023-09-10',
 			time: '11:00 AM',
-			ministries: [1],
+			ministries: [1, 2],
+			teams: [1, 2, 3],
+			event_teams: [34, 35, 36],
+		},
+		{
+			id: 2,
+			title: 'Sunday Morning Worship Service',
+			description: 'Join us every Sunday for a vibrant worship experience.',
+			date: '2023-09-17',
+			time: '11:00 AM',
+			ministries: [1, 2],
+			teams: [1, 2, 3],
+			event_teams: [37, 38, 39],
+		},
+		{
+			id: 3,
+			title: 'Sunday Morning Worship Service',
+			description: 'Join us every Sunday for a vibrant worship experience.',
+			date: '2023-09-24',
+			time: '11:00 AM',
+			ministries: [1, 2],
+			teams: [1, 2, 3],
+			event_teams: [40, 41, 42],
+		},
+		{
+			id: 4,
+			title: 'Sunday Morning Worship Service',
+			description: 'Join us every Sunday for a vibrant worship experience.',
+			date: '2023-10-01',
+			time: '11:00 AM',
+			ministries: [1, 2],
+			teams: [1, 2, 3],
+			event_teams: [43, 44, 45],
 		},
 	],
 	ministries: [
@@ -283,6 +323,80 @@ const preexistingData: DBSchema = {
 			roles: [7, 8],
 			teamLead: 3,
 		},
+	],
+	event_teams: [
+		{
+			id: 34,
+			team: 1,
+			at_capacity: true,
+			scheduled_users: [1, 9, 20, 24, 35, 41, 53, 60],
+		},
+		{
+			id: 35,
+			team: 2,
+			at_capacity: true,
+			scheduled_users: [4, 5, 7, 8, 12, 13, 14],
+		},
+		{
+			id: 36,
+			team: 3,
+			at_capacity: true,
+			scheduled_users: [6, 10, 22, 23],
+		},
+		{
+			id: 37,
+			team: 1,
+			at_capacity: true,
+			scheduled_users: [2, 11, 28, 35, 40, 48, 53, 60],
+		},
+		{
+			id: 38,
+			team: 2,
+			at_capacity: true,
+			scheduled_users: [15, 19, 21, 25, 27, 31, 32],
+		},
+		{
+			id: 39,
+			team: 3,
+			at_capacity: true,
+			scheduled_users: [26, 30, 37, 38],
+		},
+		{
+			id: 40,
+			team: 1,
+			at_capacity: true,
+			scheduled_users: [16, 17, 18, 36, 40, 41, 48, 54],
+		},
+		{
+			id: 41,
+			team: 2,
+			at_capacity: true,
+			scheduled_users: [33, 34, 43, 44, 46, 49, 50],
+		},
+		{
+			id: 42,
+			team: 3,
+			at_capacity: true,
+			scheduled_users: [39, 45, 6, 10],
+		},
+		{
+			id: 43,
+			team: 1,
+			at_capacity: true,
+			scheduled_users: [1, 2, 9, 11, 20, 24, 29, 35],
+		},
+		{
+			id: 44,
+			team: 2,
+			at_capacity: true,
+			scheduled_users: [52, 55, 56, 57, 59, 4, 5],
+		},
+		{
+			id: 45,
+			team: 3,
+			at_capacity: true,
+			scheduled_users: [22, 23, 26, 30],
+		}
 	],
 	roles: [
 		{
@@ -359,6 +473,7 @@ const preexistingData: DBSchema = {
 			phone: '555-555-5555',
 			profilePhoto: '/img/profile-pics/man-1.jpg',
 			preferredNumWeeksServing: 3,
+			teams: [1],
 			experiences: [1, 2],
 		},
 		{
@@ -375,6 +490,7 @@ const preexistingData: DBSchema = {
 			phone: '555-555-5556',
 			profilePhoto: '/img/profile-pics/woman-1.jpg',
 			preferredNumWeeksServing: 2,
+			teams: [1],
 			experiences: [3],
 		},
 		{
@@ -391,6 +507,8 @@ const preexistingData: DBSchema = {
 			phone: '555-555-5557',
 			profilePhoto: '/img/profile-pics/man-2.jpg',
 			preferredNumWeeksServing: 1,
+			teams: [1],
+			experiences: [1, 2],
 		},
 		{
 			id: 4,
@@ -401,6 +519,7 @@ const preexistingData: DBSchema = {
 			password: 'password890',
 			phone: '555-555-5558',
 			preferredNumWeeksServing: 4,
+			teams: [2, 3],
 			experiences: [4, 5, 6],
 		},
 		{
@@ -412,6 +531,7 @@ const preexistingData: DBSchema = {
 			password: 'password901',
 			profilePhoto: '/img/profile-pics/man-12.jpg',
 			preferredNumWeeksServing: 2,
+			teams: [2, 3],
 			experiences: [7, 8],
 		},
 		{
@@ -424,6 +544,8 @@ const preexistingData: DBSchema = {
 			phone: '555-555-5559',
 			profilePhoto: '/img/profile-pics/woman-12.jpg',
 			preferredNumWeeksServing: 3,
+			teams: [3],
+			experiences: [25, 26],
 		},
 		{
 			id: 7,
@@ -434,6 +556,7 @@ const preexistingData: DBSchema = {
 			password: 'password567',
 			phone: '555-555-5560',
 			preferredNumWeeksServing: 2,
+			teams: [2],
 			experiences: [9],
 		},
 		{
@@ -446,6 +569,7 @@ const preexistingData: DBSchema = {
 			phone: '555-555-5561',
 			profilePhoto: '/img/profile-pics/woman-13.jpg',
 			preferredNumWeeksServing: 4,
+			teams: [2],
 			experiences: [10],
 		},
 		{
@@ -457,6 +581,7 @@ const preexistingData: DBSchema = {
 			password: 'password123',
 			profilePhoto: '/img/profile-pics/man-13.jpg',
 			preferredNumWeeksServing: 1,
+			teams: [1],
 			experiences: [11],
 		},
 		{
@@ -469,6 +594,8 @@ const preexistingData: DBSchema = {
 			phone: '555-555-5562',
 			profilePhoto: '/img/profile-pics/woman-17.jpg',
 			preferredNumWeeksServing: 2,
+			teams: [3],
+			experiences: [25, 26],
 		},
 		{
 			id: 11,
@@ -479,6 +606,7 @@ const preexistingData: DBSchema = {
 			password: 'password789',
 			profilePhoto: '/img/profile-pics/man-14.jpg',
 			preferredNumWeeksServing: 3,
+			teams: [1],
 			experiences: [12, 13, 14],
 		},
 		{
@@ -491,6 +619,7 @@ const preexistingData: DBSchema = {
 			phone: '555-555-5563',
 			profilePhoto: '/img/profile-pics/woman-21.jpg',
 			preferredNumWeeksServing: 2,
+			teams: [2],
 			experiences: [15],
 		},
 		{
@@ -501,6 +630,7 @@ const preexistingData: DBSchema = {
 			email: 'william@example.com',
 			password: 'password456',
 			preferredNumWeeksServing: 1,
+			teams: [2],
 			experiences: [16],
 		},
 		{
@@ -513,6 +643,7 @@ const preexistingData: DBSchema = {
 			phone: '555-555-5564',
 			profilePhoto: '/img/profile-pics/woman-23.jpg',
 			preferredNumWeeksServing: 4,
+			teams: [2],
 			experiences: [17],
 		},
 		{
@@ -523,6 +654,7 @@ const preexistingData: DBSchema = {
 			email: 'michael@example.com',
 			password: 'password901',
 			preferredNumWeeksServing: 2,
+			teams: [2],
 			experiences: [18],
 		},
 		{
@@ -535,6 +667,8 @@ const preexistingData: DBSchema = {
 			phone: '555-555-5565',
 			profilePhoto: '/img/profile-pics/woman-22.jpg',
 			preferredNumWeeksServing: 3,
+			teams: [1],
+			experiences: [70],
 		},
 		{
 			id: 17,
@@ -545,6 +679,8 @@ const preexistingData: DBSchema = {
 			password: 'password567',
 			profilePhoto: '/img/profile-pics/man-18.jpg',
 			preferredNumWeeksServing: 2,
+			teams: [1],
+			experiences: [1, 60],
 		},
 		{
 			id: 18,
@@ -556,6 +692,8 @@ const preexistingData: DBSchema = {
 			phone: '555-555-5566',
 			profilePhoto: '/img/profile-pics/woman-8.jpg',
 			preferredNumWeeksServing: 4,
+			teams: [1],
+			experiences: [1, 46],
 		},
 		{
 			id: 19,
@@ -566,6 +704,7 @@ const preexistingData: DBSchema = {
 			password: 'password123',
 			profilePhoto: '/img/profile-pics/man-16.jpg',
 			preferredNumWeeksServing: 1,
+			teams: [2, 3],
 			experiences: [19, 20, 21, 22],
 		},
 		{
@@ -578,6 +717,7 @@ const preexistingData: DBSchema = {
 			phone: '555-555-5567',
 			profilePhoto: '/img/profile-pics/woman-25.jpg',
 			preferredNumWeeksServing: 2,
+			teams: [1],
 			experiences: [23],
 		},
 		{
@@ -588,6 +728,7 @@ const preexistingData: DBSchema = {
 			email: 'noah@example.com',
 			password: 'password123',
 			preferredNumWeeksServing: 1,
+			teams: [2, 3],
 			experiences: [24, 25],
 		},
 		{
@@ -600,6 +741,8 @@ const preexistingData: DBSchema = {
 			phone: '555-555-5568',
 			profilePhoto: '/img/profile-pics/woman-26.jpg',
 			preferredNumWeeksServing: 2,
+			teams: [3],
+			experiences: [25, 26],
 		},
 		{
 			id: 23,
@@ -609,6 +752,7 @@ const preexistingData: DBSchema = {
 			email: 'liam@example.com',
 			password: 'password789',
 			preferredNumWeeksServing: 1,
+			teams: [3],
 			experiences: [26],
 		},
 		{
@@ -620,6 +764,7 @@ const preexistingData: DBSchema = {
 			password: 'password890',
 			phone: '555-555-5569',
 			preferredNumWeeksServing: 3,
+			teams: [1, 2],
 			experiences: [27, 28],
 		},
 		{
@@ -631,6 +776,7 @@ const preexistingData: DBSchema = {
 			password: 'password901',
 			profilePhoto: '/img/profile-pics/man-21.jpg',
 			preferredNumWeeksServing: 2,
+			teams: [2],
 			experiences: [29],
 		},
 		{
@@ -643,6 +789,8 @@ const preexistingData: DBSchema = {
 			phone: '555-555-5570',
 			profilePhoto: '/img/profile-pics/woman-27.jpg',
 			preferredNumWeeksServing: 4,
+			teams: [3],
+			experiences: [25, 26],
 		},
 		{
 			id: 27,
@@ -653,6 +801,7 @@ const preexistingData: DBSchema = {
 			password: 'password567',
 			profilePhoto: '/img/profile-pics/man-22.jpg',
 			preferredNumWeeksServing: 2,
+			teams: [2],
 			experiences: [30],
 		},
 		{
@@ -664,6 +813,7 @@ const preexistingData: DBSchema = {
 			password: 'password890',
 			phone: '555-555-5571',
 			preferredNumWeeksServing: 4,
+			teams: [1],
 			experiences: [31, 32],
 		},
 		{
@@ -674,6 +824,7 @@ const preexistingData: DBSchema = {
 			email: 'jackson@example.com',
 			password: 'password123',
 			preferredNumWeeksServing: 1,
+			teams: [1, 2],
 			experiences: [33, 34, 35],
 		},
 		{
@@ -686,6 +837,8 @@ const preexistingData: DBSchema = {
 			phone: '555-555-5572',
 			profilePhoto: '/img/profile-pics/woman-28.jpg',
 			preferredNumWeeksServing: 2,
+			teams: [3],
+			experiences: [25, 26],
 		},
 		{
 			id: 31,
@@ -696,6 +849,7 @@ const preexistingData: DBSchema = {
 			password: 'password123',
 			profilePhoto: '/img/profile-pics/man-23.jpg',
 			preferredNumWeeksServing: 1,
+			teams: [2, 3],
 			experiences: [36, 37, 38],
 		},
 		{
@@ -707,6 +861,7 @@ const preexistingData: DBSchema = {
 			password: 'password456',
 			phone: '555-555-5573',
 			preferredNumWeeksServing: 2,
+			teams: [2],
 			experiences: [39],
 		},
 		{
@@ -718,6 +873,7 @@ const preexistingData: DBSchema = {
 			password: 'password789',
 			profilePhoto: '/img/profile-pics/man-24.jpg',
 			preferredNumWeeksServing: 1,
+			teams: [2],
 			experiences: [40],
 		},
 		{
@@ -729,6 +885,7 @@ const preexistingData: DBSchema = {
 			password: 'password890',
 			phone: '555-555-5574',
 			preferredNumWeeksServing: 3,
+			teams: [2],
 			experiences: [41, 42, 43, 44],
 		},
 		{
@@ -740,6 +897,7 @@ const preexistingData: DBSchema = {
 			password: 'password901',
 			profilePhoto: '/img/profile-pics/man-25.jpg',
 			preferredNumWeeksServing: 2,
+			teams: [1],
 			experiences: [45, 46],
 		},
 		{
@@ -752,6 +910,7 @@ const preexistingData: DBSchema = {
 			phone: '555-555-5575',
 			profilePhoto: '/img/profile-pics/woman-31.jpg',
 			preferredNumWeeksServing: 4,
+			teams: [1],
 			experiences: [47],
 		},
 		{
@@ -762,6 +921,8 @@ const preexistingData: DBSchema = {
 			email: 'samuel@example.com',
 			password: 'password567',
 			preferredNumWeeksServing: 2,
+			teams: [3],
+			experiences: [25, 26],
 		},
 		{
 			id: 38,
@@ -772,6 +933,8 @@ const preexistingData: DBSchema = {
 			password: 'password890',
 			phone: '555-555-5576',
 			preferredNumWeeksServing: 4,
+			teams: [3],
+			experiences: [25, 26],
 		},
 		{
 			id: 39,
@@ -782,6 +945,8 @@ const preexistingData: DBSchema = {
 			password: 'password123',
 			profilePhoto: '/img/profile-pics/man-27.jpg',
 			preferredNumWeeksServing: 1,
+			teams: [3],
+			experiences: [25, 26],
 		},
 		{
 			id: 40,
@@ -793,6 +958,7 @@ const preexistingData: DBSchema = {
 			phone: '555-555-5577',
 			profilePhoto: '/img/profile-pics/woman-51.jpg',
 			preferredNumWeeksServing: 2,
+			teams: [1],
 			experiences: [48, 49],
 		},
 		{
@@ -804,6 +970,7 @@ const preexistingData: DBSchema = {
 			password: 'password123',
 			profilePhoto: '/img/profile-pics/man-31.jpg',
 			preferredNumWeeksServing: 1,
+			teams: [1],
 			experiences: [50],
 		},
 		{
@@ -816,6 +983,7 @@ const preexistingData: DBSchema = {
 			phone: '555-555-5578',
 			profilePhoto: '/img/profile-pics/woman-52.jpg',
 			preferredNumWeeksServing: 2,
+			teams: [1, 2],
 			experiences: [51, 52],
 		},
 		{
@@ -826,6 +994,7 @@ const preexistingData: DBSchema = {
 			email: 'liam@example.com',
 			password: 'password789',
 			preferredNumWeeksServing: 1,
+			teams: [2],
 			experiences: [53],
 		},
 		{
@@ -838,6 +1007,7 @@ const preexistingData: DBSchema = {
 			phone: '555-555-5579',
 			profilePhoto: '/img/profile-pics/woman-53.jpg',
 			preferredNumWeeksServing: 3,
+			teams: [2],
 			experiences: [54],
 		},
 		{
@@ -849,6 +1019,7 @@ const preexistingData: DBSchema = {
 			password: 'password901',
 			profilePhoto: '/img/profile-pics/man-32.jpg',
 			preferredNumWeeksServing: 2,
+			teams: [3],
 			experiences: [55, 56],
 		},
 		{
@@ -860,6 +1031,7 @@ const preexistingData: DBSchema = {
 			password: 'password234',
 			phone: '555-555-5580',
 			preferredNumWeeksServing: 4,
+			teams: [2],
 			experiences: [57, 58, 59],
 		},
 		{
@@ -882,6 +1054,7 @@ const preexistingData: DBSchema = {
 			phone: '555-555-5581',
 			profilePhoto: '/img/profile-pics/woman-55.jpg',
 			preferredNumWeeksServing: 4,
+			teams: [1],
 			experiences: [60, 61],
 		},
 		{
@@ -892,6 +1065,7 @@ const preexistingData: DBSchema = {
 			email: 'michael@example.com',
 			password: 'password123',
 			preferredNumWeeksServing: 1,
+			teams: [2],
 			experiences: [62],
 		},
 		{
@@ -903,6 +1077,7 @@ const preexistingData: DBSchema = {
 			password: 'password456',
 			phone: '555-555-5582',
 			preferredNumWeeksServing: 2,
+			teams: [2, 3],
 			experiences: [63, 64, 65],
 		},
 		{
@@ -925,6 +1100,7 @@ const preexistingData: DBSchema = {
 			phone: '555-555-5583',
 			profilePhoto: '/img/profile-pics/woman-56.jpg',
 			preferredNumWeeksServing: 2,
+			teams: [2],
 			experiences: [66],
 		},
 		{
@@ -936,6 +1112,7 @@ const preexistingData: DBSchema = {
 			password: 'password789',
 			profilePhoto: '/img/profile-pics/man-35.jpg',
 			preferredNumWeeksServing: 1,
+			teams: [1, 2],
 			experiences: [67, 68, 69],
 		},
 		{
@@ -948,6 +1125,7 @@ const preexistingData: DBSchema = {
 			phone: '555-555-5584',
 			profilePhoto: '/img/profile-pics/woman-62.jpg',
 			preferredNumWeeksServing: 3,
+			teams: [1],
 			experiences: [70, 71],
 		},
 		{
@@ -958,6 +1136,7 @@ const preexistingData: DBSchema = {
 			email: 'daniel@example.com',
 			password: 'password901',
 			preferredNumWeeksServing: 2,
+			teams: [2],
 			experiences: [72],
 		},
 		{
@@ -969,6 +1148,7 @@ const preexistingData: DBSchema = {
 			password: 'password234',
 			phone: '555-555-5585',
 			preferredNumWeeksServing: 4,
+			teams: [2],
 			experiences: [73],
 		},
 		{
@@ -980,6 +1160,7 @@ const preexistingData: DBSchema = {
 			password: 'password567',
 			profilePhoto: '/img/profile-pics/man-36.jpg',
 			preferredNumWeeksServing: 2,
+			teams: [2],
 			experiences: [74],
 		},
 		{
@@ -1002,6 +1183,7 @@ const preexistingData: DBSchema = {
 			password: 'password123',
 			profilePhoto: '/img/profile-pics/man-37.jpg',
 			preferredNumWeeksServing: 1,
+			teams: [2, 3],
 			experiences: [75, 76, 77, 78, 79],
 		},
 		{
@@ -1014,6 +1196,7 @@ const preexistingData: DBSchema = {
 			phone: '555-555-5587',
 			profilePhoto: '/img/profile-pics/woman-97.jpg',
 			preferredNumWeeksServing: 2,
+			teams: [1],
 			experiences: [80],
 		},
 	],
