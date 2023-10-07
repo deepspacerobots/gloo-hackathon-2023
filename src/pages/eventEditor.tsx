@@ -30,10 +30,14 @@ import { useDBContext } from '@/contexts/db.context';
 import { Database as DatabaseType } from '@/db/db';
 import { MinistryEvent, Role, Team, User } from '@/db/types';
 import Box from '@mui/material/Box';
+import { generateTeamSchedule } from '@/api/gpt-service';
 
 export default function EventEditor() {
 	const db = useDBContext();
 	const events = db.getFutureEvents();
+	const teams = db.getAllTeams();
+	// starting to test schedule generation
+	generateTeamSchedule(teams[0]);
 
 	return (
 		<Grid container spacing={2}>
@@ -173,10 +177,10 @@ function EventCard({
 }
 
 function TeamCard({
-										teamName,
-										roles,
-										db,
-									}: {
+	teamName,
+	roles,
+	db,
+}: {
 	teamName: string;
 	roles: number[];
 	db: DatabaseType;
@@ -296,6 +300,10 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 	const handleDragEnd = (e) => {
 	};
 	const [filter, setFilter] = useState<any>('All Teams');
+
+	const aiAssign = () => {
+		console.log('generate schedules using AI');
+	};
 	return (
 		<Grid item className={'volunteerCard'}>
 			<Card variant='outlined'>
@@ -310,7 +318,7 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 							<CardContent>
 								<Grid container spacing={1}>
 									<Grid item>
-										<Button variant='contained' color='success'>
+										<Button variant='contained' color='success' onClick={aiAssign}>
 											AI Assign
 										</Button>
 									</Grid>

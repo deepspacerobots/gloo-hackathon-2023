@@ -163,6 +163,10 @@ export class Database {
 		return team;
 	}
 
+	getAllTeams(): Team[] {
+		return this.teams;
+	}
+
 	setTeam(payload: Team): Team {
 		payload.id = this.teams[this.teams.length - 1].id + 1;
 		this.teams.push(payload);
@@ -284,7 +288,7 @@ export const preexistingData: DBSchema = {
 			id: 1,
 			title: 'Sunday Morning Worship Service',
 			description: 'Join us every Sunday for a vibrant worship experience.',
-			date: '2023-10-01',
+			date: '2023-09-10',
 			time: '11:00 AM',
 			ministries: [1, 2],
 			teams: [1, 2, 3],
@@ -294,41 +298,61 @@ export const preexistingData: DBSchema = {
 			id: 2,
 			title: 'Sunday Morning Worship Service',
 			description: 'Join us every Sunday for a vibrant worship experience.',
-			date: '2023-10-15',
-			time: '11:00 AM',
-			ministries: [1, 2],
-			teams: [1, 2, 3],
-			eventTeams: [34, 35, 36],
-		},
-		{
-			id: 3,
-			title: 'Sunday Morning Worship Service',
-			description: 'Join us every Sunday for a vibrant worship experience.',
-			date: '2023-10-22',
+			date: '2023-09-17',
 			time: '11:00 AM',
 			ministries: [1, 2],
 			teams: [1, 2, 3],
 			eventTeams: [37, 38, 39],
 		},
 		{
-			id: 4,
+			id: 3,
 			title: 'Sunday Morning Worship Service',
 			description: 'Join us every Sunday for a vibrant worship experience.',
-			date: '2023-10-29',
+			date: '2023-09-24',
 			time: '11:00 AM',
 			ministries: [1, 2],
 			teams: [1, 2, 3],
 			eventTeams: [40, 41, 42],
 		},
 		{
-			id: 5,
+			id: 4,
 			title: 'Sunday Morning Worship Service',
 			description: 'Join us every Sunday for a vibrant worship experience.',
-			date: '2023-11-05',
+			date: '2023-10-01',
 			time: '11:00 AM',
 			ministries: [1, 2],
 			teams: [1, 2, 3],
 			eventTeams: [43, 44, 45],
+		},
+		{
+			id: 5,
+			title: 'Sunday Morning Worship Service',
+			description: 'Join us every Sunday for a vibrant worship experience.',
+			date: '2023-10-08',
+			time: '11:00 AM',
+			ministries: [1, 2],
+			teams: [1, 2, 3],
+			eventTeams: [],
+		},
+		{
+			id: 6,
+			title: 'Sunday Morning Worship Service',
+			description: 'Join us every Sunday for a vibrant worship experience.',
+			date: '2023-10-15',
+			time: '11:00 AM',
+			ministries: [1, 2],
+			teams: [1, 2, 3],
+			eventTeams: [],
+		},
+		{
+			id: 7,
+			title: 'Sunday Morning Worship Service',
+			description: 'Join us every Sunday for a vibrant worship experience.',
+			date: '2023-10-22',
+			time: '11:00 AM',
+			ministries: [1, 2],
+			teams: [1, 2, 3],
+			eventTeams: [],
 		},
 	],
 	ministries: [

@@ -1,5 +1,5 @@
 import DB from '@/db/db';
-import { LevelOptions, TypeOptions } from '@/db/types';
+import { Experience, LevelOptions, Team, TypeOptions, User } from '@/db/types';
 import OpenAI from 'openai';
 
 const openai = new OpenAI({
@@ -273,15 +273,17 @@ const worshipUsers = [
 
 const pastEvents = DB.events;
 
-const buildVolunteerListPrompt = () => {
+const buildVolunteerListPrompt = (users: (User | undefined)[]) => {
+    const completeUsers = users?.map((user) => DB.getUser(user?.id as number));
+    console.log(completeUsers)
     let promptString = '';
 
-    worshipUsers.forEach((user, index) => {
-        const availability = `${user.preferredNumWeeksServing}x a month`;
-        const proficiencies = user.experiences.reduce((acc, xp) => acc + `${parseLevelToString(xp.level)} ${xp.type}, `, '');
-        const preference = `Prefers ${getMostPreferredType(user.experiences)}`;
-        promptString += `${index+1}. ${user.firstName} ${user.lastName} (Availability: ${availability} | Proficiencies: ${proficiencies} | Preference: ${preference} | Served ${Math.floor(Math.random() * 5) + 1} times recently)\n`
-    })
+    // completeUsers.forEach((user, index) => {
+    //     const availability = `${user?.preferredNumWeeksServing}x a month`;
+    //     const proficiencies = user?.experiences.reduce((acc: string, xp: Experience) => acc + `${parseLevelToString(xp.level)} ${xp.type}, `, '');
+    //     const preference = `Prefers ${getMostPreferredType(user?.experiences)}`;
+    //     promptString += `${index+1}. ${user?.firstName} ${user?.lastName} (Availability: ${availability} | Proficiencies: ${proficiencies} | Preference: ${preference} | Served ${Math.floor(Math.random() * 5) + 1} times recently)\n`
+    // })
     return promptString;
 };
 
@@ -295,21 +297,23 @@ const parseLevelToString = (level: LevelOptions): string => {
     return levelMap[level];
 };
 
-const getMostPreferredType = (experiences: any[]): TypeOptions => {
-    const preferredExp = experiences.reduce((highest, current) => {
+const getMostPreferredType = (experiences?: any[]): TypeOptions => {
+    const preferredExp = experiences?.reduce((highest, current) => {
         return current.preference > highest.preference ? current : highest;
     });
     return preferredExp.type;
 };
 
 
-const generateSchedule = () => {
+export const generateTeamSchedule = (team: Team) => {
+    const teamMemberIds = team.users;
+    const fullUsers = teamMemberIds.map((id) => DB.getUser(id as number));
     let prompt = `
     Given the following volunteer and scheduling information:
 
     We have 20 volunteers with different levels of experience, different availability, different proficiencies, and different preferences, detailed below:
 
-    ${buildVolunteerListPrompt()}
+    ${buildVolunteerListPrompt(fullUsers)}
     `;
 
     return submitPrompt(prompt);
