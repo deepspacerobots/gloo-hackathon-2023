@@ -43,7 +43,7 @@ export default function EventEditor() {
 	const [events, setEvents] = useState(db.getFutureEvents());
 	const teams = db.getAllTeams();
 	// starting to test schedule generation, just team 1 users
-	generateTeamSchedule(teams[0]);
+	generateTeamSchedule(teams[0], events);
 	const [allVolunteers, setAllVolunteers] = useState(db.getUsers());
 	useEffect(() => {
 		console.log(events);

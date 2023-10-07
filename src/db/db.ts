@@ -127,6 +127,12 @@ export class Database {
 		return payload;
 	}
 
+	getEventTeam(eventTeamId: number): EventTeam | undefined {
+		const eventTeam = this.eventTeams.find(eventTeam => eventTeam.id === eventTeamId);
+
+		return eventTeam;
+	}
+
 	getMinistry(ministryId: number): Ministry | undefined {
 		const ministry = this.ministries.find(
 			(ministry: Ministry) => ministry.id === ministryId,
