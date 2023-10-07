@@ -1,22 +1,22 @@
 import * as React from 'react';
-import Container from '@mui/material/Container';
+import { useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
+import { ModeNight, WbSunny } from '@mui/icons-material';
 import ProTip from './ProTip';
-import { Event, ModeNight, WbSunny } from '@mui/icons-material';
 import EventEditor from '@/pages/eventEditor';
 import { ThemeProvider } from '@emotion/react';
-import { CssBaseline, Fab, useTheme } from '@mui/material';
+import { AppBar, CssBaseline, IconButton, Toolbar } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
-import { useState } from 'react';
-import './app.scss';
+import "./app.scss"
+import UserProfile from './components/UserProfile/UserProfile';
 
 function Copyright() {
 	return (
-		<Typography variant="body2" color="text.secondary" align="center">
+		<Typography variant='body2' color='text.secondary' align='center'>
 			{'Copyright © '}
-			<Link color="inherit" href="https://mui.com/">
+			<Link color='inherit' href='https://mui.com/'>
 				Your Website
 			</Link>{' '}
 			{new Date().getFullYear()}.
@@ -38,19 +38,24 @@ export default function App() {
 	return (
 		<ThemeProvider theme={theme}>
 			<CssBaseline />
+			<Box sx={{ flexGrow: 1 }}>
+				<AppBar position='static'>
+					<Toolbar>
+						<Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
+							Hackathon App Name Here
+						</Typography>
+						<IconButton onClick={() => {
+							setIsDarkTheme(!isDarkTheme);
+						}}>
+							{!isDarkTheme ? <WbSunny /> : <ModeNight />}
+						</IconButton>
+
+					</Toolbar>
+				</AppBar>
+			</Box>
 			<Box sx={{ my: 4, mx: 8 }}>
 				<EventEditor />
 			</Box>
-			<Fab
-				className={'fab'}
-				size="small"
-				aria-label="add"
-				onClick={() => {
-					setIsDarkTheme(!isDarkTheme);
-				}}
-			>
-				{!isDarkTheme ? <WbSunny /> : <ModeNight />}
-			</Fab>
 		</ThemeProvider>
 	);
 }
