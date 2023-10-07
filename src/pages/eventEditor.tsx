@@ -4,7 +4,6 @@ import {
 	Accordion,
 	AccordionDetails,
 	AccordionSummary,
-	Avatar,
 	Button,
 	Card,
 	CardContent,
@@ -47,24 +46,31 @@ export default function EventEditor() {
 	generateTeamSchedule(teams[0], events);
 	const [allVolunteers, setAllVolunteers] = useState(db.getUsers());
 	const [userDragging, setUserDragging] = useState<null | User>(null);
+	const [unassignedRoles, setUnassignedRoles] = useState(0);
 	useEffect(() => {
 		// add event teams to event
 		let newTeamId = 46;
+		let unassignedRolesCount = 0;
 		events.forEach((event) => {
 			event.teams.forEach((team) => {
-				const scheduledUsersInitial = [];
+				const scheduledUsersInitial: number[] = [];
+				// @ts-ignore
 				team.roles.forEach((a, index) => {
 					scheduledUsersInitial.push(index + 1);
+					unassignedRolesCount++;
 				});
 				// @ts-ignore
 				event.eventTeams.push({
 					id: newTeamId,
+					// @ts-ignore
 					team: team.id,
 					at_capacity: false,
 					scheduled_users: scheduledUsersInitial,
 				});
+				console.log(event.eventTeams);
 				newTeamId++;
 			});
+			setUnassignedRoles(unassignedRolesCount);
 		});
 	}, []);
 
@@ -89,7 +95,7 @@ export default function EventEditor() {
 												}}
 											>
 												<Typography variant={'h6'}>Events</Typography>
-												<Typography variant={'h2'} color={'secondary'}>
+												<Typography variant={'h2'} color={'success.main'}>
 													{events.length}
 												</Typography>
 											</div>
@@ -103,8 +109,15 @@ export default function EventEditor() {
 												}}
 											>
 												<Typography variant={'h6'}>Unassigned</Typography>
-												<Typography variant={'h2'} color={'secondary'}>
-													32
+												<Typography
+													variant={'h2'}
+													color={
+														unassignedRoles === 0
+															? 'success.main'
+															: 'error.main'
+													}
+												>
+													{unassignedRoles}
 												</Typography>
 											</div>
 										</Grid>
@@ -117,7 +130,7 @@ export default function EventEditor() {
 												}}
 											>
 												<Typography variant={'h6'}>Volunteers</Typography>
-												<Typography variant={'h2'} color={'secondary'}>
+												<Typography variant={'h2'} color={'success.main'}>
 													{db.getUsers().length}
 												</Typography>
 											</div>
@@ -131,8 +144,8 @@ export default function EventEditor() {
 												}}
 											>
 												<Typography variant={'h6'}>Teams</Typography>
-												<Typography variant={'h2'} color={'secondary'}>
-													3
+												<Typography variant={'h2'} color={'success.main'}>
+													{db.getAllTeams().length}
 												</Typography>
 											</div>
 										</Grid>
@@ -557,19 +570,21 @@ function VolunteerCard({
 								<Grid container rowSpacing={1} spacing={1}>
 									{filteredVolunteers.map((user, i) => {
 										return (
-											<Grid
-												draggable
-												onDragStart={(e) => {
-													setUserDragging(user);
-												}}
-												onDragEnd={(e) => {}}
-												item
+											<Tooltip
+												title={`${user.firstName} ${user.lastName}`}
 												key={`avatar ${i}`}
 											>
-												<Tooltip title={`${user.firstName} ${user.lastName}`}>
+												<Grid
+													draggable
+													onDragStart={(e) => {
+														setUserDragging(user);
+													}}
+													onDragEnd={(e) => {}}
+													item
+												>
 													<UserDialog user={user} />
-												</Tooltip>
-											</Grid>
+												</Grid>
+											</Tooltip>
 										);
 									})}
 								</Grid>
