@@ -43,7 +43,7 @@ export default function EventEditor() {
 	const events = db.getFutureEvents();
 	const teams = db.getAllTeams();
 	// starting to test schedule generation, just team 1 users
-	generateTeamSchedule(teams[0]);
+	generateTeamSchedule(teams[0], events);
 	const [allVolunteers, setAllVolunteers] = useState(db.getUsers());
 
 	return (
@@ -329,7 +329,7 @@ function VolunteerCard({ volunteers }: { volunteers: User[] }) {
 							<CardContent>
 								<Grid container spacing={1}>
 									<Grid item>
-										<Button variant='contained' color='success' onClick={aiAssign}>
+										<Button variant='contained' color='success'>
 											AI Assign
 										</Button>
 									</Grid>
