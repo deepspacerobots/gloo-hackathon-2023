@@ -307,6 +307,7 @@ const getMostPreferredType = (experiences?: any[]): TypeOptions => {
 export const generateTeamSchedule = (team: Team) => {
     const teamMemberIds = team.users;
     const fullUsers = teamMemberIds.map((id) => DB.getUser(id as number));
+    const pastEvents = DB.getPastEvents();
     let prompt = `
     Given the following volunteer and scheduling information:
 
