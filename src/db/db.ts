@@ -101,6 +101,16 @@ export class Database {
 		return event;
 	}
 
+	getPastEvents(): MinistryEvent[] {
+		const events = this.events;
+		const now = new Date();
+
+		return events.filter((event: MinistryEvent) => {
+			const eventDate = new Date(event.date);
+			return now > eventDate;
+		});
+	}
+
 	getFutureEvents(): MinistryEvent[] {
 		const events = this.events;
 		const now = new Date();
@@ -152,9 +162,19 @@ export class Database {
 					(user: User) => team.teamLead === user.id,
 				);
 			}
+
+			if (team.users.length) {
+				team.users = this.users.filter(
+					(user: User) => (team.users as number[]).includes(user.id)
+				);
+			}
 		}
 
 		return team;
+	}
+
+	getAllTeams(): Team[] {
+		return this.teams;
 	}
 
 	setTeam(payload: Team): Team {
@@ -282,7 +302,7 @@ export const preexistingData: DBSchema = {
 			id: 1,
 			title: 'Sunday Morning Worship Service',
 			description: 'Join us every Sunday for a vibrant worship experience.',
-			date: '2023-10-01',
+			date: '2023-09-10',
 			time: '11:00 AM',
 			ministries: [1, 2],
 			teams: [1, 2, 3],
@@ -292,41 +312,61 @@ export const preexistingData: DBSchema = {
 			id: 2,
 			title: 'Sunday Morning Worship Service',
 			description: 'Join us every Sunday for a vibrant worship experience.',
-			date: '2023-10-15',
-			time: '11:00 AM',
-			ministries: [1, 2],
-			teams: [1, 2, 3],
-			eventTeams: [34, 35, 36],
-		},
-		{
-			id: 3,
-			title: 'Sunday Morning Worship Service',
-			description: 'Join us every Sunday for a vibrant worship experience.',
-			date: '2023-10-22',
+			date: '2023-09-17',
 			time: '11:00 AM',
 			ministries: [1, 2],
 			teams: [1, 2, 3],
 			eventTeams: [37, 38, 39],
 		},
 		{
-			id: 4,
+			id: 3,
 			title: 'Sunday Morning Worship Service',
 			description: 'Join us every Sunday for a vibrant worship experience.',
-			date: '2023-10-29',
+			date: '2023-09-24',
 			time: '11:00 AM',
 			ministries: [1, 2],
 			teams: [1, 2, 3],
 			eventTeams: [40, 41, 42],
 		},
 		{
-			id: 5,
+			id: 4,
 			title: 'Sunday Morning Worship Service',
 			description: 'Join us every Sunday for a vibrant worship experience.',
-			date: '2023-11-05',
+			date: '2023-10-01',
 			time: '11:00 AM',
 			ministries: [1, 2],
 			teams: [1, 2, 3],
 			eventTeams: [43, 44, 45],
+		},
+		{
+			id: 5,
+			title: 'Sunday Morning Worship Service',
+			description: 'Join us every Sunday for a vibrant worship experience.',
+			date: '2023-10-08',
+			time: '11:00 AM',
+			ministries: [1, 2],
+			teams: [1, 2, 3],
+			eventTeams: [],
+		},
+		{
+			id: 6,
+			title: 'Sunday Morning Worship Service',
+			description: 'Join us every Sunday for a vibrant worship experience.',
+			date: '2023-10-15',
+			time: '11:00 AM',
+			ministries: [1, 2],
+			teams: [1, 2, 3],
+			eventTeams: [],
+		},
+		{
+			id: 7,
+			title: 'Sunday Morning Worship Service',
+			description: 'Join us every Sunday for a vibrant worship experience.',
+			date: '2023-10-22',
+			time: '11:00 AM',
+			ministries: [1, 2],
+			teams: [1, 2, 3],
+			eventTeams: [],
 		},
 	],
 	ministries: [
@@ -350,27 +390,33 @@ export const preexistingData: DBSchema = {
 		{
 			id: 1,
 			title: 'Worship Team',
-			roles: [1, 2, 3],
+			roles: [1, 2, 3, 4, 5, 6, 7],
+			roles_required: [1, 1, 1, 1, 2, 3, 4, 5, 6, 7],
+			users: [1, 2, 9, 11, 16, 17, 18, 20, 24, 28, 29, 35, 36, 40, 41, 42, 48, 53, 54, 60],
 			requirements: [],
-			teamLead: 1,
+			teamLead: 54,
 		},
 		{
 			id: 2,
 			title: 'Front of House',
 			description:
 				'FOH handles audio and lighting engineering, as well as managing slides',
-			roles: [4, 5, 6],
+			roles: [8, 9, 10, 11, 12, 13],
+			roles_required: [8, 9, 9, 10, 11, 12, 13],
+			users: [4, 5, 7, 8, 12, 13, 14, 15, 19, 21, 25, 27, 31, 32, 33, 34, 43, 44, 46, 49, 50, 52, 55, 56, 57, 59],
 			requirements: [1],
-			teamLead: 2,
+			teamLead: 59,
 		},
 		{
 			id: 3,
 			title: 'Pastoral Care Team',
 			description:
 				'The pastoral care team is responsible for helping the lead/associate pastors care for the congregation',
-			roles: [7, 8],
+			roles: [14, 15],
+			roles_required: [14, 14, 14, 15, 15],
+			users: [6, 10, 22, 23, 26, 30, 37, 38, 39, 45],
 			requirements: [],
-			teamLead: 3,
+			teamLead: 58,
 		},
 	],
 	eventTeams: [
@@ -456,46 +502,83 @@ export const preexistingData: DBSchema = {
 		},
 		{
 			id: 2,
+			type: TypeOptions.BandKeys,
+			experienceRequired: 3,
+		},
+		{
+			id: 3,
+			type: TypeOptions.BandBass,
+			experienceRequired: 3,
+		},
+		{
+			id: 4,
 			type: TypeOptions.BandElectricGuitar,
 			description: 'Lead guitarist',
 			experienceRequired: 3,
 		},
 		{
-			id: 3,
-			type: TypeOptions.BandKeys,
+			id: 5,
+			type: TypeOptions.BandAcousticGuitar,
 			experienceRequired: 3,
 		},
 		{
-			id: 4,
-			type: TypeOptions.TechAudio,
+			id: 6,
+			type: TypeOptions.BandDrums,
+			experienceRequired: 3,
+		},
+		{
+			id: 7,
+			type: TypeOptions.BandAux,
+			experienceRequired: 3,
+		},
+		{
+			id: 8,
+			type: TypeOptions.TechGeneral,
+			experienceRequired: 2,
+		},
+		{
+			id: 9,
+			type: TypeOptions.TechCameras,
 			description: 'Audio engineer',
 			experienceRequired: 2,
 		},
 		{
-			id: 5,
+			id: 10,
 			type: TypeOptions.TechLighting,
 			description: 'Lighting engineer',
 			experienceRequired: 3,
 		},
 		{
-			id: 6,
+			id: 11,
+			type: TypeOptions.TechAudio,
+			description: 'Audio engineer',
+			experienceRequired: 2,
+		},
+		{
+			id: 12,
 			type: TypeOptions.TechSlides,
 			description: 'Controls slides throughout service for worship and sermon',
 			experienceRequired: 2,
 		},
 		{
-			id: 7,
-			type: TypeOptions.PastoralCare,
-			description:
-				'Helps pastors care for the congregation during/around service times',
-			experienceRequired: 3,
+			id: 13,
+			type: TypeOptions.TechVideoDirector,
+			description: 'Controls slides throughout service for worship and sermon',
+			experienceRequired: 2,
 		},
 		{
-			id: 8,
+			id: 14,
 			type: TypeOptions.Prayer,
 			description:
 				'Available for the congregation if they need prayer during/around service times',
 			experienceRequired: 2,
+		},
+		{
+			id: 15,
+			type: TypeOptions.PastoralCare,
+			description:
+				'Helps pastors care for the congregation during/around service times',
+			experienceRequired: 3,
 		},
 	],
 	requirements: [
@@ -1397,8 +1480,8 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5586',
 			profilePhoto: '/img/profile-pics/woman-88.jpg',
 			preferredNumWeeksServing: 4,
-			teams: [],
-			experiences: [],
+			teams: [3],
+			experiences: [76],
 			events: [],
 			messages: [],
 			blackoutDates: [],

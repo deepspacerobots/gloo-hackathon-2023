@@ -35,11 +35,15 @@ import { useDBContext } from '@/contexts/db.context';
 import { Database as DatabaseType } from '@/db/db';
 import { MinistryEvent, Role, Team, User } from '@/db/types';
 import Box from '@mui/material/Box';
+import { generateTeamSchedule } from '@/api/gpt-service';
 import { Close } from '@mui/icons-material';
 
 export default function EventEditor() {
 	const db = useDBContext();
 	const events = db.getFutureEvents();
+	const teams = db.getAllTeams();
+	// starting to test schedule generation, just team 1 users
+	generateTeamSchedule(teams[0]);
 	const [allVolunteers, setAllVolunteers] = useState(db.getUsers());
 
 	return (
@@ -182,10 +186,10 @@ function EventCard({
 }
 
 function TeamCard({
-										teamName,
-										roles,
-										db,
-									}: {
+	teamName,
+	roles,
+	db,
+}: {
 	teamName: string;
 	roles: number[];
 	db: DatabaseType;
@@ -304,6 +308,12 @@ function VolunteerCard({ volunteers }: { volunteers: User[] }) {
 	const handleDragEnd = () => {
 	};
 	const [filter, setFilter] = useState<any>('All Teams');
+<<<<<<< HEAD
+
+	const aiAssign = () => {
+		console.log('generate schedules using AI');
+	};
+=======
 	const [filteredVolunteers, setFilteredVolunteers] = useState(volunteers);
 	const [volunteerFilterInputValue, setVolunteerFilterInputValue] = useState('');
 	useEffect(() => {
@@ -311,6 +321,7 @@ function VolunteerCard({ volunteers }: { volunteers: User[] }) {
 			return volunteer.firstName.toLowerCase().includes(volunteerFilterInputValue) || volunteer.lastName.toLowerCase().includes(volunteerFilterInputValue.toLowerCase());
 		}));
 	}, [volunteerFilterInputValue]);
+>>>>>>> 2461c9828df52d2fc3c6739f2b7cc958a07d9989
 	return (
 		<Grid item className={'volunteerCard'}>
 			<Card variant='outlined'>
@@ -325,7 +336,7 @@ function VolunteerCard({ volunteers }: { volunteers: User[] }) {
 							<CardContent>
 								<Grid container spacing={1}>
 									<Grid item>
-										<Button variant='contained' color='success'>
+										<Button variant='contained' color='success' onClick={aiAssign}>
 											AI Assign
 										</Button>
 									</Grid>

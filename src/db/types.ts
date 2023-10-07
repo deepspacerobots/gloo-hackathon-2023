@@ -155,6 +155,8 @@ export type Team = {
 	title: string;
 	description?: string;
 	roles: number[] | Role[];
+	roles_required: number[] | Role[];
+	users: number[] | User[];
 	requirements: number[] | Requirement[];
 	teamLead?: number | User;
 };
