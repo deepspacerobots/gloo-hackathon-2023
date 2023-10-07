@@ -4,6 +4,7 @@ import {
 	Accordion,
 	AccordionDetails,
 	AccordionSummary,
+	Avatar,
 	Button,
 	Card,
 	CardContent,
@@ -31,7 +32,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useEffect, useState } from 'react';
 import { useDBContext } from '@/contexts/db.context';
-import { Database as DatabaseType } from '@/db/db';
+import { Database as DatabaseType, preexistingData } from '@/db/db';
 import { EventTeam, MinistryEvent, Role, Team, User } from '@/db/types';
 import Box from '@mui/material/Box';
 import { generateTeamSchedule } from '@/api/gpt-service';
@@ -43,8 +44,6 @@ export default function EventEditor() {
 	// const [events, setEvents] = useState(db.getFutureEvents());
 	const events = db.getFutureEvents();
 	const teams = db.getAllTeams();
-	// starting to test schedule generation, just team 1 users
-	generateTeamSchedule(teams[0], events);
 	const [allVolunteers, setAllVolunteers] = useState(db.getUsers());
 	const [userDragging, setUserDragging] = useState<null | User>(null);
 	const [unassignedRoles, setUnassignedRoles] = useState(0);
@@ -467,6 +466,19 @@ function VolunteerCard({
 		setFilteredVolunteers(filteredVolunteersByName);
 	}, [filter, volunteerFilterInputValue]);
 
+	const db = useDBContext();
+	const [events, setEvents] = useState(db.getFutureEvents());
+	const teams = db.getAllTeams();
+
+	const aiAssignAll = async () => {
+		let schedules = [];
+		for (const team of teams) {
+			const teamSchedule = await generateTeamSchedule(team, events);
+			schedules.push(teamSchedule);
+		}
+		console.log({ schedules });
+	};
+
 	return (
 		<Grid item className={'volunteerCard'}>
 			<Card variant='outlined'>
@@ -487,6 +499,7 @@ function VolunteerCard({
 											variant='contained'
 											color='success'
 											onClick={() => {
+												aiAssignAll();
 											}}
 										>
 											Assign All
@@ -576,24 +589,34 @@ function VolunteerCard({
 
 								<Grid container rowSpacing={1} spacing={1}>
 									{filteredVolunteers.map((user, i) => {
-										return (
-											<Tooltip
-												title={`${user.firstName} ${user.lastName}`}
-												key={`avatar ${i}`}
-											>
-												<Grid
-													draggable
-													onDragStart={(e) => {
-														setUserDragging(user);
-													}}
-													onDragEnd={(e) => {
-													}}
-													item
+										if (i < 29) {
+											return (
+												<Tooltip
+													title={`${user.firstName} ${user.lastName}`}
+													key={`avatar ${i}`}
 												>
-													<UserDialog user={user} />
+													<Grid
+														draggable
+														onDragStart={(e) => {
+															setUserDragging(user);
+														}}
+														onDragEnd={(e) => {}}
+														item
+													>
+														<UserDialog user={user} />
+													</Grid>
+												</Tooltip>
+											);
+										} else if (i === 29) {
+											return (
+												<Grid draggable={false} item>
+													<Avatar
+														alt="More users avatar"
+														src="/img/profile-pics/ellipsis.png"
+													/>
 												</Grid>
-											</Tooltip>
-										);
+											);
+										}
 									})}
 								</Grid>
 							</CardContent>
