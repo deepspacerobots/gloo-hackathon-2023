@@ -55,12 +55,12 @@ export class Database {
 
 	getOrganization(organizationId: number): Organization | undefined {
 		const organization = this.organizations.find(
-			(organization: Organization) => organization.id === organizationId
+			(organization: Organization) => organization.id === organizationId,
 		);
 
 		if (typeof organization?.seniorPastor == 'number') {
 			organization.seniorPastor = this.users.find(
-				(user: User) => organization.seniorPastor === user.id
+				(user: User) => organization.seniorPastor === user.id,
 			);
 		}
 
@@ -75,25 +75,25 @@ export class Database {
 
 	getEvent(eventId: number): MinistryEvent | undefined {
 		const event = this.events.find(
-			(event: MinistryEvent) => event.id === eventId
+			(event: MinistryEvent) => event.id === eventId,
 		);
 
 		if (event) {
 			if (event.ministries?.length && typeof event.ministries[0] === 'number') {
 				event.ministries = this.ministries.filter((ministry: Ministry) =>
-					(event.ministries as number[]).includes(ministry.id)
+					(event.ministries as number[]).includes(ministry.id),
 				);
 			}
 
 			if (event.teams?.length && typeof event.teams[0] === 'number') {
 				event.teams = this.teams.filter((team: Team) =>
-					(event.teams as number[]).includes(team.id)
+					(event.teams as number[]).includes(team.id),
 				);
 			}
 
 			if (event.eventTeams?.length && typeof event.eventTeams[0] === 'number') {
 				event.eventTeams = this.eventTeams.filter((eventTeam: EventTeam) =>
-					(event.eventTeams as number[]).includes(eventTeam.id)
+					(event.eventTeams as number[]).includes(eventTeam.id),
 				);
 			}
 		}
@@ -127,9 +127,14 @@ export class Database {
 		return payload;
 	}
 
+	setScheduledUsers(teamId: number, eventId: number, users: number[] | null[]) {
+		let eventToUpdate = this.events.find(e => e.id === eventId).eventTeams.find(e => e.team === teamId)?.scheduled_users;
+		eventToUpdate = users;
+	}
+
 	getEventTeam(eventTeamId: number): EventTeam | undefined {
 		const eventTeam = this.eventTeams.find(
-			(eventTeam) => eventTeam.id === eventTeamId
+			(eventTeam) => eventTeam.id === eventTeamId,
 		);
 
 		return eventTeam;
@@ -137,12 +142,12 @@ export class Database {
 
 	getMinistry(ministryId: number): Ministry | undefined {
 		const ministry = this.ministries.find(
-			(ministry: Ministry) => ministry.id === ministryId
+			(ministry: Ministry) => ministry.id === ministryId,
 		);
 
 		if (ministry?.teams?.length && typeof ministry.teams[0] === 'number') {
 			ministry.teams = this.teams.filter((team: Team) =>
-				(ministry.teams as number[]).includes(team.id)
+				(ministry.teams as number[]).includes(team.id),
 			);
 		}
 
@@ -161,19 +166,19 @@ export class Database {
 		if (team) {
 			if (team.roles?.length && typeof team.roles[0] === 'number') {
 				team.roles = this.roles.filter((role: Role) =>
-					(team.roles as number[]).includes(role.id)
+					(team.roles as number[]).includes(role.id),
 				);
 			}
 
 			if (typeof team?.teamLead === 'number') {
 				team.teamLead = this.users.find(
-					(user: User) => team.teamLead === user.id
+					(user: User) => team.teamLead === user.id,
 				);
 			}
 
 			if (team.users.length) {
 				team.users = this.users.filter((user: User) =>
-					(team.users as number[]).includes(user.id)
+					(team.users as number[]).includes(user.id),
 				);
 			}
 		}
@@ -209,19 +214,19 @@ export class Database {
 
 	getRequirement(requirementId: number): Requirement | undefined {
 		const requirement = this.requirements.find(
-			(requirement: Requirement) => requirement.id === requirementId
+			(requirement: Requirement) => requirement.id === requirementId,
 		);
 
 		if (requirement) {
 			if (typeof requirement?.event === 'number') {
 				requirement.event = this.events.find(
-					(event: MinistryEvent) => requirement.event === event.id
+					(event: MinistryEvent) => requirement.event === event.id,
 				);
 			}
 
 			if (typeof requirement?.ministry === 'number') {
 				requirement.ministry = this.ministries.find(
-					(ministry: Ministry) => requirement.ministry === ministry.id
+					(ministry: Ministry) => requirement.ministry === ministry.id,
 				);
 			}
 		}
@@ -241,19 +246,19 @@ export class Database {
 		if (user) {
 			if (typeof user?.relatedVolunteer === 'number') {
 				user.relatedVolunteer = this.users.find(
-					(userIteration: User) => user.relatedVolunteer === userIteration.id
+					(userIteration: User) => user.relatedVolunteer === userIteration.id,
 				);
 			}
 
 			if (user.teams?.length && typeof user.teams[0] === 'number') {
 				user.teams = this.teams.filter((team: Team) =>
-					(user.teams as number[]).includes(team.id)
+					(user.teams as number[]).includes(team.id),
 				);
 			}
 
 			if (user.events?.length && typeof user.events[0] === 'number') {
 				user.events = this.events.filter((event: MinistryEvent) =>
-					(user.events as number[]).includes(event.id)
+					(user.events as number[]).includes(event.id),
 				);
 			}
 		}
@@ -273,7 +278,7 @@ export class Database {
 
 	getExperience(experienceId: number): Experience | undefined {
 		const experience = this.experiences.find(
-			(experience: Experience) => experience.id === experienceId
+			(experience: Experience) => experience.id === experienceId,
 		);
 
 		return experience;

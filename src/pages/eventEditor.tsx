@@ -33,7 +33,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useEffect, useState } from 'react';
 import { useDBContext } from '@/contexts/db.context';
 import { Database as DatabaseType, preexistingData } from '@/db/db';
-import { MinistryEvent, Role, Team, User } from '@/db/types';
+import { EventTeam, MinistryEvent, Role, Team, User } from '@/db/types';
 import Box from '@mui/material/Box';
 import { generateTeamSchedule } from '@/api/gpt-service';
 import { Close } from '@mui/icons-material';
@@ -41,7 +41,8 @@ import UserDialog from '@/components/UserDialog/UserDialog';
 
 export default function EventEditor() {
 	const db = useDBContext();
-	const [events, setEvents] = useState(db.getFutureEvents());
+	// const [events, setEvents] = useState(db.getFutureEvents());
+	const events = db.getFutureEvents();
 	const teams = db.getAllTeams();
 	const [allVolunteers, setAllVolunteers] = useState(db.getUsers());
 	const [userDragging, setUserDragging] = useState<null | User>(null);
@@ -55,7 +56,7 @@ export default function EventEditor() {
 				const scheduledUsersInitial: number[] = [];
 				// @ts-ignore
 				team.roles.forEach((a, index) => {
-					scheduledUsersInitial.push(index + 1);
+					scheduledUsersInitial.push(null);
 					unassignedRolesCount++;
 				});
 				// @ts-ignore
@@ -66,7 +67,6 @@ export default function EventEditor() {
 					at_capacity: false,
 					scheduled_users: scheduledUsersInitial,
 				});
-				console.log(event.eventTeams);
 				newTeamId++;
 			});
 			setUnassignedRoles(unassignedRolesCount);
@@ -162,7 +162,6 @@ export default function EventEditor() {
 							db={db}
 							userDragging={userDragging}
 							setUserDragging={setUserDragging}
-							setEvents={setEvents}
 							events={events}
 						/>
 					))}
@@ -182,30 +181,29 @@ export default function EventEditor() {
 }
 
 function EventCard({
-	eventId,
-	eventName,
-	eventDate,
-	db,
-	userDragging,
-	setUserDragging,
-	updateEvent,
-	setEvents,
-	events,
-}: {
+										 eventId,
+										 eventName,
+										 eventDate,
+										 userDragging,
+										 setUserDragging,
+										 events,
+									 }: {
 	eventId: number;
 	eventName: string;
 	eventDate: string;
 	db: DatabaseType;
 	userDragging: null | User;
 	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
-	setEvents: React.Dispatch<React.SetStateAction<MinistryEvent[]>>;
 	events: MinistryEvent[];
 }) {
+	const db = useDBContext();
 	const [isExpanded, setIsExpanded] = useState(false);
 
-	const event = db.getEvent(eventId);
+	const fadfasdfgarstgewrrhtawegrtwe = db.getEvent(eventId);
+	const event = events.find(e => e.id === eventId);
 	const formattedEventDate = new Date(eventDate).toDateString();
 	const teams = event?.teams as Team[];
+	const teams2 = event?.eventTeams as EventTeam[];
 
 	return (
 		<Grid item xs={12}>
@@ -250,13 +248,12 @@ function EventCard({
 								key={team.id}
 								teamName={team.title}
 								roles={team.roles as number[]}
-								db={db}
 								userDragging={userDragging}
 								setUserDragging={setUserDragging}
 								eventId={eventId}
 								teamId={team.id}
-								setEvents={setEvents}
 								events={events}
+								event={event as MinistryEvent}
 							/>
 						))}
 					</Grid>
@@ -267,38 +264,43 @@ function EventCard({
 }
 
 function TeamCard({
-	teamName,
-	roles,
-	db,
-	userDragging,
-	setUserDragging,
-	eventId,
-	teamId,
-	setEvents,
-}: {
+										teamName,
+										roles,
+										userDragging,
+										setUserDragging,
+										eventId,
+										teamId,
+										events,
+										event,
+									}: {
 	teamName: string;
 	roles: number[];
-	db: DatabaseType;
 	userDragging: null | User;
 	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
 	eventId: number;
 	teamId: number;
-	setEvents: React.Dispatch<React.SetStateAction<MinistryEvent[]>>;
 	events: MinistryEvent[];
+	event: MinistryEvent
 }) {
+	const db = useDBContext();
 	const fullRoles = roles.map((role: number) => db.getRole(role)) as Role[];
-	const event = db.getEvent(eventId);
+	// const event = db.getEvent(eventId);
 	const [usersInRoles, setUsersInRoles] = useState(
-		Array.from(fullRoles, () => null)
+		Array.from(fullRoles, (role, i) => {
+			return null;
+		}),
 	);
+	useEffect(() => {
+		db.setScheduledUsers(teamId, eventId, [...usersInRoles]);
+	}, [usersInRoles]);
 
 	return (
 		<Grid item xs={12} md={4}>
-			<Card variant="outlined">
+			<Card variant='outlined'>
 				<CardContent>
 					<Typography mb={2}>Team: {teamName}</Typography>
 					<TableContainer component={Paper}>
-						<Table size="small" aria-label="a dense table">
+						<Table size='small'>
 							<TableHead>
 								<TableRow>
 									<TableCell>Position</TableCell>
@@ -310,9 +312,17 @@ function TeamCard({
 								{fullRoles?.map((role: Role, index) => {
 									const userObj = db.getUser(
 										event?.eventTeams.find((data) => data.team === teamId)
-											?.scheduled_users[index]
+											?.scheduled_users[index],
 									);
-									const userName = `${userObj?.firstName} ${userObj?.lastName}`;
+									console.log(event?.eventTeams.find((data) => data.team === teamId)
+										?.scheduled_users);
+									const userName = usersInRoles[index] !== null
+										? `${db.getUser(event?.eventTeams.find((data) => data.team === teamId)
+											?.scheduled_users[index])?.firstName} ${
+											db.getUser(event?.eventTeams.find((data) => data.team === teamId)
+												?.scheduled_users[index])?.lastName
+										}`
+										: '';
 									return (
 										<EventPosition
 											key={role.id}
@@ -320,18 +330,14 @@ function TeamCard({
 											userDragging={userDragging}
 											setUserDragging={setUserDragging}
 											roleIndex={index}
-											usersName={
-												usersInRoles[index] !== null
-													? `${db.getUser(usersInRoles[index])?.firstName} ${
-															db.getUser(usersInRoles[index])?.lastName
-													  }`
-													: ''
-											}
+											usersName={userName}
 											setUserToEvent={() => {
 												const newUsersInRoles = [...usersInRoles];
 												newUsersInRoles[index] = userDragging.id;
 												setUsersInRoles(newUsersInRoles);
-												// setEvents();
+												const newEventObj = JSON.parse(JSON.stringify(events));
+												const allEventTeamsForEvent = newEventObj[newEventObj.findIndex(e => e.id === eventId)].eventTeams;
+												const eventTeamForEvent = allEventTeamsForEvent.findIndex(e => e.id === teamId);
 											}}
 										/>
 									);
@@ -348,7 +354,7 @@ function TeamCard({
 function TeamCardSecondary({ teamName }: { teamName: string }) {
 	return (
 		<Grid item xs={12} md={4}>
-			<Card variant="outlined">
+			<Card variant='outlined'>
 				<CardContent>
 					<Typography mb={2}>Team: {teamName}</Typography>
 				</CardContent>
@@ -358,13 +364,13 @@ function TeamCardSecondary({ teamName }: { teamName: string }) {
 }
 
 function EventPosition({
-	position,
-	userDragging,
-	setUserDragging,
-	roleIndex,
-	setUserToEvent,
-	usersName,
-}: {
+												 position,
+												 userDragging,
+												 setUserDragging,
+												 roleIndex,
+												 setUserToEvent,
+												 usersName,
+											 }: {
 	position: string;
 	userDragging: null | User;
 	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
@@ -398,7 +404,7 @@ function EventPosition({
 				setUserToEvent();
 			}}
 		>
-			<TableCell component="th" scope="row">
+			<TableCell component='th' scope='row'>
 				<Typography>{position}</Typography>
 			</TableCell>
 
@@ -410,10 +416,10 @@ function EventPosition({
 }
 
 function VolunteerCard({
-	volunteers,
-	userDragging,
-	setUserDragging,
-}: {
+												 volunteers,
+												 userDragging,
+												 setUserDragging,
+											 }: {
 	volunteers: User[];
 	userDragging: null | User;
 	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
@@ -455,7 +461,7 @@ function VolunteerCard({
 	useEffect(() => {
 		const filteredVolunteersByTeam = filterVolunteersByTeam();
 		const filteredVolunteersByName = filterVolunteersByName(
-			filteredVolunteersByTeam
+			filteredVolunteersByTeam,
 		);
 		setFilteredVolunteers(filteredVolunteersByName);
 	}, [filter, volunteerFilterInputValue]);
@@ -475,7 +481,7 @@ function VolunteerCard({
 
 	return (
 		<Grid item className={'volunteerCard'}>
-			<Card variant="outlined">
+			<Card variant='outlined'>
 				<CardContent>
 					{/*<CardHeader title={'Assign Volunteers'}></CardHeader>*/}
 					<Stack spacing={1}>
@@ -490,8 +496,8 @@ function VolunteerCard({
 								<Grid container spacing={1}>
 									<Grid item>
 										<Button
-											variant="contained"
-											color="success"
+											variant='contained'
+											color='success'
 											onClick={() => {
 												aiAssignAll();
 											}}
@@ -501,7 +507,7 @@ function VolunteerCard({
 									</Grid>
 
 									<Grid item>
-										<Button color="error">Unassign All</Button>
+										<Button color='error'>Unassign All</Button>
 									</Grid>
 								</Grid>
 							</CardContent>
@@ -518,9 +524,9 @@ function VolunteerCard({
 								<FormControl fullWidth>
 									<InputLabel>Team</InputLabel>
 									<Select
-										size="small"
+										size='small'
 										value={filter}
-										label="Team"
+										label='Team'
 										onChange={(e) => setFilter(e.target.value)}
 									>
 										<MenuItem value={0}>All Teams</MenuItem>
@@ -531,7 +537,7 @@ function VolunteerCard({
 								</FormControl>
 
 								<Button
-									color="error"
+									color='error'
 									onClick={() => setFilter(0)}
 									disabled={filter === 0}
 								>
@@ -552,7 +558,7 @@ function VolunteerCard({
 									<FormControl fullWidth>
 										<InputLabel
 											size={'small'}
-											htmlFor="search-for-volunteer-input"
+											htmlFor='search-for-volunteer-input'
 										>
 											Search For Volunteer
 										</InputLabel>
@@ -563,14 +569,14 @@ function VolunteerCard({
 											size={'small'}
 											label={'Search For Volunteer'}
 											endAdornment={
-												<InputAdornment position="end">
+												<InputAdornment position='end'>
 													<IconButton
 														size={'small'}
 														onClick={() => {
 															setVolunteerFilterInputValue('');
 														}}
 													>
-														<Close fontSize="inherit" />
+														<Close fontSize='inherit' />
 													</IconButton>
 												</InputAdornment>
 											}
