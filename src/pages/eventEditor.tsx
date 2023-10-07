@@ -31,7 +31,7 @@ import { MinistryEvent, Role, Team, User } from '@/db/types';
 
 export default function EventEditor() {
 	const db = useDBContext();
-	const { events } = db;
+	const events = db.getFutureEvents();
 
 	return (
 		<Grid container spacing={2}>
@@ -42,6 +42,7 @@ export default function EventEditor() {
 							key={event.id}
 							eventId={event.id}
 							eventName={event.title}
+							eventDate={event.date}
 							db={db}
 						/>
 					))}
@@ -57,15 +58,18 @@ export default function EventEditor() {
 function EventCard({
 	eventId,
 	eventName,
+	eventDate,
 	db,
 }: {
 	eventId: number;
 	eventName: string;
+	eventDate: string;
 	db: DatabaseType;
 }) {
 	const [isExpanded, setIsExpanded] = useState(false);
 
 	const event = db.getEvent(eventId);
+	const formattedEventDate = new Date(eventDate).toDateString();
 	const teams = event?.teams as Team[];
 
 	return (
@@ -78,7 +82,9 @@ function EventCard({
 			>
 				<AccordionSummary expandIcon={<ExpandMoreIcon />}>
 					<Stack>
-						<Typography>{eventName}</Typography>
+						<Typography>
+							{eventName} - {formattedEventDate}
+						</Typography>
 						<Accordion
 							className={'outerAccordion'}
 							disableGutters
@@ -218,11 +224,11 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 	useEffect(() => {
 		const mArr = Array.from(
 			{ length: 99 },
-			(_, i) => `/public/img/profile-pics/man-${i + 1}.jpg`
+			(_, i) => `/img/profile-pics/man-${i + 1}.jpg`
 		);
 		const wArr = Array.from(
 			{ length: 99 },
-			(_, i) => `/public/img/profile-pics/woman-${i + 1}.jpg`
+			(_, i) => `/img/profile-pics/woman-${i + 1}.jpg`
 		);
 		const avatarCollection = [];
 		const avatarIcons = [];

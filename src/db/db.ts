@@ -21,7 +21,7 @@ type DBSchema = {
 	events: MinistryEvent[];
 	ministries: Ministry[];
 	teams: Team[];
-	event_teams: EventTeam[];
+	eventTeams: EventTeam[];
 	roles: Role[];
 	requirements: Requirement[];
 	users: User[];
@@ -33,7 +33,7 @@ type DBSchema = {
 export class Database {
 	organizations: Organization[];
 	events: MinistryEvent[];
-	event_teams: EventTeam[];
+	eventTeams: EventTeam[];
 	ministries: Ministry[];
 	teams: Team[];
 	roles: Role[];
@@ -46,7 +46,7 @@ export class Database {
 		this.events = preexistingData.events;
 		this.ministries = preexistingData.ministries;
 		this.teams = preexistingData.teams;
-		this.event_teams = preexistingData.event_teams;
+		this.eventTeams = preexistingData.eventTeams;
 		this.roles = preexistingData.roles;
 		this.requirements = preexistingData.requirements;
 		this.users = preexistingData.users;
@@ -91,17 +91,24 @@ export class Database {
 				);
 			}
 
-			if (
-				event.event_teams?.length &&
-				typeof event.event_teams[0] === 'number'
-			) {
-				event.event_teams = this.event_teams.filter((eventTeam: EventTeam) =>
-					(event.event_teams as number[]).includes(eventTeam.id)
+			if (event.eventTeams?.length && typeof event.eventTeams[0] === 'number') {
+				event.eventTeams = this.eventTeams.filter((eventTeam: EventTeam) =>
+					(event.eventTeams as number[]).includes(eventTeam.id)
 				);
 			}
 		}
 
 		return event;
+	}
+
+	getFutureEvents(): MinistryEvent[] {
+		const events = this.events;
+		const now = new Date();
+
+		return events.filter((event: MinistryEvent) => {
+			const eventDate = new Date(event.date);
+			return now < eventDate;
+		});
 	}
 
 	setEvent(payload: MinistryEvent): MinistryEvent {
@@ -271,41 +278,51 @@ export const preexistingData: DBSchema = {
 			id: 1,
 			title: 'Sunday Morning Worship Service',
 			description: 'Join us every Sunday for a vibrant worship experience.',
+			date: '2023-10-01',
+			time: '11:00 AM',
+			ministries: [1, 2],
+			teams: [1, 2, 3],
+			eventTeams: [34, 35, 36],
+		},
+		{
+			id: 2,
+			title: 'Sunday Morning Worship Service',
+			description: 'Join us every Sunday for a vibrant worship experience.',
 			date: '2023-10-15',
 			time: '11:00 AM',
 			ministries: [1, 2],
 			teams: [1, 2, 3],
-			event_teams: [34, 35, 36],
+			eventTeams: [34, 35, 36],
 		},
 		{
-			id: 2,
+			id: 3,
 			title: 'Sunday Morning Worship Service',
 			description: 'Join us every Sunday for a vibrant worship experience.',
 			date: '2023-10-22',
 			time: '11:00 AM',
 			ministries: [1, 2],
 			teams: [1, 2, 3],
-			event_teams: [37, 38, 39],
+			eventTeams: [37, 38, 39],
 		},
 		{
-			id: 3,
+			id: 4,
 			title: 'Sunday Morning Worship Service',
 			description: 'Join us every Sunday for a vibrant worship experience.',
 			date: '2023-10-29',
 			time: '11:00 AM',
 			ministries: [1, 2],
 			teams: [1, 2, 3],
-			event_teams: [40, 41, 42],
+			eventTeams: [40, 41, 42],
 		},
 		{
-			id: 4,
+			id: 5,
 			title: 'Sunday Morning Worship Service',
 			description: 'Join us every Sunday for a vibrant worship experience.',
 			date: '2023-11-05',
 			time: '11:00 AM',
 			ministries: [1, 2],
 			teams: [1, 2, 3],
-			event_teams: [43, 44, 45],
+			eventTeams: [43, 44, 45],
 		},
 	],
 	ministries: [
@@ -352,7 +369,7 @@ export const preexistingData: DBSchema = {
 			teamLead: 3,
 		},
 	],
-	event_teams: [
+	eventTeams: [
 		{
 			id: 34,
 			team: 1,

@@ -127,7 +127,7 @@ export type MinistryEvent = {
 	whatToBring?: string;
 	repeats?: RepeatOptions;
 	ministries: number[] | Ministry[];
-	event_teams: number[] | EventTeam[];
+	eventTeams: number[] | EventTeam[];
 	teams: number[] | Team[];
 };
 
