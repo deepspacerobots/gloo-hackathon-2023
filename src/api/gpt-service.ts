@@ -1,3 +1,5 @@
+import DB from '@/db/db';
+import { LevelOptions, TypeOptions } from '@/db/types';
 import OpenAI from 'openai';
 
 const openai = new OpenAI({
@@ -32,12 +34,12 @@ const users = [
         teams: ["Worship"],
         experiences: [
             {
-                type: "band_piano",
+                type: TypeOptions.BandKeys,
                 level: 2, // 1 = beginner, 2 = intermediate, 3 = advanced
                 preference: 3, // preference is measured 1-3, lowest to highest
             },
             {
-                type: "band_bass",
+                type: TypeOptions.BandBass,
                 level: 1,
                 preference: 2,
             }
@@ -61,12 +63,12 @@ const users = [
         teams: ["Worship"],
         experiences: [
             {
-                "type": "band_guitar",
+                "type": TypeOptions.BandElectricGuitar,
                 "level": 3,
                 "preference": 3
             },
             {
-                "type": "band_drums",
+                "type": TypeOptions.BandDrums,
                 "level": 2,
                 "preference": 2
             }
@@ -90,12 +92,12 @@ const users = [
         teams: ["Worship"],
         experiences: [
             {
-                "type": "vocals",
+                "type": TypeOptions.BandVocals,
                 "level": 3,
                 "preference": 3
             },
             {
-                "type": "band_guitar",
+                "type": TypeOptions.BandAcousticGuitar,
                 "level": 2,
                 "preference": 2
             }
@@ -114,12 +116,12 @@ const users = [
         teams: ["Worship"],
         experiences: [
             {
-                "type": "band_bass",
+                "type": TypeOptions.BandBass,
                 "level": 3,
                 "preference": 3
             },
             {
-                "type": "band_piano",
+                "type": TypeOptions.BandKeys,
                 "level": 2,
                 "preference": 2
             }
@@ -137,12 +139,12 @@ const users = [
         teams: ["Worship"],
         experiences: [
             {
-                "type": "band_drums",
+                "type": TypeOptions.BandDrums,
                 "level": 3,
                 "preference": 3
             },
             {
-                "type": "band_bass",
+                "type": TypeOptions.BandBass,
                 "level": 2,
                 "preference": 2
             }
@@ -161,12 +163,12 @@ const users = [
         teams: ["Worship"],
         experiences: [
             {
-                "type": "band_piano",
+                "type": TypeOptions.BandKeys,
                 "level": 3,
                 "preference": 3
             },
             {
-                "type": "vocals",
+                "type": TypeOptions.BandVocals,
                 "level": 2,
                 "preference": 2
             }
@@ -185,12 +187,12 @@ const users = [
         teams: ["Worship"],
         experiences: [
             {
-                "type": "band_guitar",
+                "type": TypeOptions.BandElectricGuitar,
                 "level": 2,
                 "preference": 3
             },
             {
-                "type": "band_bass",
+                "type": TypeOptions.BandBass,
                 "level": 1,
                 "preference": 2
             }
@@ -209,12 +211,12 @@ const users = [
         teams: ["Worship"],
         experiences: [
             {
-                "type": "band_drums",
+                "type": TypeOptions.BandDrums,
                 "level": 2,
                 "preference": 3
             },
             {
-                "type": "band_piano",
+                "type": TypeOptions.BandKeys,
                 "level": 1,
                 "preference": 2
             }
@@ -232,12 +234,12 @@ const users = [
         teams: ["Worship"],
         experiences: [
             {
-                "type": "vocals",
+                "type": TypeOptions.BandVocals,
                 "level": 3,
                 "preference": 3
             },
             {
-                "type": "band_bass",
+                "type": TypeOptions.BandBass,
                 "level": 2,
                 "preference": 2
             }
@@ -256,12 +258,12 @@ const users = [
         teams: ["Worship"],
         experiences: [
             {
-                "type": "band_piano",
+                "type": TypeOptions.BandKeys,
                 "level": 2,
                 "preference": 3
             },
             {
-                "type": "band_drums",
+                "type": TypeOptions.BandDrums,
                 "level": 1,
                 "preference": 2
             }
@@ -269,36 +271,35 @@ const users = [
     },
 ];
 
+const pastEvents = DB.events;
+
 const buildVolunteerListPrompt = () => {
     let promptString = '';
 
     users.forEach((user, index) => {
         const availability = `${user.preferredNumWeeksServing}x a month`;
         const proficiencies = user.experiences.reduce((acc, xp) => acc + `${parseLevelToString(xp.level)} ${xp.type}, `, '');
-        const preference = `Prefers ${getMostPreferredType(user.experiences).type}`;
+        const preference = `Prefers ${getMostPreferredType(user.experiences)}`;
         promptString += `${index+1}. ${user.firstName} ${user.lastName} (Availability: ${availability} | Proficiencies: ${proficiencies} | Preference: ${preference} | Served ${Math.floor(Math.random() * 5) + 1} times recently)\n`
     })
     return promptString;
 };
 
-const parseLevelToString = (level: number) => {
-    const levelMap: { [level: number]: string } = {
-        1: "Beginner",
-        2: "Intermediate",
-        3: "Advanced",
-        4: "Expert",
+const parseLevelToString = (level: LevelOptions): string => {
+    const levelMap: { [key in LevelOptions]: string } = {
+        [LevelOptions.Beginner]: "Beginner",
+        [LevelOptions.Intermediate]: "Intermediate",
+        [LevelOptions.Advanced]: "Advanced",
+        [LevelOptions.Expert]: "Expert",
     }
     return levelMap[level];
 };
 
-const parseTypeToString = (type: string) => {
-
-};
-
-const getMostPreferredType = (experiences: any[]) => {
-    return experiences.reduce((highest, current) => {
+const getMostPreferredType = (experiences: any[]): TypeOptions => {
+    const preferredExp = experiences.reduce((highest, current) => {
         return current.preference > highest.preference ? current : highest;
     });
+    return preferredExp.type;
 };
 
 

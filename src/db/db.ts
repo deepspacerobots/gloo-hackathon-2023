@@ -13,6 +13,7 @@ import {
 	TypeOptions,
 	LevelOptions,
 	PreferenceOptions,
+	EventTeam,
 } from './types';
 
 type DBSchema = {
@@ -20,6 +21,7 @@ type DBSchema = {
 	events: MinistryEvent[];
 	ministries: Ministry[];
 	teams: Team[];
+	event_teams: EventTeam[];
 	roles: Role[];
 	requirements: Requirement[];
 	users: User[];
@@ -31,6 +33,7 @@ type DBSchema = {
 export class Database {
 	organizations: Organization[];
 	events: MinistryEvent[];
+	event_teams: EventTeam[];
 	ministries: Ministry[];
 	teams: Team[];
 	roles: Role[];
@@ -43,6 +46,7 @@ export class Database {
 		this.events = preexistingData.events;
 		this.ministries = preexistingData.ministries;
 		this.teams = preexistingData.teams;
+		this.event_teams = preexistingData.event_teams;
 		this.roles = preexistingData.roles;
 		this.requirements = preexistingData.requirements;
 		this.users = preexistingData.users;
@@ -85,6 +89,10 @@ export class Database {
 				event.teams = this.teams.filter((team: Team) =>
 					(event.teams as number[]).includes(team.id)
 				);
+			}
+
+			if (event.event_teams?.length && typeof event.event_teams[0] === 'number') {
+				event.event_teams = this.event_teams.filter((eventTeam: EventTeam) => (event.event_teams as number[]).includes(eventTeam.id));
 			}
 		}
 
@@ -258,10 +266,41 @@ export const preexistingData: DBSchema = {
 			id: 1,
 			title: 'Sunday Morning Worship Service',
 			description: 'Join us every Sunday for a vibrant worship experience.',
-			date: '2023-10-31',
+			date: '2023-09-10',
 			time: '11:00 AM',
 			ministries: [1, 2],
 			teams: [1, 2, 3],
+			event_teams: [34, 35, 36],
+		},
+		{
+			id: 2,
+			title: 'Sunday Morning Worship Service',
+			description: 'Join us every Sunday for a vibrant worship experience.',
+			date: '2023-09-17',
+			time: '11:00 AM',
+			ministries: [1, 2],
+			teams: [1, 2, 3],
+			event_teams: [37, 38, 39],
+		},
+		{
+			id: 3,
+			title: 'Sunday Morning Worship Service',
+			description: 'Join us every Sunday for a vibrant worship experience.',
+			date: '2023-09-24',
+			time: '11:00 AM',
+			ministries: [1, 2],
+			teams: [1, 2, 3],
+			event_teams: [40, 41, 42],
+		},
+		{
+			id: 4,
+			title: 'Sunday Morning Worship Service',
+			description: 'Join us every Sunday for a vibrant worship experience.',
+			date: '2023-10-01',
+			time: '11:00 AM',
+			ministries: [1, 2],
+			teams: [1, 2, 3],
+			event_teams: [43, 44, 45],
 		},
 	],
 	ministries: [
@@ -307,6 +346,80 @@ export const preexistingData: DBSchema = {
 			requirements: [],
 			teamLead: 3,
 		},
+	],
+	event_teams: [
+		{
+			id: 34,
+			team: 1,
+			at_capacity: true,
+			scheduled_users: [1, 9, 20, 24, 35, 41, 53, 60],
+		},
+		{
+			id: 35,
+			team: 2,
+			at_capacity: true,
+			scheduled_users: [4, 5, 7, 8, 12, 13, 14],
+		},
+		{
+			id: 36,
+			team: 3,
+			at_capacity: true,
+			scheduled_users: [6, 10, 22, 23],
+		},
+		{
+			id: 37,
+			team: 1,
+			at_capacity: true,
+			scheduled_users: [2, 11, 28, 35, 40, 48, 53, 60],
+		},
+		{
+			id: 38,
+			team: 2,
+			at_capacity: true,
+			scheduled_users: [15, 19, 21, 25, 27, 31, 32],
+		},
+		{
+			id: 39,
+			team: 3,
+			at_capacity: true,
+			scheduled_users: [26, 30, 37, 38],
+		},
+		{
+			id: 40,
+			team: 1,
+			at_capacity: true,
+			scheduled_users: [16, 17, 18, 36, 40, 41, 48, 54],
+		},
+		{
+			id: 41,
+			team: 2,
+			at_capacity: true,
+			scheduled_users: [33, 34, 43, 44, 46, 49, 50],
+		},
+		{
+			id: 42,
+			team: 3,
+			at_capacity: true,
+			scheduled_users: [39, 45, 6, 10],
+		},
+		{
+			id: 43,
+			team: 1,
+			at_capacity: true,
+			scheduled_users: [1, 2, 9, 11, 20, 24, 29, 35],
+		},
+		{
+			id: 44,
+			team: 2,
+			at_capacity: true,
+			scheduled_users: [52, 55, 56, 57, 59, 4, 5],
+		},
+		{
+			id: 45,
+			team: 3,
+			at_capacity: true,
+			scheduled_users: [22, 23, 26, 30],
+		}
 	],
 	roles: [
 		{
@@ -423,8 +536,8 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5557',
 			profilePhoto: '/img/profile-pics/man-2.jpg',
 			preferredNumWeeksServing: 1,
-			teams: [],
-			experiences: [],
+			teams: [1],
+			experiences: [1, 2],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -469,8 +582,8 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5559',
 			profilePhoto: '/img/profile-pics/woman-12.jpg',
 			preferredNumWeeksServing: 3,
-			teams: [],
-			experiences: [],
+			teams: [3],
+			experiences: [25, 26],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -531,8 +644,8 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5562',
 			profilePhoto: '/img/profile-pics/woman-17.jpg',
 			preferredNumWeeksServing: 2,
-			teams: [],
-			experiences: [],
+			teams: [3],
+			experiences: [25, 26],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -622,8 +735,8 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5565',
 			profilePhoto: '/img/profile-pics/woman-22.jpg',
 			preferredNumWeeksServing: 3,
-			teams: [],
-			experiences: [],
+			teams: [1],
+			experiences: [70],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -637,8 +750,8 @@ export const preexistingData: DBSchema = {
 			password: 'password567',
 			profilePhoto: '/img/profile-pics/man-18.jpg',
 			preferredNumWeeksServing: 2,
-			teams: [],
-			experiences: [],
+			teams: [1],
+			experiences: [1, 60],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -653,8 +766,8 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5566',
 			profilePhoto: '/img/profile-pics/woman-8.jpg',
 			preferredNumWeeksServing: 4,
-			teams: [],
-			experiences: [],
+			teams: [1],
+			experiences: [1, 46],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -714,8 +827,8 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5568',
 			profilePhoto: '/img/profile-pics/woman-26.jpg',
 			preferredNumWeeksServing: 2,
-			teams: [],
-			experiences: [],
+			teams: [3],
+			experiences: [25, 26],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -774,8 +887,8 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5570',
 			profilePhoto: '/img/profile-pics/woman-27.jpg',
 			preferredNumWeeksServing: 4,
-			teams: [],
-			experiences: [],
+			teams: [3],
+			experiences: [25, 26],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -834,8 +947,8 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5572',
 			profilePhoto: '/img/profile-pics/woman-28.jpg',
 			preferredNumWeeksServing: 2,
-			teams: [],
-			experiences: [],
+			teams: [3],
+			experiences: [25, 26],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -939,8 +1052,8 @@ export const preexistingData: DBSchema = {
 			email: 'samuel@example.com',
 			password: 'password567',
 			preferredNumWeeksServing: 2,
-			teams: [],
-			experiences: [],
+			teams: [3],
+			experiences: [25, 26],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -954,8 +1067,8 @@ export const preexistingData: DBSchema = {
 			password: 'password890',
 			phone: '555-555-5576',
 			preferredNumWeeksServing: 4,
-			teams: [],
-			experiences: [],
+			teams: [3],
+			experiences: [25, 26],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -969,8 +1082,8 @@ export const preexistingData: DBSchema = {
 			password: 'password123',
 			profilePhoto: '/img/profile-pics/man-27.jpg',
 			preferredNumWeeksServing: 1,
-			teams: [],
-			experiences: [],
+			teams: [3],
+			experiences: [25, 26],
 			events: [],
 			messages: [],
 			blackoutDates: [],
