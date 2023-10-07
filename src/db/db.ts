@@ -152,6 +152,12 @@ export class Database {
 					(user: User) => team.teamLead === user.id
 				);
 			}
+
+			if (team.users.length) {
+				team.users = this.users.filter(
+					(user: User) => (team.users as number[]).includes(user.id)
+				);
+			}
 		}
 
 		return team;
@@ -347,6 +353,7 @@ export const preexistingData: DBSchema = {
 			id: 1,
 			title: 'Worship Team',
 			roles: [1, 2, 3],
+			users: [1, 2, 9, 11, 16, 17, 18, 20, 24, 28, 29, 35, 36, 40, 41, 42, 48, 53, 54, 60],
 			requirements: [],
 			teamLead: 1,
 		},
@@ -356,6 +363,7 @@ export const preexistingData: DBSchema = {
 			description:
 				'FOH handles audio and lighting engineering, as well as managing slides',
 			roles: [4, 5, 6],
+			users: [4, 5, 7, 8, 12, 13, 14, 15, 19, 21, 25, 27, 31, 32, 33, 34, 43, 44, 46, 49, 50, 52, 55, 56, 57, 59],
 			requirements: [1],
 			teamLead: 2,
 		},
@@ -365,6 +373,7 @@ export const preexistingData: DBSchema = {
 			description:
 				'The pastoral care team is responsible for helping the lead/associate pastors care for the congregation',
 			roles: [7, 8],
+			users: [6, 10, 22, 23, 26, 30, 37, 38, 39, 45],
 			requirements: [],
 			teamLead: 3,
 		},

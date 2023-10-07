@@ -15,7 +15,7 @@ export const submitPrompt = async (prompt: string) => {
     console.log(chatCompletion.choices);
 }
 
-const users = [
+const worshipUsers = [
     {
         id: 1,
         firstName: 'John',
@@ -276,7 +276,7 @@ const pastEvents = DB.events;
 const buildVolunteerListPrompt = () => {
     let promptString = '';
 
-    users.forEach((user, index) => {
+    worshipUsers.forEach((user, index) => {
         const availability = `${user.preferredNumWeeksServing}x a month`;
         const proficiencies = user.experiences.reduce((acc, xp) => acc + `${parseLevelToString(xp.level)} ${xp.type}, `, '');
         const preference = `Prefers ${getMostPreferredType(user.experiences)}`;
