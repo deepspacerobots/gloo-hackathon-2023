@@ -13,8 +13,11 @@ import {
 	FormControl,
 	Grid,
 	Hidden,
+	IconButton,
+	InputAdornment,
 	InputLabel,
 	MenuItem,
+	OutlinedInput,
 	Paper,
 	Select,
 	Stack,
@@ -24,6 +27,7 @@ import {
 	TableContainer,
 	TableHead,
 	TableRow,
+	Tooltip,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useEffect, useState } from 'react';
@@ -31,10 +35,12 @@ import { useDBContext } from '@/contexts/db.context';
 import { Database as DatabaseType } from '@/db/db';
 import { MinistryEvent, Role, Team, User } from '@/db/types';
 import Box from '@mui/material/Box';
+import { Close } from '@mui/icons-material';
 
 export default function EventEditor() {
 	const db = useDBContext();
 	const events = db.getFutureEvents();
+	const [allVolunteers, setAllVolunteers] = useState(db.getUsers());
 
 	return (
 		<Grid container spacing={2}>
@@ -98,7 +104,7 @@ export default function EventEditor() {
 			</Grid>
 			<Hidden mdDown>
 				<Grid item xs={12} md={4} order={{ xs: 1, md: 2 }}>
-					<VolunteerCard volunteers={[]} />
+					<VolunteerCard volunteers={allVolunteers} />
 				</Grid>
 			</Hidden>
 		</Grid>
@@ -131,7 +137,7 @@ function EventCard({
 				}}
 			>
 				<AccordionSummary expandIcon={<ExpandMoreIcon />}>
-					<Stack>
+					<Stack style={{ width: '100%' }}>
 						<Typography>
 							{eventName} - {formattedEventDate}
 						</Typography>
@@ -269,7 +275,7 @@ function EventPosition({
 	);
 }
 
-function VolunteerCard({ volunteers }: { volunteers: string[] }) {
+function VolunteerCard({ volunteers }: { volunteers: User[] }) {
 	const [avatars, setAvatars] = useState<any[]>([]);
 	useEffect(() => {
 		const mArr = Array.from(
@@ -289,7 +295,7 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 		};
 		const shuffledArr = shuffle([...mArr, ...wArr]);
 		for (let i = 0; i < 50; i++) {
-			avatarIcons.push(<Avatar key={shuffledArr[i]} src={shuffledArr[i]} />);
+			avatarIcons.push();
 		}
 		setAvatars(avatarIcons);
 	}, []);
@@ -298,6 +304,13 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 	const handleDragEnd = () => {
 	};
 	const [filter, setFilter] = useState<any>('All Teams');
+	const [filteredVolunteers, setFilteredVolunteers] = useState(volunteers);
+	const [volunteerFilterInputValue, setVolunteerFilterInputValue] = useState('');
+	useEffect(() => {
+		setFilteredVolunteers(volunteers.filter(volunteer => {
+			return volunteer.firstName.toLowerCase().includes(volunteerFilterInputValue) || volunteer.lastName.toLowerCase().includes(volunteerFilterInputValue.toLowerCase());
+		}));
+	}, [volunteerFilterInputValue]);
 	return (
 		<Grid item className={'volunteerCard'}>
 			<Card variant='outlined'>
@@ -349,6 +362,7 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 									onClick={() => {
 										setFilter('All Teams');
 									}}
+									disabled={filter === 'All Teams'}
 								>
 									Reset
 								</Button>
@@ -360,8 +374,24 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 								subheader={'Click and drag volunteers to manually assign them'}
 							/>
 							<CardContent>
+								<Box mb={2}>
+									<FormControl fullWidth>
+										<InputLabel size={'small'} htmlFor='search-for-volunteer-input'>Search For Volunteer</InputLabel>
+										<OutlinedInput id={'search-for-volunteer-input'} value={volunteerFilterInputValue} size={'small'}
+																	 label={'Search For Volunteer'}
+																	 endAdornment={<InputAdornment
+																		 position='end'><IconButton size={'small'} onClick={() => {
+																		 setVolunteerFilterInputValue('');
+																	 }}><Close
+																		 fontSize='inherit' /></IconButton></InputAdornment>}
+																	 onChange={(e) => {
+																		 setVolunteerFilterInputValue(e.target.value);
+																	 }} />
+									</FormControl>
+								</Box>
+
 								<Grid container rowSpacing={1} spacing={1}>
-									{avatars.map((avatar, i) => {
+									{filteredVolunteers.map((user, i) => {
 										return (
 											<Grid
 												draggable
@@ -370,7 +400,9 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 												item
 												key={`avatar ${i}`}
 											>
-												{avatar}
+												<Tooltip title={`${user.firstName} ${user.lastName}`}>
+													<Avatar src={user.profilePhoto} />
+												</Tooltip>
 											</Grid>
 										);
 									})}
