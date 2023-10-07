@@ -256,12 +256,6 @@ export class Database {
 					(user.events as number[]).includes(event.id)
 				);
 			}
-
-			if (user.experiences?.length && typeof user.experiences[0] === 'number') {
-				user.experiences = this.experiences.filter((experience: Experience) =>
-					(user.experiences as number[]).includes(experience.id)
-				);
-			}
 		}
 
 		return user;
