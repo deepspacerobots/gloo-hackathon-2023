@@ -282,7 +282,7 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 		);
 		const avatarCollection = [];
 		const avatarIcons = [];
-		const shuffle = (array) => {
+		const shuffle = (array: any[]) => {
 			return array
 				.map((a) => ({ sort: Math.random(), value: a }))
 				.sort((a, b) => a.sort - b.sort)
@@ -294,9 +294,9 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 		}
 		setAvatars(avatarIcons);
 	}, []);
-	const handleDragStart = (e) => {
+	const handleDragStart = () => {
 	};
-	const handleDragEnd = (e) => {
+	const handleDragEnd = () => {
 	};
 	const [filter, setFilter] = useState<any>('All Teams');
 	return (
