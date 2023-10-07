@@ -265,6 +265,7 @@ export const preexistingData: DBSchema = {
 			id: 1,
 			title: 'Worship Team',
 			roles: [1, 2, 3],
+			requirements: [],
 			teamLead: 1,
 		},
 		{
@@ -282,6 +283,7 @@ export const preexistingData: DBSchema = {
 			description:
 				'The pastoral care team is responsible for helping the lead/associate pastors care for the congregation',
 			roles: [7, 8],
+			requirements: [],
 			teamLead: 3,
 		},
 	],
