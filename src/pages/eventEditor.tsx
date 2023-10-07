@@ -48,7 +48,7 @@ export default function EventEditor() {
 									<Typography variant={'h6'}>Overview</Typography>
 									<Divider />
 									<Grid container>
-										<Grid item xs={6} md={3}>
+										<Grid item sm={6} md={3}>
 											<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
 												<Typography variant={'h6'}>
 													Events
@@ -56,7 +56,7 @@ export default function EventEditor() {
 												<Typography variant={'h2'} color={'secondary'}>1</Typography>
 											</div>
 										</Grid>
-										<Grid item xs={6} md={3}>
+										<Grid item sm={6} md={3}>
 											<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
 												<Typography variant={'h6'}>
 													Unassigned
@@ -64,7 +64,7 @@ export default function EventEditor() {
 												<Typography variant={'h2'} color={'secondary'}>32</Typography>
 											</div>
 										</Grid>
-										<Grid item xs={6} md={3}>
+										<Grid item sm={6} md={3}>
 											<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
 												<Typography variant={'h6'}>
 													Volunteers
@@ -72,7 +72,7 @@ export default function EventEditor() {
 												<Typography variant={'h2'} color={'secondary'}>100</Typography>
 											</div>
 										</Grid>
-										<Grid item xs={6} md={3}>
+										<Grid item sm={6} md={3}>
 											<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
 												<Typography variant={'h6'}>
 													Teams
