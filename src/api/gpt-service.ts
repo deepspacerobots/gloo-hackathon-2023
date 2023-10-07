@@ -2,18 +2,19 @@ import DB from '@/db/db';
 import { Experience, LevelOptions, Team, TypeOptions, User } from '@/db/types';
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey: 'my api key', // defaults to process.env["OPENAI_API_KEY"]
-});
+// const openai = new OpenAI({
+//   apiKey: 'my api key', // defaults to process.env["OPENAI_API_KEY"]
+//   dangerouslyAllowBrowser: true
+// });
 
-export const submitPrompt = async (prompt: string) => {
-    const chatCompletion = await openai.chat.completions.create({
-        messages: [{ role: 'user', content: prompt }],
-        model: 'gpt-3.5-turbo',
-    });
+// export const submitPrompt = async (prompt: string) => {
+//     const chatCompletion = await openai.chat.completions.create({
+//         messages: [{ role: 'user', content: prompt }],
+//         model: 'gpt-3.5-turbo',
+//     });
 
-    console.log(chatCompletion.choices);
-}
+//     console.log(chatCompletion.choices);
+// }
 
 const worshipUsers = [
     {
@@ -274,16 +275,14 @@ const worshipUsers = [
 const pastEvents = DB.events;
 
 const buildVolunteerListPrompt = (users: (User | undefined)[]) => {
-    const completeUsers = users?.map((user) => DB.getUser(user?.id as number));
-    console.log(completeUsers)
     let promptString = '';
 
-    // completeUsers.forEach((user, index) => {
-    //     const availability = `${user?.preferredNumWeeksServing}x a month`;
-    //     const proficiencies = user?.experiences.reduce((acc: string, xp: Experience) => acc + `${parseLevelToString(xp.level)} ${xp.type}, `, '');
-    //     const preference = `Prefers ${getMostPreferredType(user?.experiences)}`;
-    //     promptString += `${index+1}. ${user?.firstName} ${user?.lastName} (Availability: ${availability} | Proficiencies: ${proficiencies} | Preference: ${preference} | Served ${Math.floor(Math.random() * 5) + 1} times recently)\n`
-    // })
+    users.forEach((user, index) => {
+        const availability = `${user?.preferredNumWeeksServing}x a month`;
+        const proficiencies = user?.experiences.reduce((acc: string, xp: Experience) => acc + `${parseLevelToString(xp.level)} ${xp.type}, `, '');
+        const preference = `Prefers ${getMostPreferredType(user?.experiences)}`;
+        promptString += `${index+1}. ${user?.firstName} ${user?.lastName} (Availability: ${availability} | Proficiencies: ${proficiencies} | Preference: ${preference} | Served ${Math.floor(Math.random() * 5) + 1} times recently)\n`
+    })
     return promptString;
 };
 
@@ -311,19 +310,20 @@ export const generateTeamSchedule = (team: Team) => {
     let prompt = `
     Given the following volunteer and scheduling information:
 
-    We have 20 volunteers with different levels of experience, different availability, different proficiencies, and different preferences, detailed below:
+    We have ${teamMemberIds.length} volunteers with different levels of experience, different availability, different proficiencies, and different preferences, detailed below:
 
     ${buildVolunteerListPrompt(fullUsers)}
     `;
 
-    return submitPrompt(prompt);
+    console.log(prompt);
+    // return submitPrompt(prompt);
 };
 
 /**
  * TODOS
- * - Prepare list of volunteers in prompt format
- * - Prepare list of events in prompt format
- * - Prepare team requirements
+ * - Prepare list of volunteers in prompt format - DONE
+ * - Prepare list of previous events in prompt format
+ * - Prepare team and event requirements
  */
 
 /**

@@ -37,7 +37,7 @@ export default function EventEditor() {
 	const db = useDBContext();
 	const events = db.getFutureEvents();
 	const teams = db.getAllTeams();
-	// starting to test schedule generation
+	// starting to test schedule generation, just team 1 users
 	generateTeamSchedule(teams[0]);
 
 	return (
