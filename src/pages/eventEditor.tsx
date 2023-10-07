@@ -37,6 +37,7 @@ import { MinistryEvent, Role, Team, User } from '@/db/types';
 import Box from '@mui/material/Box';
 import { generateTeamSchedule } from '@/api/gpt-service';
 import { Close } from '@mui/icons-material';
+import UserDialog from '@/components/UserDialog/UserDialog';
 
 export default function EventEditor() {
 	const db = useDBContext();
@@ -49,8 +50,8 @@ export default function EventEditor() {
 	useEffect(() => {
 		// add event teams to event
 		let newTeamId = 46;
-		events.forEach(event => {
-			event.teams.forEach(team => {
+		events.forEach((event) => {
+			event.teams.forEach((team) => {
 				const scheduledUsersInitial = [];
 				team.roles.forEach((a, index) => {
 					scheduledUsersInitial.push(index + 1);
@@ -81,35 +82,59 @@ export default function EventEditor() {
 									<Divider />
 									<Grid container>
 										<Grid item sm={6} md={3}>
-											<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-												<Typography variant={'h6'}>
-													Events
+											<div
+												style={{
+													display: 'flex',
+													alignItems: 'center',
+													flexDirection: 'column',
+												}}
+											>
+												<Typography variant={'h6'}>Events</Typography>
+												<Typography variant={'h2'} color={'secondary'}>
+													{events.length}
 												</Typography>
-												<Typography variant={'h2'} color={'secondary'}>{events.length}</Typography>
 											</div>
 										</Grid>
 										<Grid item sm={6} md={3}>
-											<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-												<Typography variant={'h6'}>
-													Unassigned
+											<div
+												style={{
+													display: 'flex',
+													alignItems: 'center',
+													flexDirection: 'column',
+												}}
+											>
+												<Typography variant={'h6'}>Unassigned</Typography>
+												<Typography variant={'h2'} color={'secondary'}>
+													32
 												</Typography>
-												<Typography variant={'h2'} color={'secondary'}>32</Typography>
 											</div>
 										</Grid>
 										<Grid item sm={6} md={3}>
-											<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-												<Typography variant={'h6'}>
-													Volunteers
+											<div
+												style={{
+													display: 'flex',
+													alignItems: 'center',
+													flexDirection: 'column',
+												}}
+											>
+												<Typography variant={'h6'}>Volunteers</Typography>
+												<Typography variant={'h2'} color={'secondary'}>
+													{db.getUsers().length}
 												</Typography>
-												<Typography variant={'h2'} color={'secondary'}>{db.getUsers().length}</Typography>
 											</div>
 										</Grid>
 										<Grid item sm={6} md={3}>
-											<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-												<Typography variant={'h6'}>
-													Teams
+											<div
+												style={{
+													display: 'flex',
+													alignItems: 'center',
+													flexDirection: 'column',
+												}}
+											>
+												<Typography variant={'h6'}>Teams</Typography>
+												<Typography variant={'h2'} color={'secondary'}>
+													3
 												</Typography>
-												<Typography variant={'h2'} color={'secondary'}>3</Typography>
 											</div>
 										</Grid>
 									</Grid>
@@ -134,7 +159,11 @@ export default function EventEditor() {
 			</Grid>
 			<Hidden mdDown>
 				<Grid item xs={12} md={4} order={{ xs: 1, md: 2 }}>
-					<VolunteerCard volunteers={allVolunteers} userDragging={userDragging} setUserDragging={setUserDragging} />
+					<VolunteerCard
+						volunteers={allVolunteers}
+						userDragging={userDragging}
+						setUserDragging={setUserDragging}
+					/>
 				</Grid>
 			</Hidden>
 		</Grid>
@@ -142,17 +171,22 @@ export default function EventEditor() {
 }
 
 function EventCard({
-										 eventId,
-										 eventName,
-										 eventDate,
-										 db,
-										 userDragging, setUserDragging, updateEvent, setEvents, events,
-									 }: {
+	eventId,
+	eventName,
+	eventDate,
+	db,
+	userDragging,
+	setUserDragging,
+	updateEvent,
+	setEvents,
+	events,
+}: {
 	eventId: number;
 	eventName: string;
 	eventDate: string;
 	db: DatabaseType;
-	userDragging: null | User; setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
+	userDragging: null | User;
+	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
 	setEvents: React.Dispatch<React.SetStateAction<MinistryEvent[]>>;
 	events: MinistryEvent[];
 }) {
@@ -222,15 +256,20 @@ function EventCard({
 }
 
 function TeamCard({
-										teamName,
-										roles,
-										db,
-										userDragging, setUserDragging, eventId, teamId, setEvents,
-									}: {
+	teamName,
+	roles,
+	db,
+	userDragging,
+	setUserDragging,
+	eventId,
+	teamId,
+	setEvents,
+}: {
 	teamName: string;
 	roles: number[];
 	db: DatabaseType;
-	userDragging: null | User; setUserDragging: React.Dispatch<React.SetStateAction<User | null>>
+	userDragging: null | User;
+	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
 	eventId: number;
 	teamId: number;
 	setEvents: React.Dispatch<React.SetStateAction<MinistryEvent[]>>;
@@ -238,15 +277,17 @@ function TeamCard({
 }) {
 	const fullRoles = roles.map((role: number) => db.getRole(role)) as Role[];
 	const event = db.getEvent(eventId);
-	const [usersInRoles, setUsersInRoles] = useState(Array.from(fullRoles, () => null));
+	const [usersInRoles, setUsersInRoles] = useState(
+		Array.from(fullRoles, () => null)
+	);
 
 	return (
 		<Grid item xs={12} md={4}>
-			<Card variant='outlined'>
+			<Card variant="outlined">
 				<CardContent>
 					<Typography mb={2}>Team: {teamName}</Typography>
 					<TableContainer component={Paper}>
-						<Table size='small' aria-label='a dense table'>
+						<Table size="small" aria-label="a dense table">
 							<TableHead>
 								<TableRow>
 									<TableCell>Position</TableCell>
@@ -256,22 +297,33 @@ function TeamCard({
 
 							<TableBody>
 								{fullRoles?.map((role: Role, index) => {
-									const userObj = db.getUser(event?.eventTeams.find(data => data.team === teamId)?.scheduled_users[index]);
+									const userObj = db.getUser(
+										event?.eventTeams.find((data) => data.team === teamId)
+											?.scheduled_users[index]
+									);
 									const userName = `${userObj?.firstName} ${userObj?.lastName}`;
-									return <EventPosition
-										key={role.id}
-										position={role.type}
-										userDragging={userDragging}
-										setUserDragging={setUserDragging}
-										roleIndex={index}
-										usersName={usersInRoles[index] !== null ? `${db.getUser(usersInRoles[index])?.firstName} ${db.getUser(usersInRoles[index])?.lastName}` : ''}
-										setUserToEvent={() => {
-											const newUsersInRoles = [...usersInRoles];
-											newUsersInRoles[index] = userDragging.id;
-											setUsersInRoles(newUsersInRoles);
-											// setEvents();
-										}}
-									/>;
+									return (
+										<EventPosition
+											key={role.id}
+											position={role.type}
+											userDragging={userDragging}
+											setUserDragging={setUserDragging}
+											roleIndex={index}
+											usersName={
+												usersInRoles[index] !== null
+													? `${db.getUser(usersInRoles[index])?.firstName} ${
+															db.getUser(usersInRoles[index])?.lastName
+													  }`
+													: ''
+											}
+											setUserToEvent={() => {
+												const newUsersInRoles = [...usersInRoles];
+												newUsersInRoles[index] = userDragging.id;
+												setUsersInRoles(newUsersInRoles);
+												// setEvents();
+											}}
+										/>
+									);
 								})}
 							</TableBody>
 						</Table>
@@ -285,7 +337,7 @@ function TeamCard({
 function TeamCardSecondary({ teamName }: { teamName: string }) {
 	return (
 		<Grid item xs={12} md={4}>
-			<Card variant='outlined'>
+			<Card variant="outlined">
 				<CardContent>
 					<Typography mb={2}>Team: {teamName}</Typography>
 				</CardContent>
@@ -295,13 +347,13 @@ function TeamCardSecondary({ teamName }: { teamName: string }) {
 }
 
 function EventPosition({
-												 position,
-												 userDragging,
-												 setUserDragging,
-												 roleIndex,
-												 setUserToEvent,
-												 usersName,
-											 }: {
+	position,
+	userDragging,
+	setUserDragging,
+	roleIndex,
+	setUserToEvent,
+	usersName,
+}: {
 	position: string;
 	userDragging: null | User;
 	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
@@ -335,38 +387,47 @@ function EventPosition({
 				setUserToEvent();
 			}}
 		>
-			<TableCell component='th' scope='row'>
-				<Typography>
-					{position}
-				</Typography>
+			<TableCell component="th" scope="row">
+				<Typography>{position}</Typography>
 			</TableCell>
 
 			<TableCell>
-				<Typography>
-					{usersName}
-				</Typography>
-
+				<Typography>{usersName}</Typography>
 			</TableCell>
 		</TableRow>
 	);
 }
 
-function VolunteerCard({ volunteers, userDragging, setUserDragging }: {
-	volunteers: User[],
+function VolunteerCard({
+	volunteers,
+	userDragging,
+	setUserDragging,
+}: {
+	volunteers: User[];
 	userDragging: null | User;
-	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>
+	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
 }) {
 	const [filter, setFilter] = useState<any>('All Teams');
 	const [filteredVolunteers, setFilteredVolunteers] = useState(volunteers);
-	const [volunteerFilterInputValue, setVolunteerFilterInputValue] = useState('');
+	const [volunteerFilterInputValue, setVolunteerFilterInputValue] =
+		useState('');
 	useEffect(() => {
-		setFilteredVolunteers(volunteers.filter(volunteer => {
-			return volunteer.firstName.toLowerCase().includes(volunteerFilterInputValue) || volunteer.lastName.toLowerCase().includes(volunteerFilterInputValue.toLowerCase());
-		}));
+		setFilteredVolunteers(
+			volunteers.filter((volunteer) => {
+				return (
+					volunteer.firstName
+						.toLowerCase()
+						.includes(volunteerFilterInputValue) ||
+					volunteer.lastName
+						.toLowerCase()
+						.includes(volunteerFilterInputValue.toLowerCase())
+				);
+			})
+		);
 	}, [volunteerFilterInputValue]);
 	return (
 		<Grid item className={'volunteerCard'}>
-			<Card variant='outlined'>
+			<Card variant="outlined">
 				<CardContent>
 					{/*<CardHeader title={'Assign Volunteers'}></CardHeader>*/}
 					<Stack spacing={1}>
@@ -379,13 +440,16 @@ function VolunteerCard({ volunteers, userDragging, setUserDragging }: {
 							<CardContent>
 								<Grid container spacing={1}>
 									<Grid item>
-										<Button variant='contained' color='success' onClick={() => {
-										}}>
+										<Button
+											variant="contained"
+											color="success"
+											onClick={() => {}}
+										>
 											Assign All
 										</Button>
 									</Grid>
 									<Grid item>
-										<Button color='error'>Unassign All</Button>
+										<Button color="error">Unassign All</Button>
 									</Grid>
 								</Grid>
 							</CardContent>
@@ -400,9 +464,9 @@ function VolunteerCard({ volunteers, userDragging, setUserDragging }: {
 								<FormControl fullWidth>
 									<InputLabel>Team</InputLabel>
 									<Select
-										size='small'
+										size="small"
 										value={filter}
-										label='Team'
+										label="Team"
 										onChange={(e) => {
 											console.log(e.target.value);
 											setFilter(e.target.value);
@@ -414,7 +478,7 @@ function VolunteerCard({ volunteers, userDragging, setUserDragging }: {
 									</Select>
 								</FormControl>
 								<Button
-									color='error'
+									color="error"
 									onClick={() => {
 										setFilter('All Teams');
 									}}
@@ -433,17 +497,33 @@ function VolunteerCard({ volunteers, userDragging, setUserDragging }: {
 							<CardContent>
 								<Box mb={2}>
 									<FormControl fullWidth>
-										<InputLabel size={'small'} htmlFor='search-for-volunteer-input'>Search For Volunteer</InputLabel>
-										<OutlinedInput id={'search-for-volunteer-input'} value={volunteerFilterInputValue} size={'small'}
-																	 label={'Search For Volunteer'}
-																	 endAdornment={<InputAdornment
-																		 position='end'><IconButton size={'small'} onClick={() => {
-																		 setVolunteerFilterInputValue('');
-																	 }}><Close
-																		 fontSize='inherit' /></IconButton></InputAdornment>}
-																	 onChange={(e) => {
-																		 setVolunteerFilterInputValue(e.target.value);
-																	 }} />
+										<InputLabel
+											size={'small'}
+											htmlFor="search-for-volunteer-input"
+										>
+											Search For Volunteer
+										</InputLabel>
+										<OutlinedInput
+											id={'search-for-volunteer-input'}
+											value={volunteerFilterInputValue}
+											size={'small'}
+											label={'Search For Volunteer'}
+											endAdornment={
+												<InputAdornment position="end">
+													<IconButton
+														size={'small'}
+														onClick={() => {
+															setVolunteerFilterInputValue('');
+														}}
+													>
+														<Close fontSize="inherit" />
+													</IconButton>
+												</InputAdornment>
+											}
+											onChange={(e) => {
+												setVolunteerFilterInputValue(e.target.value);
+											}}
+										/>
 									</FormControl>
 								</Box>
 
@@ -455,13 +535,12 @@ function VolunteerCard({ volunteers, userDragging, setUserDragging }: {
 												onDragStart={(e) => {
 													setUserDragging(user);
 												}}
-												onDragEnd={(e) => {
-												}}
+												onDragEnd={(e) => {}}
 												item
 												key={`avatar ${i}`}
 											>
 												<Tooltip title={`${user.firstName} ${user.lastName}`}>
-													<Avatar src={user.profilePhoto} />
+													<UserDialog user={user} />
 												</Tooltip>
 											</Grid>
 										);
