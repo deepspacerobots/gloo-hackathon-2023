@@ -45,7 +45,26 @@ export default function EventEditor() {
 	// starting to test schedule generation, just team 1 users
 	generateTeamSchedule(teams[0]);
 	const [allVolunteers, setAllVolunteers] = useState(db.getUsers());
+	const [userDragging, setUserDragging] = useState<null | User>(null);
 	useEffect(() => {
+		// add event teams to event
+		let newTeamId = 46;
+		events.forEach(event => {
+			event.teams.forEach(team => {
+				const scheduledUsersInitial = [];
+				team.roles.forEach((a, index) => {
+					scheduledUsersInitial.push(index + 1);
+				});
+				// @ts-ignore
+				event.eventTeams.push({
+					id: newTeamId,
+					team: team.id,
+					at_capacity: false,
+					scheduled_users: scheduledUsersInitial,
+				});
+				newTeamId++;
+			});
+		});
 		console.log(events);
 	}, []);
 
@@ -66,7 +85,7 @@ export default function EventEditor() {
 												<Typography variant={'h6'}>
 													Events
 												</Typography>
-												<Typography variant={'h2'} color={'secondary'}>1</Typography>
+												<Typography variant={'h2'} color={'secondary'}>{events.length}</Typography>
 											</div>
 										</Grid>
 										<Grid item sm={6} md={3}>
@@ -82,7 +101,7 @@ export default function EventEditor() {
 												<Typography variant={'h6'}>
 													Volunteers
 												</Typography>
-												<Typography variant={'h2'} color={'secondary'}>100</Typography>
+												<Typography variant={'h2'} color={'secondary'}>{db.getUsers().length}</Typography>
 											</div>
 										</Grid>
 										<Grid item sm={6} md={3}>
@@ -105,13 +124,17 @@ export default function EventEditor() {
 							eventName={event.title}
 							eventDate={event.date}
 							db={db}
+							userDragging={userDragging}
+							setUserDragging={setUserDragging}
+							setEvents={setEvents}
+							events={events}
 						/>
 					))}
 				</Grid>
 			</Grid>
 			<Hidden mdDown>
 				<Grid item xs={12} md={4} order={{ xs: 1, md: 2 }}>
-					<VolunteerCard volunteers={allVolunteers} />
+					<VolunteerCard volunteers={allVolunteers} userDragging={userDragging} setUserDragging={setUserDragging} />
 				</Grid>
 			</Hidden>
 		</Grid>
@@ -123,11 +146,15 @@ function EventCard({
 										 eventName,
 										 eventDate,
 										 db,
+										 userDragging, setUserDragging, updateEvent, setEvents, events,
 									 }: {
 	eventId: number;
 	eventName: string;
 	eventDate: string;
 	db: DatabaseType;
+	userDragging: null | User; setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
+	setEvents: React.Dispatch<React.SetStateAction<MinistryEvent[]>>;
+	events: MinistryEvent[];
 }) {
 	const [isExpanded, setIsExpanded] = useState(false);
 
@@ -179,6 +206,12 @@ function EventCard({
 								teamName={team.title}
 								roles={team.roles as number[]}
 								db={db}
+								userDragging={userDragging}
+								setUserDragging={setUserDragging}
+								eventId={eventId}
+								teamId={team.id}
+								setEvents={setEvents}
+								events={events}
 							/>
 						))}
 					</Grid>
@@ -192,12 +225,20 @@ function TeamCard({
 										teamName,
 										roles,
 										db,
+										userDragging, setUserDragging, eventId, teamId, setEvents,
 									}: {
 	teamName: string;
 	roles: number[];
 	db: DatabaseType;
+	userDragging: null | User; setUserDragging: React.Dispatch<React.SetStateAction<User | null>>
+	eventId: number;
+	teamId: number;
+	setEvents: React.Dispatch<React.SetStateAction<MinistryEvent[]>>;
+	events: MinistryEvent[];
 }) {
 	const fullRoles = roles.map((role: number) => db.getRole(role)) as Role[];
+	const event = db.getEvent(eventId);
+	const [usersInRoles, setUsersInRoles] = useState(Array.from(fullRoles, () => null));
 
 	return (
 		<Grid item xs={12} md={4}>
@@ -214,13 +255,24 @@ function TeamCard({
 							</TableHead>
 
 							<TableBody>
-								{fullRoles?.map((role: Role) => (
-									<EventPosition
+								{fullRoles?.map((role: Role, index) => {
+									const userObj = db.getUser(event?.eventTeams.find(data => data.team === teamId)?.scheduled_users[index]);
+									const userName = `${userObj?.firstName} ${userObj?.lastName}`;
+									return <EventPosition
 										key={role.id}
 										position={role.type}
-										volunteer={role?.user as User}
-									/>
-								))}
+										userDragging={userDragging}
+										setUserDragging={setUserDragging}
+										roleIndex={index}
+										usersName={usersInRoles[index] !== null ? `${db.getUser(usersInRoles[index])?.firstName} ${db.getUser(usersInRoles[index])?.lastName}` : ''}
+										setUserToEvent={() => {
+											const newUsersInRoles = [...usersInRoles];
+											newUsersInRoles[index] = userDragging.id;
+											setUsersInRoles(newUsersInRoles);
+											// setEvents();
+										}}
+									/>;
+								})}
 							</TableBody>
 						</Table>
 					</TableContainer>
@@ -244,12 +296,22 @@ function TeamCardSecondary({ teamName }: { teamName: string }) {
 
 function EventPosition({
 												 position,
-												 volunteer,
+												 userDragging,
+												 setUserDragging,
+												 roleIndex,
+												 setUserToEvent,
+												 usersName,
 											 }: {
 	position: string;
-	volunteer: User | undefined;
+	userDragging: null | User;
+	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
+	roleIndex: number;
+	setUserToEvent: () => void;
+	usersName: string;
 }) {
 	const [styles, setStyle] = useState('');
+	const db = useDBContext();
+	const [displayName, setDisplayName] = useState('');
 	return (
 		<TableRow
 			key={position}
@@ -257,6 +319,7 @@ function EventPosition({
 			onDragLeave={(e) => {
 				e.preventDefault();
 				setStyle('');
+				setDisplayName('');
 			}}
 			onDragEnter={(e) => {
 				e.preventDefault();
@@ -267,49 +330,32 @@ function EventPosition({
 			}}
 			onDrop={(e) => {
 				e.preventDefault();
-				console.log(position);
+				setUserDragging(null);
 				setStyle('');
+				setUserToEvent();
 			}}
 		>
 			<TableCell component='th' scope='row'>
-				{position}
+				<Typography>
+					{position}
+				</Typography>
 			</TableCell>
 
 			<TableCell>
-				{volunteer?.firstName} {volunteer?.lastName}
+				<Typography>
+					{usersName}
+				</Typography>
+
 			</TableCell>
 		</TableRow>
 	);
 }
 
-function VolunteerCard({ volunteers }: { volunteers: User[] }) {
-	const [avatars, setAvatars] = useState<any[]>([]);
-	useEffect(() => {
-		const mArr = Array.from(
-			{ length: 99 },
-			(_, i) => `/img/profile-pics/man-${i + 1}.jpg`,
-		);
-		const wArr = Array.from(
-			{ length: 99 },
-			(_, i) => `/img/profile-pics/woman-${i + 1}.jpg`,
-		);
-		const avatarIcons = [];
-		const shuffle = (array: any[]) => {
-			return array
-				.map((a) => ({ sort: Math.random(), value: a }))
-				.sort((a, b) => a.sort - b.sort)
-				.map((a) => a.value);
-		};
-		const shuffledArr = shuffle([...mArr, ...wArr]);
-		for (let i = 0; i < 50; i++) {
-			avatarIcons.push();
-		}
-		setAvatars(avatarIcons);
-	}, []);
-	const handleDragStart = () => {
-	};
-	const handleDragEnd = () => {
-	};
+function VolunteerCard({ volunteers, userDragging, setUserDragging }: {
+	volunteers: User[],
+	userDragging: null | User;
+	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>
+}) {
 	const [filter, setFilter] = useState<any>('All Teams');
 	const [filteredVolunteers, setFilteredVolunteers] = useState(volunteers);
 	const [volunteerFilterInputValue, setVolunteerFilterInputValue] = useState('');
@@ -324,6 +370,7 @@ function VolunteerCard({ volunteers }: { volunteers: User[] }) {
 				<CardContent>
 					{/*<CardHeader title={'Assign Volunteers'}></CardHeader>*/}
 					<Stack spacing={1}>
+						{/*Assistant Card*/}
 						<Card>
 							<CardHeader
 								title={'Assistant'}
@@ -343,6 +390,7 @@ function VolunteerCard({ volunteers }: { volunteers: User[] }) {
 								</Grid>
 							</CardContent>
 						</Card>
+						{/*Filter Card*/}
 						<Card>
 							<CardHeader
 								title={'Filter'}
@@ -376,6 +424,7 @@ function VolunteerCard({ volunteers }: { volunteers: User[] }) {
 								</Button>
 							</CardContent>
 						</Card>
+						{/*Available Volunteers Card*/}
 						<Card>
 							<CardHeader
 								title={'Available Volunteers'}
@@ -403,8 +452,11 @@ function VolunteerCard({ volunteers }: { volunteers: User[] }) {
 										return (
 											<Grid
 												draggable
-												onDragStart={handleDragStart}
-												onDragEnd={handleDragEnd}
+												onDragStart={(e) => {
+													setUserDragging(user);
+												}}
+												onDragEnd={(e) => {
+												}}
 												item
 												key={`avatar ${i}`}
 											>
