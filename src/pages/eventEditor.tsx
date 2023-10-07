@@ -12,6 +12,7 @@ import {
 	Divider,
 	FormControl,
 	Grid,
+	Hidden,
 	InputLabel,
 	MenuItem,
 	Paper,
@@ -37,7 +38,7 @@ export default function EventEditor() {
 
 	return (
 		<Grid container spacing={2}>
-			<Grid item xs={8}>
+			<Grid item xs={12} md={8}>
 				<Grid container rowSpacing={1}>
 					<Grid item xs={12}>
 						<Box>
@@ -47,7 +48,7 @@ export default function EventEditor() {
 									<Typography variant={'h6'}>Overview</Typography>
 									<Divider />
 									<Grid container>
-										<Grid item xs={3}>
+										<Grid item xs={6} md={3}>
 											<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
 												<Typography variant={'h6'}>
 													Events
@@ -55,15 +56,15 @@ export default function EventEditor() {
 												<Typography variant={'h2'} color={'secondary'}>1</Typography>
 											</div>
 										</Grid>
-										<Grid item xs={3}>
+										<Grid item xs={6} md={3}>
 											<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
 												<Typography variant={'h6'}>
-													Unfilled Positions
+													Unassigned
 												</Typography>
 												<Typography variant={'h2'} color={'secondary'}>32</Typography>
 											</div>
 										</Grid>
-										<Grid item xs={3}>
+										<Grid item xs={6} md={3}>
 											<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
 												<Typography variant={'h6'}>
 													Volunteers
@@ -71,7 +72,7 @@ export default function EventEditor() {
 												<Typography variant={'h2'} color={'secondary'}>100</Typography>
 											</div>
 										</Grid>
-										<Grid item xs={3}>
+										<Grid item xs={6} md={3}>
 											<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
 												<Typography variant={'h6'}>
 													Teams
@@ -95,9 +96,11 @@ export default function EventEditor() {
 					))}
 				</Grid>
 			</Grid>
-			<Grid item xs={4}>
-				<VolunteerCard volunteers={[]} />
-			</Grid>
+			<Hidden mdDown>
+				<Grid item xs={12} md={4} order={{ xs: 1, md: 2 }}>
+					<VolunteerCard volunteers={[]} />
+				</Grid>
+			</Hidden>
 		</Grid>
 	);
 }
@@ -184,7 +187,7 @@ function TeamCard({
 	const fullRoles = roles.map((role: number) => db.getRole(role)) as Role[];
 
 	return (
-		<Grid item xs={4}>
+		<Grid item xs={12} md={4}>
 			<Card variant='outlined'>
 				<CardContent>
 					<Typography mb={2}>Team: {teamName}</Typography>
@@ -216,7 +219,7 @@ function TeamCard({
 
 function TeamCardSecondary({ teamName }: { teamName: string }) {
 	return (
-		<Grid item xs={4}>
+		<Grid item xs={12} md={4}>
 			<Card variant='outlined'>
 				<CardContent>
 					<Typography mb={2}>Team: {teamName}</Typography>
