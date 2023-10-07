@@ -17,7 +17,6 @@ export type User = {
 	messages: number[] | Message[];
 	blackoutDates: DateTime[];
 	preferredNumWeeksServing: number;
-	experiences: number[] | Experience[];
 	proficiencies?: Proficiency[];
 };
 

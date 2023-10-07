@@ -1084,8 +1084,19 @@ export const preexistingData: DBSchema = {
 			password: 'password123',
 			profilePhoto: '/img/profile-pics/man-23.jpg',
 			preferredNumWeeksServing: 1,
-			teams: [2, 3],
-			experiences: [36, 37, 38],
+			teams: [3],
+			proficiencies: [
+				{
+					type: TypeOptions.Prayer,
+					experience: LevelOptions.Intermediate,
+					preference: PreferenceOptions.High
+				},
+				{
+					type: TypeOptions.PastoralCare,
+					experience: LevelOptions.Advanced,
+					preference: PreferenceOptions.VeryHigh
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1100,7 +1111,18 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5573',
 			preferredNumWeeksServing: 2,
 			teams: [2],
-			experiences: [39],
+			proficiencies: [
+				{
+					type: TypeOptions.TechGeneral,
+					experience: LevelOptions.Intermediate,
+					preference: PreferenceOptions.High
+				},
+				{
+					type: TypeOptions.TechLighting,
+					experience: LevelOptions.Beginner,
+					preference: PreferenceOptions.Low
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1115,7 +1137,13 @@ export const preexistingData: DBSchema = {
 			profilePhoto: '/img/profile-pics/man-24.jpg',
 			preferredNumWeeksServing: 1,
 			teams: [2],
-			experiences: [40],
+			proficiencies: [
+				{
+					type: TypeOptions.TechGeneral,
+					experience: LevelOptions.Intermediate,
+					preference: PreferenceOptions.High
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1130,7 +1158,28 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5574',
 			preferredNumWeeksServing: 3,
 			teams: [2],
-			experiences: [41, 42, 43, 44],
+			proficiencies: [
+				{
+					type: TypeOptions.TechGeneral,
+					experience: LevelOptions.Intermediate,
+					preference: PreferenceOptions.High
+				},
+				{
+					type: TypeOptions.TechSlides,
+					experience: LevelOptions.Beginner,
+					preference: PreferenceOptions.Low
+				},
+				{
+					type: TypeOptions.TechLighting,
+					experience: LevelOptions.Advanced,
+					preference: PreferenceOptions.VeryHigh
+				},
+				{
+					type: TypeOptions.TechGeneral,
+					experience: LevelOptions.Intermediate,
+					preference: PreferenceOptions.High
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1145,7 +1194,13 @@ export const preexistingData: DBSchema = {
 			profilePhoto: '/img/profile-pics/man-25.jpg',
 			preferredNumWeeksServing: 2,
 			teams: [1],
-			experiences: [45, 46],
+			proficiencies: [
+				{
+					type: TypeOptions.BandVocals,
+					experience: LevelOptions.Advanced,
+					preference: PreferenceOptions.VeryHigh
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1161,7 +1216,13 @@ export const preexistingData: DBSchema = {
 			profilePhoto: '/img/profile-pics/woman-31.jpg',
 			preferredNumWeeksServing: 4,
 			teams: [1],
-			experiences: [47],
+			proficiencies: [
+				{
+					type: TypeOptions.BandBass,
+					experience: LevelOptions.Beginner,
+					preference: PreferenceOptions.Low
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1175,7 +1236,18 @@ export const preexistingData: DBSchema = {
 			password: 'password567',
 			preferredNumWeeksServing: 2,
 			teams: [3],
-			experiences: [25, 26],
+			proficiencies: [
+				{
+					type: TypeOptions.PastoralCare,
+					experience: LevelOptions.Intermediate,
+					preference: PreferenceOptions.High
+				},
+				{
+					type: TypeOptions.Prayer,
+					experience: LevelOptions.Advanced,
+					preference: PreferenceOptions.VeryHigh
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1190,7 +1262,18 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5576',
 			preferredNumWeeksServing: 4,
 			teams: [3],
-			experiences: [25, 26],
+			proficiencies: [
+				{
+					type: TypeOptions.PastoralCare,
+					experience: LevelOptions.Intermediate,
+					preference: PreferenceOptions.High
+				},
+				{
+					type: TypeOptions.Prayer,
+					experience: LevelOptions.Advanced,
+					preference: PreferenceOptions.VeryHigh
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1205,7 +1288,18 @@ export const preexistingData: DBSchema = {
 			profilePhoto: '/img/profile-pics/man-27.jpg',
 			preferredNumWeeksServing: 1,
 			teams: [3],
-			experiences: [25, 26],
+			proficiencies: [
+				{
+					type: TypeOptions.PastoralCare,
+					experience: LevelOptions.Intermediate,
+					preference: PreferenceOptions.High
+				},
+				{
+					type: TypeOptions.Prayer,
+					experience: LevelOptions.Advanced,
+					preference: PreferenceOptions.VeryHigh
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1221,7 +1315,18 @@ export const preexistingData: DBSchema = {
 			profilePhoto: '/img/profile-pics/woman-51.jpg',
 			preferredNumWeeksServing: 2,
 			teams: [1],
-			experiences: [48, 49],
+			proficiencies: [
+				{
+					type: TypeOptions.BandElectricGuitar,
+					experience: LevelOptions.Advanced,
+					preference: PreferenceOptions.VeryHigh
+				},
+				{
+					type: TypeOptions.BandAcousticGuitar,
+					experience: LevelOptions.Beginner,
+					preference: PreferenceOptions.Low
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1236,7 +1341,13 @@ export const preexistingData: DBSchema = {
 			profilePhoto: '/img/profile-pics/man-31.jpg',
 			preferredNumWeeksServing: 1,
 			teams: [1],
-			experiences: [50],
+			proficiencies: [
+				{
+					type: TypeOptions.BandDrums,
+					experience: LevelOptions.Intermediate,
+					preference: PreferenceOptions.High
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1251,8 +1362,19 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5578',
 			profilePhoto: '/img/profile-pics/woman-52.jpg',
 			preferredNumWeeksServing: 2,
-			teams: [1, 2],
-			experiences: [51, 52],
+			teams: [1],
+			proficiencies: [
+				{
+					type: TypeOptions.BandAux,
+					experience: LevelOptions.Intermediate,
+					preference: PreferenceOptions.High
+				},
+				{
+					type: TypeOptions.BandDrums,
+					experience: LevelOptions.Advanced,
+					preference: PreferenceOptions.High
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1266,7 +1388,13 @@ export const preexistingData: DBSchema = {
 			password: 'password789',
 			preferredNumWeeksServing: 1,
 			teams: [2],
-			experiences: [53],
+			proficiencies: [
+				{
+					type: TypeOptions.TechSlides,
+					experience: LevelOptions.Beginner,
+					preference: PreferenceOptions.Low
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1282,7 +1410,13 @@ export const preexistingData: DBSchema = {
 			profilePhoto: '/img/profile-pics/woman-53.jpg',
 			preferredNumWeeksServing: 3,
 			teams: [2],
-			experiences: [54],
+			proficiencies: [
+				{
+					type: TypeOptions.TechVideoDirector,
+					experience: LevelOptions.Intermediate,
+					preference: PreferenceOptions.High
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1297,7 +1431,13 @@ export const preexistingData: DBSchema = {
 			profilePhoto: '/img/profile-pics/man-32.jpg',
 			preferredNumWeeksServing: 2,
 			teams: [3],
-			experiences: [55, 56],
+			proficiencies: [
+				{
+					type: TypeOptions.Prayer,
+					experience: LevelOptions.Advanced,
+					preference: PreferenceOptions.VeryHigh
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1312,7 +1452,23 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5580',
 			preferredNumWeeksServing: 4,
 			teams: [2],
-			experiences: [57, 58, 59],
+			proficiencies: [
+				{
+					type: TypeOptions.TechLighting,
+					experience: LevelOptions.Intermediate,
+					preference: PreferenceOptions.High
+				},
+				{
+					type: TypeOptions.TechGeneral,
+					experience: LevelOptions.Advanced,
+					preference: PreferenceOptions.VeryHigh
+				},
+				{
+					type: TypeOptions.TechCameras,
+					experience: LevelOptions.Beginner,
+					preference: PreferenceOptions.Low
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1326,8 +1482,14 @@ export const preexistingData: DBSchema = {
 			password: 'password567',
 			profilePhoto: '/img/profile-pics/man-33.jpg',
 			preferredNumWeeksServing: 2,
-			teams: [],
-			experiences: [],
+			teams: [3],
+			proficiencies: [
+				{
+					type: TypeOptions.PastoralCare,
+					experience: LevelOptions.Intermediate,
+					preference: PreferenceOptions.High
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1343,7 +1505,18 @@ export const preexistingData: DBSchema = {
 			profilePhoto: '/img/profile-pics/woman-55.jpg',
 			preferredNumWeeksServing: 4,
 			teams: [1],
-			experiences: [60, 61],
+			proficiencies: [
+				{
+					type: TypeOptions.BandAcousticGuitar,
+					experience: LevelOptions.Intermediate,
+					preference: PreferenceOptions.High
+				},
+				{
+					type: TypeOptions.BandBass,
+					experience: LevelOptions.Advanced,
+					preference: PreferenceOptions.VeryHigh
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1357,7 +1530,13 @@ export const preexistingData: DBSchema = {
 			password: 'password123',
 			preferredNumWeeksServing: 1,
 			teams: [2],
-			experiences: [62],
+			proficiencies: [
+				{
+					type: TypeOptions.TechGeneral,
+					experience: LevelOptions.Beginner,
+					preference: PreferenceOptions.Low
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1371,8 +1550,14 @@ export const preexistingData: DBSchema = {
 			password: 'password456',
 			phone: '555-555-5582',
 			preferredNumWeeksServing: 2,
-			teams: [2, 3],
-			experiences: [63, 64, 65],
+			teams: [2],
+			proficiencies: [
+				{
+					type: TypeOptions.TechAudio,
+					experience: LevelOptions.Intermediate,
+					preference: PreferenceOptions.High
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1386,8 +1571,19 @@ export const preexistingData: DBSchema = {
 			password: 'password123',
 			profilePhoto: '/img/profile-pics/man-34.jpg',
 			preferredNumWeeksServing: 1,
-			teams: [],
-			experiences: [],
+			teams: [3],
+			proficiencies: [
+				{
+					type: TypeOptions.PastoralCare,
+					experience: LevelOptions.Intermediate,
+					preference: PreferenceOptions.High
+				},
+				{
+					type: TypeOptions.Prayer,
+					experience: LevelOptions.Advanced,
+					preference: PreferenceOptions.High
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1403,7 +1599,13 @@ export const preexistingData: DBSchema = {
 			profilePhoto: '/img/profile-pics/woman-56.jpg',
 			preferredNumWeeksServing: 2,
 			teams: [2],
-			experiences: [66],
+			proficiencies: [
+				{
+					type: TypeOptions.TechCameras,
+					experience: LevelOptions.Intermediate,
+					preference: PreferenceOptions.High
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1417,8 +1619,14 @@ export const preexistingData: DBSchema = {
 			password: 'password789',
 			profilePhoto: '/img/profile-pics/man-35.jpg',
 			preferredNumWeeksServing: 1,
-			teams: [1, 2],
-			experiences: [67, 68, 69],
+			teams: [1],
+			proficiencies: [
+				{
+					type: TypeOptions.BandVocals,
+					experience: LevelOptions.Intermediate,
+					preference: PreferenceOptions.High
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1434,7 +1642,18 @@ export const preexistingData: DBSchema = {
 			profilePhoto: '/img/profile-pics/woman-62.jpg',
 			preferredNumWeeksServing: 3,
 			teams: [1],
-			experiences: [70, 71],
+			proficiencies: [
+				{
+					type: TypeOptions.BandKeys,
+					experience: LevelOptions.Advanced,
+					preference: PreferenceOptions.VeryHigh
+				},
+				{
+					type: TypeOptions.BandElectricGuitar,
+					experience: LevelOptions.Beginner,
+					preference: PreferenceOptions.Low
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1448,7 +1667,13 @@ export const preexistingData: DBSchema = {
 			password: 'password901',
 			preferredNumWeeksServing: 2,
 			teams: [2],
-			experiences: [72],
+			proficiencies: [
+				{
+					type: TypeOptions.TechVideoDirector,
+					experience: LevelOptions.Intermediate,
+					preference: PreferenceOptions.High
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1463,7 +1688,13 @@ export const preexistingData: DBSchema = {
 			phone: '555-555-5585',
 			preferredNumWeeksServing: 4,
 			teams: [2],
-			experiences: [73],
+			proficiencies: [
+				{
+					type: TypeOptions.TechAudio,
+					experience: LevelOptions.Advanced,
+					preference: PreferenceOptions.VeryHigh
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1478,7 +1709,13 @@ export const preexistingData: DBSchema = {
 			profilePhoto: '/img/profile-pics/man-36.jpg',
 			preferredNumWeeksServing: 2,
 			teams: [2],
-			experiences: [74],
+			proficiencies: [
+				{
+					type: TypeOptions.TechSlides,
+					experience: LevelOptions.Beginner,
+					preference: PreferenceOptions.Low
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1494,7 +1731,13 @@ export const preexistingData: DBSchema = {
 			profilePhoto: '/img/profile-pics/woman-88.jpg',
 			preferredNumWeeksServing: 4,
 			teams: [3],
-			experiences: [76],
+			proficiencies: [
+				{
+					type: TypeOptions.PastoralCare,
+					experience: LevelOptions.Advanced,
+					preference: PreferenceOptions.VeryHigh
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1508,8 +1751,24 @@ export const preexistingData: DBSchema = {
 			password: 'password123',
 			profilePhoto: '/img/profile-pics/man-37.jpg',
 			preferredNumWeeksServing: 1,
-			teams: [2, 3],
-			experiences: [75, 76, 77, 78, 79],
+			teams: [2],
+			proficiencies: [
+				{
+					type: TypeOptions.TechLighting,
+					experience: LevelOptions.Intermediate,
+					preference: PreferenceOptions.High
+				},
+				{
+					type: TypeOptions.TechGeneral,
+					experience: LevelOptions.Advanced,
+					preference: PreferenceOptions.VeryHigh
+				},
+				{
+					type: TypeOptions.TechCameras,
+					experience: LevelOptions.Beginner,
+					preference: PreferenceOptions.Low
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
@@ -1525,7 +1784,18 @@ export const preexistingData: DBSchema = {
 			profilePhoto: '/img/profile-pics/woman-97.jpg',
 			preferredNumWeeksServing: 2,
 			teams: [1],
-			experiences: [80],
+			proficiencies: [
+				{
+					type: TypeOptions.BandAcousticGuitar,
+					experience: LevelOptions.Intermediate,
+					preference: PreferenceOptions.High
+				},
+				{
+					type: TypeOptions.BandVocals,
+					experience: LevelOptions.Intermediate,
+					preference: PreferenceOptions.High
+				},
+			],
 			events: [],
 			messages: [],
 			blackoutDates: [],
