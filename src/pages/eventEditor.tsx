@@ -4,6 +4,7 @@ import {
 	Accordion,
 	AccordionDetails,
 	AccordionSummary,
+	Avatar,
 	Button,
 	Card,
 	CardContent,
@@ -456,7 +457,8 @@ function VolunteerCard({
 		const filteredVolunteersByName = filterVolunteersByName(
 			filteredVolunteersByTeam
 		);
-	}, [volunteerFilterInputValue]);
+		setFilteredVolunteers(filteredVolunteersByName);
+	}, [filter, volunteerFilterInputValue]);
 
 	const db = useDBContext();
 	const [events, setEvents] = useState(db.getFutureEvents());
@@ -468,7 +470,7 @@ function VolunteerCard({
 			const teamSchedule = await generateTeamSchedule(team, events);
 			schedules.push(teamSchedule);
 		}
-		console.log({schedules})
+		console.log({ schedules });
 	};
 
 	return (
@@ -490,7 +492,9 @@ function VolunteerCard({
 										<Button
 											variant="contained"
 											color="success"
-											onClick={() => {aiAssignAll()}}
+											onClick={() => {
+												aiAssignAll();
+											}}
 										>
 											Assign All
 										</Button>
@@ -579,23 +583,34 @@ function VolunteerCard({
 
 								<Grid container rowSpacing={1} spacing={1}>
 									{filteredVolunteers.map((user, i) => {
-										return (
-											<Tooltip
-												title={`${user.firstName} ${user.lastName}`}
-												key={`avatar ${i}`}
-											>
-												<Grid
-													draggable
-													onDragStart={(e) => {
-														setUserDragging(user);
-													}}
-													onDragEnd={(e) => {}}
-													item
+										if (i < 29) {
+											return (
+												<Tooltip
+													title={`${user.firstName} ${user.lastName}`}
+													key={`avatar ${i}`}
 												>
-													<UserDialog user={user} />
+													<Grid
+														draggable
+														onDragStart={(e) => {
+															setUserDragging(user);
+														}}
+														onDragEnd={(e) => {}}
+														item
+													>
+														<UserDialog user={user} />
+													</Grid>
+												</Tooltip>
+											);
+										} else if (i === 29) {
+											return (
+												<Grid draggable={false} item>
+													<Avatar
+														alt="More users avatar"
+														src="/img/profile-pics/ellipsis.png"
+													/>
 												</Grid>
-											</Tooltip>
-										);
+											);
+										}
 									})}
 								</Grid>
 							</CardContent>
