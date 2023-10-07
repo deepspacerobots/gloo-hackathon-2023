@@ -50,8 +50,8 @@ export default function EventEditor() {
 	useEffect(() => {
 		// add event teams to event
 		let newTeamId = 46;
+		let unassignedRolesCount = 0;
 		events.forEach((event) => {
-			let unassignedRolesCount = 0;
 			event.teams.forEach((team) => {
 				const scheduledUsersInitial: number[] = [];
 				// @ts-ignore
