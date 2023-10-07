@@ -280,7 +280,6 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 			{ length: 99 },
 			(_, i) => `/img/profile-pics/woman-${i + 1}.jpg`,
 		);
-		const avatarCollection = [];
 		const avatarIcons = [];
 		const shuffle = (array: any[]) => {
 			return array
