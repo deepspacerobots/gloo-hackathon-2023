@@ -2101,6 +2101,6 @@ export const preexistingData: DBSchema = {
 	],
 };
 
-const DB = new Database(preexistingData);
+const DB = new Database(structuredClone(preexistingData));
 
 export default DB;

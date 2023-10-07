@@ -1,17 +1,16 @@
-import { Database, preexistingData } from '@/db/db';
+import DB, { Database } from '@/db/db';
 import { ReactNode, createContext, useContext } from 'react';
 
 type Props = {
 	children: string | ReactNode | JSX.Element;
 };
 
-const database = new Database(preexistingData);
 type DBContextType = Database;
 
-const DBContext = createContext<DBContextType>(database);
+const DBContext = createContext<DBContextType>(DB);
 
 const DBProvider = ({ children }: Props): JSX.Element => {
-	return <DBContext.Provider value={database}>{children}</DBContext.Provider>;
+	return <DBContext.Provider value={DB}>{children}</DBContext.Provider>;
 };
 
 export default DBProvider;
