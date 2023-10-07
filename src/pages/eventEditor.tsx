@@ -24,6 +24,7 @@ import {
 	TableContainer,
 	TableHead,
 	TableRow,
+	Tooltip,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useEffect, useState } from 'react';
@@ -35,6 +36,7 @@ import Box from '@mui/material/Box';
 export default function EventEditor() {
 	const db = useDBContext();
 	const events = db.getFutureEvents();
+	const [allVolunteers, setAllVolunteers] = useState(db.getUsers());
 
 	return (
 		<Grid container spacing={2}>
@@ -98,7 +100,7 @@ export default function EventEditor() {
 			</Grid>
 			<Hidden mdDown>
 				<Grid item xs={12} md={4} order={{ xs: 1, md: 2 }}>
-					<VolunteerCard volunteers={[]} />
+					<VolunteerCard volunteers={allVolunteers} />
 				</Grid>
 			</Hidden>
 		</Grid>
@@ -269,7 +271,8 @@ function EventPosition({
 	);
 }
 
-function VolunteerCard({ volunteers }: { volunteers: string[] }) {
+function VolunteerCard({ volunteers }: { volunteers: User[] }) {
+	console.log(volunteers);
 	const [avatars, setAvatars] = useState<any[]>([]);
 	useEffect(() => {
 		const mArr = Array.from(
@@ -289,7 +292,7 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 		};
 		const shuffledArr = shuffle([...mArr, ...wArr]);
 		for (let i = 0; i < 50; i++) {
-			avatarIcons.push(<Avatar key={shuffledArr[i]} src={shuffledArr[i]} />);
+			avatarIcons.push();
 		}
 		setAvatars(avatarIcons);
 	}, []);
@@ -349,6 +352,7 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 									onClick={() => {
 										setFilter('All Teams');
 									}}
+									disabled={filter === 'All Teams'}
 								>
 									Reset
 								</Button>
@@ -357,11 +361,11 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 						<Card>
 							<CardHeader
 								title={'Available Volunteers'}
-								subheader={'Click and drag volunteers to manually assign them'}
+								subheader={'Click title={} and drag volunteers to manually assign them'}
 							/>
 							<CardContent>
 								<Grid container rowSpacing={1} spacing={1}>
-									{avatars.map((avatar, i) => {
+									{volunteers.map((user, i) => {
 										return (
 											<Grid
 												draggable
@@ -370,7 +374,9 @@ function VolunteerCard({ volunteers }: { volunteers: string[] }) {
 												item
 												key={`avatar ${i}`}
 											>
-												{avatar}
+												<Tooltip title={`${user.firstName} ${user.lastName}`}>
+													<Avatar src={user.profilePhoto} />
+												</Tooltip>
 											</Grid>
 										);
 									})}
