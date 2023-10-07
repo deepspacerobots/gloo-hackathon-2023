@@ -54,7 +54,7 @@ export class Database {
 			(organization: Organization) => organization.id === organizationId
 		);
 
-		if (organization) {
+		if (typeof organization?.seniorPastor == 'number') {
 			organization.seniorPastor = this.users.find(
 				(user: User) => organization.seniorPastor === user.id
 			);
@@ -75,13 +75,17 @@ export class Database {
 		);
 
 		if (event) {
-			event.ministries = this.ministries.filter((ministry: Ministry) =>
-				(event.ministries as number[]).includes(ministry.id)
-			);
+			if (event.ministries?.length && typeof event.ministries[0] === 'number') {
+				event.ministries = this.ministries.filter((ministry: Ministry) =>
+					(event.ministries as number[]).includes(ministry.id)
+				);
+			}
 
-			event.teams = this.teams.filter((team: Team) =>
-				(event.teams as number[]).includes(team.id)
-			);
+			if (event.teams?.length && typeof event.teams[0] === 'number') {
+				event.teams = this.teams.filter((team: Team) =>
+					(event.teams as number[]).includes(team.id)
+				);
+			}
 		}
 
 		return event;
@@ -98,7 +102,7 @@ export class Database {
 			(ministry: Ministry) => ministry.id === ministryId
 		);
 
-		if (ministry) {
+		if (ministry?.teams?.length && typeof ministry.teams[0] === 'number') {
 			ministry.teams = this.teams.filter((team: Team) =>
 				(ministry.teams as number[]).includes(team.id)
 			);
@@ -117,13 +121,17 @@ export class Database {
 		const team = this.teams.find((team: Team) => team.id === teamId);
 
 		if (team) {
-			team.roles = this.roles.filter((role: Role) =>
-				(team.roles as number[]).includes(role.id)
-			);
+			if (team.roles?.length && typeof team.roles[0] === 'number') {
+				team.roles = this.roles.filter((role: Role) =>
+					(team.roles as number[]).includes(role.id)
+				);
+			}
 
-			team.teamLead = this.users.find(
-				(user: User) => team.teamLead === user.id
-			);
+			if (typeof team?.teamLead === 'number') {
+				team.teamLead = this.users.find(
+					(user: User) => team.teamLead === user.id
+				);
+			}
 		}
 
 		return team;
@@ -138,7 +146,7 @@ export class Database {
 	getRole(roleId: number): Role | undefined {
 		const role = this.roles.find((role: Role) => role.id === roleId);
 
-		if (role) {
+		if (typeof role?.user === 'number') {
 			role.user = this.users.find((user: User) => role.user === user.id);
 		}
 
@@ -157,12 +165,17 @@ export class Database {
 		);
 
 		if (requirement) {
-			requirement.event = this.events.find(
-				(event: MinistryEvent) => requirement.event === event.id
-			);
-			requirement.ministry = this.ministries.find(
-				(ministry: Ministry) => requirement.ministry === ministry.id
-			);
+			if (typeof requirement?.event === 'number') {
+				requirement.event = this.events.find(
+					(event: MinistryEvent) => requirement.event === event.id
+				);
+			}
+
+			if (typeof requirement?.ministry === 'number') {
+				requirement.ministry = this.ministries.find(
+					(ministry: Ministry) => requirement.ministry === ministry.id
+				);
+			}
 		}
 
 		return requirement;
@@ -176,23 +189,31 @@ export class Database {
 
 	getUser(userId: number): User | undefined {
 		const user = this.users.find((user: User) => user.id === userId);
-		console.log(user);
+
 		if (user) {
-			user.relatedVolunteer = this.users.find(
-				(userIteration: User) => user.relatedVolunteer === userIteration.id
-			);
+			if (typeof user?.relatedVolunteer === 'number') {
+				user.relatedVolunteer = this.users.find(
+					(userIteration: User) => user.relatedVolunteer === userIteration.id
+				);
+			}
 
-			user.teams = this.teams.filter((team: Team) =>
-				(user.teams as number[]).includes(team.id)
-			);
+			if (user.teams?.length && typeof user.teams[0] === 'number') {
+				user.teams = this.teams.filter((team: Team) =>
+					(user.teams as number[]).includes(team.id)
+				);
+			}
 
-			user.events = this.events.filter((event: MinistryEvent) =>
-				(user.events as number[]).includes(event.id)
-			);
+			if (user.events?.length && typeof user.events[0] === 'number') {
+				user.events = this.events.filter((event: MinistryEvent) =>
+					(user.events as number[]).includes(event.id)
+				);
+			}
 
-			user.experiences = this.experiences.filter((experience: Experience) =>
-				(user.experiences as number[]).includes(experience.id)
-			);
+			if (user.experiences?.length && typeof user.experiences[0] === 'number') {
+				user.experiences = this.experiences.filter((experience: Experience) =>
+					(user.experiences as number[]).includes(experience.id)
+				);
+			}
 		}
 
 		return user;
@@ -1841,8 +1862,6 @@ export const preexistingData: DBSchema = {
 		},
 	],
 };
-
-console.log('pre existing data', preexistingData);
 
 const DB = new Database(preexistingData);
 
