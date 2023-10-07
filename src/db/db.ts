@@ -381,7 +381,8 @@ export const preexistingData: DBSchema = {
 		{
 			id: 1,
 			title: 'Worship Ministry',
-			description: 'The worship team leads us in praise and worship to God',
+			description:
+				'The worship ministry encompasses all roles required to lead us in praise and worship to God',
 			logo: '/img/worship-service-logo.jpg',
 			bannerImage: '/img/worship-service-banner.jpg',
 			teams: [1, 2],
@@ -390,7 +391,7 @@ export const preexistingData: DBSchema = {
 			id: 2,
 			title: 'Pastoral Care Ministry',
 			description:
-				'The pastoral care team helps campus pastors to care for the congregation',
+				'The pastoral care ministry helps campus pastors to care for the congregation',
 			teams: [3],
 		},
 	],
@@ -398,6 +399,7 @@ export const preexistingData: DBSchema = {
 		{
 			id: 1,
 			title: 'Worship Team',
+			description: 'The worship team leads us in praise and worship to God',
 			roles: [1, 2, 3, 4, 5, 6, 7],
 			roles_required: [1, 1, 1, 1, 2, 3, 4, 5, 6, 7],
 			users: [
@@ -409,9 +411,9 @@ export const preexistingData: DBSchema = {
 		},
 		{
 			id: 2,
-			title: 'Front of House',
+			title: 'Tech Team',
 			description:
-				'FOH handles audio and lighting engineering, as well as managing slides',
+				'The tech team handles audio and lighting engineering, as well as managing slides',
 			roles: [8, 9, 10, 11, 12, 13],
 			roles_required: [8, 9, 9, 10, 11, 12, 13],
 			users: [
