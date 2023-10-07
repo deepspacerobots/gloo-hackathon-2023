@@ -59,20 +59,20 @@ const buildTeamRequirementsPrompt = (team: Team) => {
 };
 
 const parseLevelToString = (level: LevelOptions): string => {
-    const levelMap: { [key in LevelOptions]: string } = {
-        [LevelOptions.Beginner]: "Beginner",
-        [LevelOptions.Intermediate]: "Intermediate",
-        [LevelOptions.Advanced]: "Advanced",
-        [LevelOptions.Expert]: "Expert",
-    }
-    return levelMap[level];
+	const levelMap: { [key in LevelOptions]: string } = {
+		[LevelOptions.Beginner]: 'Beginner',
+		[LevelOptions.Intermediate]: 'Intermediate',
+		[LevelOptions.Advanced]: 'Advanced',
+		[LevelOptions.Expert]: 'Expert',
+	};
+	return levelMap[level];
 };
 
 const getMostPreferredType = (experiences?: any[]): TypeOptions => {
-    const preferredExp = experiences?.reduce((highest, current) => {
-        return current.preference > highest.preference ? current : highest;
-    });
-    return preferredExp.type;
+	const preferredExp = experiences?.reduce((highest, current) => {
+		return current.preference > highest.preference ? current : highest;
+	});
+	return preferredExp.type;
 };
 
 type UserWithServeHistory = User & {
@@ -100,7 +100,7 @@ export const generateTeamSchedule = (team: Team, events: MinistryEvent[]) => {
             numTimesServed
         }
     });
-    
+
     let prompt = `
     Given the following volunteer and scheduling information:
 
@@ -115,6 +115,7 @@ export const generateTeamSchedule = (team: Team, events: MinistryEvent[]) => {
     ${buildTeamRequirementsPrompt(team)}
 
     I need to schedule ${events.length} events, ensuring we have a mix of experience levels and no one is overworked. Who should be scheduled for the upcoming events, considering volunteer availability, experience, preferences, and recent scheduling patterns?
+    Also include your reasoning for scheduling each person.
 
     Return the data in a format as depicted in the following example. Return only JSON.
     [
@@ -126,7 +127,17 @@ export const generateTeamSchedule = (team: Team, events: MinistryEvent[]) => {
                     id: 46,
                     team: 1,
                     at_capacity: true,
-                    scheduled_users: [1, 9, 20, 24, 35, 41, 53, 60, 62]
+                    scheduled_users: [
+                        {id: 1, reason: "I scheduled this person because..."},
+                        {id: 9, reason: "I scheduled this person because..."},
+                        {id: 20, reason: "I scheduled this person because..."},
+                        {id: 24, reason: "I scheduled this person because..."},
+                        {id: 35, reason: "I scheduled this person because..."},
+                        {id: 41, reason: "I scheduled this person because..."},
+                        {id: 53, reason: "I scheduled this person because..."},
+                        {id: 60, reason: "I scheduled this person because..."},
+                        {id: 62, reason: "I scheduled this person because..."}
+                    ]
                 },
             },
             {
@@ -136,7 +147,17 @@ export const generateTeamSchedule = (team: Team, events: MinistryEvent[]) => {
                     id: 34,
                     team: 1,
                     at_capacity: true,
-                    scheduled_users: [1, 9, 20, 24, 35, 41, 53, 60, 62]
+                    scheduled_users: [
+                        {id: 1, reason: "I scheduled this person because..."},
+                        {id: 9, reason: "I scheduled this person because..."},
+                        {id: 20, reason: "I scheduled this person because..."},
+                        {id: 24, reason: "I scheduled this person because..."},
+                        {id: 35, reason: "I scheduled this person because..."},
+                        {id: 41, reason: "I scheduled this person because..."},
+                        {id: 53, reason: "I scheduled this person because..."},
+                        {id: 60, reason: "I scheduled this person because..."},
+                        {id: 62, reason: "I scheduled this person because..."}
+                    ]
                 },
             },
             {
@@ -146,15 +167,25 @@ export const generateTeamSchedule = (team: Team, events: MinistryEvent[]) => {
                     id: 34,
                     team: 1,
                     at_capacity: true,
-                    scheduled_users: [1, 9, 20, 24, 35, 41, 53, 60, 62]
+                    scheduled_users: [
+                        {id: 1, reason: "I scheduled this person because..."},
+                        {id: 9, reason: "I scheduled this person because..."},
+                        {id: 20, reason: "I scheduled this person because..."},
+                        {id: 24, reason: "I scheduled this person because..."},
+                        {id: 35, reason: "I scheduled this person because..."},
+                        {id: 41, reason: "I scheduled this person because..."},
+                        {id: 53, reason: "I scheduled this person because..."},
+                        {id: 60, reason: "I scheduled this person because..."},
+                        {id: 62, reason: "I scheduled this person because..."}
+                    ]
                 },
             },
         ]
     ]
     `;
 
-    console.log(prompt);
-    // return submitPrompt(prompt);
+	// console.log(prompt);
+	// return submitPrompt(prompt);
 };
 
 /**
@@ -166,8 +197,8 @@ export const generateTeamSchedule = (team: Team, events: MinistryEvent[]) => {
 
 /**
  * Example prompt for Worship Team
- * 
- 
+ *
+
   Given the following volunteer and scheduling information:
 
   We have 20 volunteers with different levels of experience, different availability, different proficiencies, and different preferences, detailed below:
@@ -192,7 +223,7 @@ export const generateTeamSchedule = (team: Team, events: MinistryEvent[]) => {
     18. Patrick id: 18 (Availability: 4x a month | Proficiencies: Intermediate Piano, Beginner Drums | Preference: Prefers Piano | Recent Serve Amount: Served 3 times recently)
     19. Peter id: 19 (Availability: 2x a month | Proficiencies: Beginner Bass, Beginner Guitar | Preference: Prefers Bass | Recent Serve Amount: Served 1 time recently)
     20. Quinn id: 20 (Availability: 1x a month | Proficiencies: Beginner Drums, Beginner Piano | Preference: Prefers Drums | Recent Serve Amount: Served 2 times recently)
-  
+
   Events To Schedule For:
     1. id: 5, date: 2023-10-08
     2. id: 6, date: 2023-10-15
