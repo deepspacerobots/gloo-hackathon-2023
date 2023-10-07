@@ -131,7 +131,7 @@ function EventCard({
 				}}
 			>
 				<AccordionSummary expandIcon={<ExpandMoreIcon />}>
-					<Stack>
+					<Stack style={{ width: '100%' }}>
 						<Typography>
 							{eventName} - {formattedEventDate}
 						</Typography>
