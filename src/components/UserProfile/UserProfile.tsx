@@ -1,6 +1,6 @@
-import { Avatar } from '@mui/material';
+import { Avatar, Box, Chip, Stack } from '@mui/material';
 import './UserProfile.scss';
-import { RoleOptions } from '@/db/types';
+import { Experience, RoleOptions, Team } from '@/db/types';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -14,21 +14,61 @@ interface Props {
 
 const UserProfile = (props: Props) => {
 	const { userId } = props;
-	console.log(userId);
+
 	const db = useDBContext();
 	const user = db.getUser(userId);
+	console.log(user);
 
 	return (
 		user && (
 			<Card sx={{ minWidth: 275 }}>
-				<CardContent>
-					<Avatar alt="Remy Sharp" src={user.profilePhoto} />
-					<Typography variant="h5" component="div">
-						{user.firstName} {user.lastName}
-					</Typography>
+				<CardContent className="user-profile-layout">
+					<Box sx={{ display: 'flex' }}>
+						<Avatar
+							alt={`${user.firstName} ${user.lastName}`}
+							src={user.profilePhoto}
+						/>
+						<Stack spacing={0.5}>
+							<Typography variant="h5" component="div">
+								{user.firstName} {user.lastName}
+							</Typography>
+							<Typography
+								sx={{ fontSize: 14 }}
+								color="text.secondary"
+								gutterBottom
+							>
+								{user.role}
+							</Typography>
+						</Stack>
+					</Box>
 					<Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-						{user.role}
+						Teams:
 					</Typography>
+					<Box sx={{ display: 'flex' }}>
+						{(user.teams as Team[]).map((team: Team) => {
+							return (
+								<Chip
+									key={`team-${team.id}`}
+									label={team.title}
+									variant="outlined"
+								/>
+							);
+						})}
+					</Box>
+					<Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+						Experiences:
+					</Typography>
+					<Box sx={{ display: 'flex' }}>
+						{(user.experiences as Experience[]).map((e: Experience) => {
+							return (
+								<Chip
+									key={`experience-${e.id}`}
+									label={e.type}
+									variant="outlined"
+								/>
+							);
+						})}
+					</Box>
 				</CardContent>
 				<CardActions>
 					<Button size="small">Learn More</Button>
