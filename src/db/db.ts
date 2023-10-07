@@ -239,7 +239,8 @@ export const preexistingData: DBSchema = {
 			description: 'Join us every Sunday for a vibrant worship experience.',
 			date: '2023-10-31',
 			time: '11:00 AM',
-			ministries: [1],
+			ministries: [1, 2],
+			teams: [1, 2, 3],
 		},
 	],
 	ministries: [
@@ -1628,6 +1629,8 @@ export const preexistingData: DBSchema = {
 		},
 	],
 };
+
+console.log('pre existing data', preexistingData);
 
 const DB = new Database(preexistingData);
 
