@@ -15,7 +15,8 @@ export const submitPrompt = async (prompt: string) => {
 
     if (chatCompletion.choices[0].message.content) {
         // console.log(chatCompletion.choices[0].message.content)
-        console.log(JSON.parse(chatCompletion.choices[0].message.content));
+        // console.log(JSON.parse(chatCompletion.choices[0].message.content));
+        return JSON.parse(chatCompletion.choices[0].message.content);
     }
 }
 
@@ -37,13 +38,12 @@ const buildEventDetailsPrompt = (events: MinistryEvent[]) => {
     let promptString = '';
 
     events.forEach((ministryEvent, index) => {
-        promptString += `${index+1}. id: ${ministryEvent.id}, date: ${ministryEvent.date}\n`;
+        promptString += `${index+1}. id: ${ministryEvent.id}, date: ${ministryEvent.date}, event_team_id: ${45 + index}\n`;
     });
     return promptString;
 };
 
 const buildTeamRequirementsPrompt = (team: Team) => {
-    console.log({team})
     const requiredRoles = team.roles_required.map((roleId) => {
         return DB.getRole(roleId as number);
     });
@@ -79,6 +79,31 @@ const getMostPreferredType = (experiences?: any[]): TypeOptions => {
 
 type UserWithServeHistory = User & {
     numTimesServed: number;
+};
+
+export type AISingleTeamSchedule = {
+    events: [
+        {
+            id: number;
+            date: string;
+            eventTeam: {
+                id: number,
+                team: 1,
+                at_capacity: true,
+                scheduled_users: [
+                    {id: 1, reason: "I scheduled this person because..."},
+                    {id: 9, reason: "I scheduled this person because..."},
+                    {id: 20, reason: "I scheduled this person because..."},
+                    {id: 24, reason: "I scheduled this person because..."},
+                    {id: 35, reason: "I scheduled this person because..."},
+                    {id: 41, reason: "I scheduled this person because..."},
+                    {id: 53, reason: "I scheduled this person because..."},
+                    {id: 60, reason: "I scheduled this person because..."},
+                    {id: 62, reason: "I scheduled this person because..."}
+                ]
+            }
+        }
+    ]
 };
 
 export const generateTeamSchedule = async (team: Team, events: MinistryEvent[]) => {
@@ -125,7 +150,7 @@ export const generateTeamSchedule = async (team: Team, events: MinistryEvent[]) 
             {
                 id: 5,
                 date: '2023-10-08',
-                eventTeams: {
+                eventTeam: {
                     id: 46,
                     team: 1,
                     at_capacity: true,
@@ -145,7 +170,7 @@ export const generateTeamSchedule = async (team: Team, events: MinistryEvent[]) 
             {
                 id: 49,
                 date: '2023-10-15',
-                eventTeams: {
+                eventTeam: {
                     id: 34,
                     team: 1,
                     at_capacity: true,
@@ -165,7 +190,7 @@ export const generateTeamSchedule = async (team: Team, events: MinistryEvent[]) 
             {
                 id: 52,
                 date: '2023-10-22',
-                eventTeams: {
+                eventTeam: {
                     id: 34,
                     team: 1,
                     at_capacity: true,
@@ -228,9 +253,9 @@ export const generateTeamSchedule = async (team: Team, events: MinistryEvent[]) 
     20. Quinn id: 20 (Availability: 1x a month | Proficiencies: Beginner Drums, Beginner Piano | Preference: Prefers Drums | Recent Serve Amount: Served 2 times recently)
 
   Events To Schedule For:
-    1. id: 5, date: 2023-10-08
-    2. id: 6, date: 2023-10-15
-    3. id: 7, date: 2023-10-22
+    1. id: 5, date: 2023-10-08, event_team_id: 46
+    2. id: 6, date: 2023-10-15, event_team_id: 47
+    3. id: 7, date: 2023-10-22, event_team_id: 48
 
   Team Requirements:
   - Role: Vocals. Number needed: 4

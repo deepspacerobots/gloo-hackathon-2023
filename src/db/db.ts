@@ -398,7 +398,7 @@ export const preexistingData: DBSchema = {
 			title: 'Worship Team',
 			roles: [1, 2, 3, 4, 5, 6, 7],
 			roles_required: [1, 1, 1, 1, 2, 3, 4, 5, 6, 7],
-			users: [1, 2, 9, 11, 16, 17, 18, 20, 24, 28, 29, 35, 36, 40, 41, 42, 48, 53, 54, 60],
+			users: [1, 2, 3, 9, 11, 16, 17, 18, 20, 24, 28, 29, 35, 36, 40, 41, 42, 48, 53, 54, 60],
 			requirements: [],
 			teamLead: 54,
 		},

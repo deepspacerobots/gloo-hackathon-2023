@@ -31,7 +31,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useEffect, useState } from 'react';
 import { useDBContext } from '@/contexts/db.context';
-import { Database as DatabaseType } from '@/db/db';
+import { Database as DatabaseType, preexistingData } from '@/db/db';
 import { MinistryEvent, Role, Team, User } from '@/db/types';
 import Box from '@mui/material/Box';
 import { generateTeamSchedule } from '@/api/gpt-service';
@@ -432,11 +432,15 @@ function VolunteerCard({
 	const db = useDBContext();
 	const [events, setEvents] = useState(db.getFutureEvents());
 	const teams = db.getAllTeams();
-	// starting to test schedule generation, just team 1 users
-	// generateTeamSchedule(teams[0], events);
+	console.log({events})
 
-	const aiAssignAll = () => {
-
+	const aiAssignAll = async () => {
+		let schedules = [];
+		for (const team of teams) {
+			const teamSchedule = await generateTeamSchedule(team, events);
+			schedules.push(teamSchedule);
+		}
+		console.log({schedules})
 	};
 
 	return (
