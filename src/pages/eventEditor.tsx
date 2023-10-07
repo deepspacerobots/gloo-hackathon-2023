@@ -66,7 +66,6 @@ export default function EventEditor() {
 				newTeamId++;
 			});
 		});
-		console.log(events);
 	}, []);
 
 	return (
@@ -407,24 +406,48 @@ function VolunteerCard({
 	userDragging: null | User;
 	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
 }) {
-	const [filter, setFilter] = useState<any>('All Teams');
+	const [filter, setFilter] = useState(0);
 	const [filteredVolunteers, setFilteredVolunteers] = useState(volunteers);
 	const [volunteerFilterInputValue, setVolunteerFilterInputValue] =
 		useState('');
+
+	const filterVolunteersByTeam = (): User[] => {
+		if (filter === 0) {
+			return volunteers;
+		}
+
+		return volunteers.filter((volunteer: User) => {
+			return volunteer.teams.find((team: Team | number) => {
+				if (typeof team === 'number') {
+					return team === filter;
+				}
+
+				return team.id === filter;
+			});
+		});
+	};
+
+	const filterVolunteersByName = (volunteersByTeam: User[]): User[] => {
+		return volunteersByTeam.filter((volunteer) => {
+			return (
+				volunteer.firstName
+					.toLowerCase()
+					.includes(volunteerFilterInputValue.toLowerCase()) ||
+				volunteer.lastName
+					.toLowerCase()
+					.includes(volunteerFilterInputValue.toLowerCase())
+			);
+		});
+	};
+
 	useEffect(() => {
-		setFilteredVolunteers(
-			volunteers.filter((volunteer) => {
-				return (
-					volunteer.firstName
-						.toLowerCase()
-						.includes(volunteerFilterInputValue) ||
-					volunteer.lastName
-						.toLowerCase()
-						.includes(volunteerFilterInputValue.toLowerCase())
-				);
-			})
+		const filteredVolunteersByTeam = filterVolunteersByTeam();
+		const filteredVolunteersByName = filterVolunteersByName(
+			filteredVolunteersByTeam
 		);
-	}, [volunteerFilterInputValue]);
+		setFilteredVolunteers(filteredVolunteersByName);
+	}, [filter, volunteerFilterInputValue]);
+
 	return (
 		<Grid item className={'volunteerCard'}>
 			<Card variant="outlined">
@@ -437,6 +460,7 @@ function VolunteerCard({
 								title={'Assistant'}
 								subheader={'Let AI assign your volunteers'}
 							/>
+
 							<CardContent>
 								<Grid container spacing={1}>
 									<Grid item>
@@ -448,18 +472,21 @@ function VolunteerCard({
 											Assign All
 										</Button>
 									</Grid>
+
 									<Grid item>
 										<Button color="error">Unassign All</Button>
 									</Grid>
 								</Grid>
 							</CardContent>
 						</Card>
+
 						{/*Filter Card*/}
 						<Card>
 							<CardHeader
 								title={'Filter'}
 								subheader={'See only who is part of a selected team'}
 							/>
+
 							<CardContent>
 								<FormControl fullWidth>
 									<InputLabel>Team</InputLabel>
@@ -467,33 +494,32 @@ function VolunteerCard({
 										size="small"
 										value={filter}
 										label="Team"
-										onChange={(e) => {
-											console.log(e.target.value);
-											setFilter(e.target.value);
-										}}
+										onChange={(e) => setFilter(e.target.value)}
 									>
-										<MenuItem value={'All Teams'}>All Teams</MenuItem>
-										<MenuItem value={'Music Team'}>Music Team</MenuItem>
-										<MenuItem value={'Tech Team'}>Tech Team</MenuItem>
+										<MenuItem value={0}>All Teams</MenuItem>
+										<MenuItem value={1}>Worship Team</MenuItem>
+										<MenuItem value={2}>Tech Team</MenuItem>
+										<MenuItem value={3}>Pastoral Care Team</MenuItem>
 									</Select>
 								</FormControl>
+
 								<Button
 									color="error"
-									onClick={() => {
-										setFilter('All Teams');
-									}}
-									disabled={filter === 'All Teams'}
+									onClick={() => setFilter(0)}
+									disabled={filter === 0}
 								>
 									Reset
 								</Button>
 							</CardContent>
 						</Card>
+
 						{/*Available Volunteers Card*/}
 						<Card>
 							<CardHeader
 								title={'Available Volunteers'}
 								subheader={'Click and drag volunteers to manually assign them'}
 							/>
+
 							<CardContent>
 								<Box mb={2}>
 									<FormControl fullWidth>
@@ -503,6 +529,7 @@ function VolunteerCard({
 										>
 											Search For Volunteer
 										</InputLabel>
+
 										<OutlinedInput
 											id={'search-for-volunteer-input'}
 											value={volunteerFilterInputValue}
