@@ -314,6 +314,7 @@ function TeamCard({
 											setUserDragging={setUserDragging}
 											roleIndex={index}
 											usersName={userName}
+											userProfilePhoto={userDragging?.profilePhoto}
 											setUserToEvent={() => {
 												//@ts-ignore
 												const newUsersInRoles = [...event?.eventTeams.find((data: any) => data.team === teamId)?.scheduled_users];
@@ -363,6 +364,7 @@ function EventPosition({
 	roleIndex,
 	setUserToEvent,
 	usersName,
+	userProfilePhoto
 }: {
 	position: string;
 	userDragging: null | User;
@@ -370,6 +372,7 @@ function EventPosition({
 	roleIndex: number;
 	setUserToEvent: () => void;
 	usersName: string;
+	userProfilePhoto: string;
 }) {
 	const [styles, setStyle] = useState('');
 	//const db = useDBContext();
@@ -404,6 +407,10 @@ function EventPosition({
 
 			<TableCell>
 				<Typography>{usersName}</Typography>
+				{/* <Avatar
+					alt={usersName}
+					src={userProfilePhoto}
+				/> */}
 			</TableCell>
 		</TableRow>
 	);
