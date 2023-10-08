@@ -285,8 +285,8 @@ function TeamCard({
 						<Table size="small">
 							<TableHead>
 								<TableRow>
-									<TableCell>Position</TableCell>
-									<TableCell>Volunteer</TableCell>
+									<TableCell sx={{ fontSize: "0.8rem", fontWeight: "bold", opacity: 0.8 }}>Position</TableCell>
+									<TableCell></TableCell>
 								</TableRow>
 							</TableHead>
 
@@ -300,10 +300,12 @@ function TeamCard({
 									const userId = eventTeam?.scheduled_users?.[index];
 									
 									let userName = '';
+									let profilePic = '';
 									
 									if (typeof userId === 'number') {
 										const user = getUser(userId);
 										userName = user ? `${user.firstName} ${user.lastName}` : '';
+										profilePic = user?.profilePhoto as string;
 									}
 									
 									return (
@@ -314,7 +316,7 @@ function TeamCard({
 											setUserDragging={setUserDragging}
 											roleIndex={index}
 											usersName={userName}
-											userProfilePhoto={userDragging?.profilePhoto as string}
+											userProfilePhoto={profilePic as string}
 											setUserToEvent={() => {
 												//@ts-ignore
 												const newUsersInRoles = [...event?.eventTeams.find((data: any) => data.team === teamId)?.scheduled_users];
@@ -401,16 +403,33 @@ function EventPosition({
 				setUserToEvent();
 			}}
 		>
-			<TableCell component="th" scope="row">
+			{/* <TableCell component="th" scope="row">
 				<Typography>{position}</Typography>
-			</TableCell>
+			</TableCell> */}
 
+			<TableCell component="th" scope="row" sx={{ '&:hover': { cursor: 'pointer' } }}>
+				<div>
+					<Typography>{position}</Typography>
+				</div>
+				{usersName.length ? (
+					<div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 10 }}>
+						{usersName.length ? (
+							<Tooltip
+								title={usersName}
+								key={`avatar ${usersName}`}
+							>
+								<Avatar
+									alt={usersName}
+									src={userProfilePhoto}
+								/>
+							</Tooltip>
+						): null}
+						<Typography>{usersName}</Typography>
+					</div>
+				) : null}
+			</TableCell>
 			<TableCell>
-				<Typography>{usersName}</Typography>
-				{/* <Avatar
-					alt={usersName}
-					src={userProfilePhoto}
-				/> */}
+				{/* <Typography>{position}</Typography> */}
 			</TableCell>
 		</TableRow>
 	);
