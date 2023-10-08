@@ -315,7 +315,26 @@ export const preexistingData: DBSchema = {
 			time: '11:00 AM',
 			ministries: [1, 2],
 			teams: [1, 2, 3],
-			eventTeams: [34, 35, 36],
+			eventTeams: [
+				{
+					id: 46,
+					team: 1,
+					at_capacity: false,
+					scheduled_users: [],
+				},
+				{
+					id: 47,
+					team: 2,
+					at_capacity: false,
+					scheduled_users: [],
+				},
+				{
+					id: 48,
+					team: 3,
+					at_capacity: false,
+					scheduled_users: [],
+				},
+			],
 		},
 		{
 			id: 2,
@@ -325,7 +344,26 @@ export const preexistingData: DBSchema = {
 			time: '11:00 AM',
 			ministries: [1, 2],
 			teams: [1, 2, 3],
-			eventTeams: [37, 38, 39],
+			eventTeams: [
+				{
+					id: 46,
+					team: 1,
+					at_capacity: false,
+					scheduled_users: [],
+				},
+				{
+					id: 47,
+					team: 2,
+					at_capacity: false,
+					scheduled_users: [],
+				},
+				{
+					id: 48,
+					team: 3,
+					at_capacity: false,
+					scheduled_users: [],
+				},
+			],
 		},
 		{
 			id: 3,
@@ -335,7 +373,26 @@ export const preexistingData: DBSchema = {
 			time: '11:00 AM',
 			ministries: [1, 2],
 			teams: [1, 2, 3],
-			eventTeams: [40, 41, 42],
+			eventTeams: [
+				{
+					id: 46,
+					team: 1,
+					at_capacity: false,
+					scheduled_users: [],
+				},
+				{
+					id: 47,
+					team: 2,
+					at_capacity: false,
+					scheduled_users: [],
+				},
+				{
+					id: 48,
+					team: 3,
+					at_capacity: false,
+					scheduled_users: [],
+				},
+			],
 		},
 		{
 			id: 4,
@@ -345,7 +402,26 @@ export const preexistingData: DBSchema = {
 			time: '11:00 AM',
 			ministries: [1, 2],
 			teams: [1, 2, 3],
-			eventTeams: [43, 44, 45],
+			eventTeams: [
+				{
+					id: 46,
+					team: 1,
+					at_capacity: false,
+					scheduled_users: [],
+				},
+				{
+					id: 47,
+					team: 2,
+					at_capacity: false,
+					scheduled_users: [],
+				},
+				{
+					id: 48,
+					team: 3,
+					at_capacity: false,
+					scheduled_users: [],
+				},
+			],
 		},
 		{
 			id: 5,
@@ -355,7 +431,26 @@ export const preexistingData: DBSchema = {
 			time: '11:00 AM',
 			ministries: [1, 2],
 			teams: [1, 2, 3],
-			eventTeams: [],
+			eventTeams: [
+				{
+					id: 46,
+					team: 1,
+					at_capacity: false,
+					scheduled_users: [],
+				},
+				{
+					id: 47,
+					team: 2,
+					at_capacity: false,
+					scheduled_users: [],
+				},
+				{
+					id: 48,
+					team: 3,
+					at_capacity: false,
+					scheduled_users: [],
+				},
+			],
 		},
 		{
 			id: 6,
@@ -365,7 +460,26 @@ export const preexistingData: DBSchema = {
 			time: '11:00 AM',
 			ministries: [1, 2],
 			teams: [1, 2, 3],
-			eventTeams: [],
+			eventTeams: [
+				{
+					id: 46,
+					team: 1,
+					at_capacity: false,
+					scheduled_users: [],
+				},
+				{
+					id: 47,
+					team: 2,
+					at_capacity: false,
+					scheduled_users: [],
+				},
+				{
+					id: 48,
+					team: 3,
+					at_capacity: false,
+					scheduled_users: [],
+				},
+			],
 		},
 		{
 			id: 7,
@@ -375,7 +489,26 @@ export const preexistingData: DBSchema = {
 			time: '11:00 AM',
 			ministries: [1, 2],
 			teams: [1, 2, 3],
-			eventTeams: [],
+			eventTeams: [
+				{
+					id: 46,
+					team: 1,
+					at_capacity: false,
+					scheduled_users: [],
+				},
+				{
+					id: 47,
+					team: 2,
+					at_capacity: false,
+					scheduled_users: [],
+				},
+				{
+					id: 48,
+					team: 3,
+					at_capacity: false,
+					scheduled_users: [],
+				},
+			],
 		},
 	],
 	ministries: [
