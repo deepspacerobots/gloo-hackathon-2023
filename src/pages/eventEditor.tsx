@@ -650,7 +650,7 @@ function VolunteerCard({
 											return chunk.map((user: User) => (
 												<Tooltip
 													title={`${user.firstName} ${user.lastName}`}
-													key={`avatar ${i} ${user.id}`}
+													key={`avatar ${user.id}`}
 												>
 													<Grid
 														draggable
