@@ -294,22 +294,19 @@ function TeamCard({
 							<TableBody>
 								{fullRoles?.map((role: Role, index) => {
 									const userName =
-										//@ts-ignore
 										event?.eventTeams.find((data: any) => data.team === teamId)
-										?.scheduled_users[index] !== undefined
+										?.scheduled_users?.[index] !== undefined
 											? `${
 													getUser(
-														//@ts-ignore
 														event?.eventTeams.find(
 															(data: any) => data.team === teamId
-														)?.scheduled_users[index]
+														)?.scheduled_users?.[index]
 													)?.firstName
 											  } ${
 													getUser(
-														//@ts-ignore
 														event?.eventTeams.find(
 															(data: any) => data.team === teamId
-														)?.scheduled_users[index]
+														)?.scheduled_users?.[index]
 													)?.lastName
 											  }`
 											: '';
