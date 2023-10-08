@@ -388,6 +388,7 @@ const DBProvider = ({ children }: Props): JSX.Element => {
 		batchUpdateScheduledUsers
 	};
 
+	//@ts-ignore
 	return <DBContext.Provider value={provide}>{children}</DBContext.Provider>;
 };
 

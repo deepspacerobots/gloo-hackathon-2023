@@ -32,9 +32,8 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useEffect, useState } from 'react';
 import { useDBContext } from '@/contexts/db.context';
-import { EventTeam, MinistryEvent, Role, Team, User } from '@/db/types';
+import { MinistryEvent, Role, Team, User } from '@/db/types';
 import Box from '@mui/material/Box';
-import { generateTeamSchedule } from '@/api/gpt-service';
 import { Close } from '@mui/icons-material';
 import UserDialog from '@/components/UserDialog/UserDialog';
 import {
@@ -42,6 +41,7 @@ import {
 	techTeamSchedules,
 	prayerTeamSchedules,
 } from '../api/example-responses';
+import { useGPT } from '@/hooks/useGPT';
 
 export default function EventEditor() {
 	const { db, getFutureEvents, getAllTeams, getUsers, setEventTeams } =
@@ -294,18 +294,21 @@ function TeamCard({
 							<TableBody>
 								{fullRoles?.map((role: Role, index) => {
 									const userName =
-										event?.eventTeams.find((data) => data.team === teamId)
+										//@ts-ignore
+										event?.eventTeams.find((data: any) => data.team === teamId)
 										?.scheduled_users[index] !== undefined
 											? `${
 													getUser(
+														//@ts-ignore
 														event?.eventTeams.find(
-															(data) => data.team === teamId
+															(data: any) => data.team === teamId
 														)?.scheduled_users[index]
 													)?.firstName
 											  } ${
 													getUser(
+														//@ts-ignore
 														event?.eventTeams.find(
-															(data) => data.team === teamId
+															(data: any) => data.team === teamId
 														)?.scheduled_users[index]
 													)?.lastName
 											  }`
@@ -319,7 +322,9 @@ function TeamCard({
 											roleIndex={index}
 											usersName={userName}
 											setUserToEvent={() => {
-												const newUsersInRoles = [...event?.eventTeams.find((data) => data.team === teamId)?.scheduled_users];
+												//@ts-ignore
+												const newUsersInRoles = [...event?.eventTeams.find((data: any) => data.team === teamId)?.scheduled_users];
+												//@ts-ignore
 												newUsersInRoles[index] = userDragging.id;
 												batchUpdateScheduledUsers([
 													{teamId, eventId, users: [...newUsersInRoles]}
@@ -327,11 +332,11 @@ function TeamCard({
 												const newEventObj = JSON.parse(JSON.stringify(events));
 												const allEventTeamsForEvent =
 													newEventObj[
-														newEventObj.findIndex((e) => e.id === eventId)
+														newEventObj.findIndex((e: any) => e.id === eventId)
 													].eventTeams;
 												const eventTeamForEvent =
 													allEventTeamsForEvent.findIndex(
-														(e) => e.id === teamId
+														(e: any) => e.id === teamId
 													);
 											}}
 										/>
@@ -457,6 +462,7 @@ function VolunteerCard({
 		}
 
 		return volunteers.filter((volunteer: User) => {
+			//@ts-ignore
 			return volunteer.teams.find((team: Team | number) => {
 				if (typeof team === 'number') {
 					return team === filter;
@@ -492,6 +498,7 @@ function VolunteerCard({
 
 	//const db = useDBContext();
 	const { db, getFutureEvents, getAllTeams, setScheduledUsers, batchUpdateScheduledUsers, getRole, getUser } = useDBContext();
+	const { generateTeamSchedule } = useGPT();
 	const [futureEvents, setEvents] = useState(getFutureEvents());
 	const teams = getAllTeams();
 
@@ -592,6 +599,7 @@ function VolunteerCard({
 										size="small"
 										value={filter}
 										label="Team"
+										//@ts-ignore
 										onChange={(e) => setFilter(e.target.value)}
 									>
 										<MenuItem value={0}>All Teams</MenuItem>
