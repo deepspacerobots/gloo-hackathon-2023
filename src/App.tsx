@@ -42,7 +42,7 @@ export default function App() {
 				<AppBar position='static'>
 					<Toolbar>
 						<Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
-							<Logo color={theme.palette.text.primary} />
+							<Logo color={theme.palette.text.secondary} />
 						</Typography>
 						<IconButton
 							onClick={() => {
