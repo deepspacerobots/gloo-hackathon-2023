@@ -32,7 +32,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useEffect, useState } from 'react';
 import { useDBContext } from '@/contexts/db.context';
-import { MinistryEvent, Role, Team, User } from '@/db/types';
+import { EventTeam, MinistryEvent, Role, Team, User } from '@/db/types';
 import Box from '@mui/material/Box';
 import { Close } from '@mui/icons-material';
 import UserDialog from '@/components/UserDialog/UserDialog';
@@ -293,23 +293,19 @@ function TeamCard({
 
 							<TableBody>
 								{fullRoles?.map((role: Role, index) => {
-									const userName =
-										event?.eventTeams.find((data: any) => data.team === teamId)
-										?.scheduled_users?.[index] !== undefined
-											? `${
-													getUser(
-														event?.eventTeams.find(
-															(data: any) => data.team === teamId
-														)?.scheduled_users?.[index]
-													)?.firstName
-											  } ${
-													getUser(
-														event?.eventTeams.find(
-															(data: any) => data.team === teamId
-														)?.scheduled_users?.[index]
-													)?.lastName
-											  }`
-											: '';
+									const eventTeam = event?.eventTeams.find(
+										(data: any): data is EventTeam => typeof data === 'object' && data.team === teamId
+									);
+									
+									const userId = eventTeam?.scheduled_users?.[index];
+									
+									let userName = '';
+									
+									if (typeof userId === 'number') {
+										const user = getUser(userId);
+										userName = user ? `${user.firstName} ${user.lastName}` : '';
+									}
+									
 									return (
 										<EventPosition
 											key={index}
