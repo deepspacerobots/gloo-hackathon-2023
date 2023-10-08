@@ -1,4 +1,4 @@
-export const worshipTeamSchedule = {
+export const worshipTeamSchedules = {
     events: [
         {
             id: 5,
@@ -63,7 +63,7 @@ export const worshipTeamSchedule = {
     ]
 };
 
-export const techTeamSchedule = {
+export const techTeamSchedules = {
     events: [
         {
             id: 5,
@@ -122,7 +122,7 @@ export const techTeamSchedule = {
     ]
 };
 
-export const prayerTeamSchedule = {
+export const prayerTeamSchedules = {
     events: [
         {
             id: 5,
