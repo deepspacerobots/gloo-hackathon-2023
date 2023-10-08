@@ -338,8 +338,8 @@ function TeamCard({
 												//@ts-ignore
 												const newUsersInRoles = [
 													...event?.eventTeams.find(
-														(data: any) => data.team === teamId
-													)?.scheduled_users,
+														(data: any): data is EventTeam => typeof data === 'object' && data.team === teamId
+													)?.scheduled_users || [],
 												];
 												//@ts-ignore
 												newUsersInRoles[index] = userDragging.id;
