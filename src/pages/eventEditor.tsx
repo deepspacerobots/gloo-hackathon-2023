@@ -32,7 +32,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useEffect, useState } from 'react';
 import { useDBContext } from '@/contexts/db.context';
-import { Database as DatabaseType, preexistingData } from '@/db/db';
+import { Database as DatabaseType } from '@/db/db';
 import { EventTeam, MinistryEvent, Role, Team, User } from '@/db/types';
 import Box from '@mui/material/Box';
 import { generateTeamSchedule } from '@/api/gpt-service';
@@ -314,13 +314,16 @@ function TeamCard({
 										event?.eventTeams.find((data) => data.team === teamId)
 											?.scheduled_users[index],
 									);
-									console.log(event?.eventTeams.find((data) => data.team === teamId)
-										?.scheduled_users);
-									const userName = usersInRoles[index] !== null
+									const userName2 = usersInRoles[index] !== null
 										? `${db.getUser(event?.eventTeams.find((data) => data.team === teamId)
 											?.scheduled_users[index])?.firstName} ${
 											db.getUser(event?.eventTeams.find((data) => data.team === teamId)
 												?.scheduled_users[index])?.lastName
+										}`
+										: '';
+									const userName = usersInRoles[index] !== null
+										? `${db.getUser(usersInRoles[index])?.firstName} ${
+											db.getUser(usersInRoles[index])?.lastName
 										}`
 										: '';
 									return (
@@ -600,7 +603,8 @@ function VolunteerCard({
 														onDragStart={(e) => {
 															setUserDragging(user);
 														}}
-														onDragEnd={(e) => {}}
+														onDragEnd={(e) => {
+														}}
 														item
 													>
 														<UserDialog user={user} />
@@ -611,8 +615,8 @@ function VolunteerCard({
 											return (
 												<Grid draggable={false} item>
 													<Avatar
-														alt="More users avatar"
-														src="/img/profile-pics/ellipsis.png"
+														alt='More users avatar'
+														src='/img/profile-pics/ellipsis.png'
 													/>
 												</Grid>
 											);
