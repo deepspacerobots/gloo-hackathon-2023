@@ -3,6 +3,7 @@ import Avatar from '@mui/material/Avatar';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import { User } from '@/db/types';
+import './UserDialog.scss';
 
 const emails = ['username@gmail.com', 'user02@gmail.com'];
 
@@ -46,11 +47,17 @@ export default function UserDialog(props: UserDialogProps) {
 
 	return (
 		<div>
-			<Avatar
-				alt={`${user.firstName} ${user.lastName}`}
-				src={user.profilePhoto}
-				onClick={handleClickOpen}
-			/>
+			{user.profilePhoto ? (
+				<Avatar
+					alt={`${user.firstName} ${user.lastName}`}
+					src={user.profilePhoto}
+					onClick={handleClickOpen}
+				/>
+			) : (
+				<div className="missingProfilePhoto">
+					{user.firstName.slice(0, 1)} {user.lastName.slice(0, 1)}
+				</div>
+			)}
 			<SimpleDialog
 				selectedValue={selectedValue}
 				open={open}
