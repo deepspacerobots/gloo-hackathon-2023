@@ -38,6 +38,7 @@ import Box from '@mui/material/Box';
 import { generateTeamSchedule } from '@/api/gpt-service';
 import { Close } from '@mui/icons-material';
 import UserDialog from '@/components/UserDialog/UserDialog';
+import { worshipTeamSchedules, techTeamSchedules, prayerTeamSchedules } from '../api/example-responses';
 
 export default function EventEditor() {
 	//const db = useDBContext();
@@ -489,12 +490,16 @@ function VolunteerCard({
 	const teams = getAllTeams();
 
 	const aiAssignAll = async () => {
-		let schedules = [];
-		for (const team of teams) {
-			const teamSchedule = await generateTeamSchedule(team, events);
-			schedules.push(teamSchedule);
-		}
-		console.log({ schedules });
+		// let schedules = [];
+		// for (const team of teams) {
+		// 	const teamSchedule = await generateTeamSchedule(team, events);
+		// 	schedules.push(teamSchedule);
+		// }
+		console.log({
+			worshipTeamSchedules,
+			techTeamSchedules,
+			prayerTeamSchedules
+		})
 	};
 
 	return (
