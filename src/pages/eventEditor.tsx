@@ -459,7 +459,10 @@ function VolunteerCard({
 
 			for (let j = 0; j < chunkSize; j++) {
 				const currentIdx = i * chunkSize + j;
-				chunk.push(volunteersToChunk[currentIdx]);
+
+				if (volunteersToChunk[currentIdx]) {
+					chunk.push(volunteersToChunk[currentIdx]);
+				}
 			}
 
 			chunkedVolunteers.push(chunk);
@@ -669,12 +672,14 @@ function VolunteerCard({
 									})}
 								</Grid>
 
-								<Button
-									className="showMore"
-									onClick={() => setNumChunks(numChunks + 1)}
-								>
-									Show More
-								</Button>
+								{filteredVolunteers.length > numChunks && (
+									<Button
+										className="showMore"
+										onClick={() => setNumChunks(numChunks + 1)}
+									>
+										Show More
+									</Button>
+								)}
 							</CardContent>
 						</Card>
 					</Stack>
