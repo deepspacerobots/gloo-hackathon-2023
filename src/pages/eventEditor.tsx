@@ -472,6 +472,7 @@ function VolunteerCard({
 	const db = useDBContext();
 	const [events, setEvents] = useState(db.getFutureEvents());
 	const teams = db.getAllTeams();
+	console.log({events})
 
 	const aiAssignAll = async () => {
 		let schedules = [];

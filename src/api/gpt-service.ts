@@ -1,5 +1,5 @@
 import DB from '@/db/db';
-import { Experience, LevelOptions, MinistryEvent, Team, TypeOptions, User } from '@/db/types';
+import { LevelOptions, MinistryEvent, Proficiency, Team, User } from '@/db/types';
 import OpenAI from 'openai';
 
 const openai = new OpenAI({
@@ -12,6 +12,7 @@ export const submitPrompt = async (prompt: string) => {
         messages: [{ role: 'user', content: prompt }],
         model: 'gpt-3.5-turbo',
     });
+    // console.log(chatCompletion.usage)
 
     if (chatCompletion.choices[0].message.content) {
         // console.log(chatCompletion.choices[0].message.content)
@@ -26,8 +27,8 @@ const buildVolunteerListPrompt = (users: (UserWithServeHistory | undefined)[]) =
     users.forEach((user, index) => {
         const availability = `${user?.preferredNumWeeksServing}x a month`;
         //@ts-ignore
-        const proficiencies = user?.experiences.reduce((acc: string, xp: Experience) => acc + `${parseLevelToString(xp.level)} ${xp.type}, `, '');
-        const preference = `Prefers ${getMostPreferredType(user?.experiences)}`;
+        const proficiencies = user?.proficiencies.reduce((acc: string, prof: Proficiency) => acc + `${parseExperienceToString(prof.experience)} ${prof.type}, `, '');
+        const preference = `Prefers ${getMostPreferredType(user?.proficiencies)}`;
         const numTimesServed = `Served ${user?.numTimesServed} times recently`;
         promptString += `${index+1}. ${user?.firstName} ${user?.lastName} id: ${user?.id} (Availability: ${availability} | Proficiencies: ${proficiencies} | Preference: ${preference} | Recent Serve Amount: ${numTimesServed})\n`
     });
@@ -54,24 +55,24 @@ const buildTeamRequirementsPrompt = (team: Team) => {
     }, {});
 
     const promptString = Object.keys(roleCounts)
-        .map(role => `- Role: ${role}, Number needed: ${roleCounts[role]}`)
+        .map(role => `- Role: ${role}, Min # needed: ${roleCounts[role]}`)
         .join('\n  ');
 
     return promptString;
 };
 
-const parseLevelToString = (level: LevelOptions): string => {
-	const levelMap: { [key in LevelOptions]: string } = {
+const parseExperienceToString = (experience: LevelOptions): string => {
+	const expMap: { [key in LevelOptions]: string } = {
 		[LevelOptions.Beginner]: 'Beginner',
 		[LevelOptions.Intermediate]: 'Intermediate',
 		[LevelOptions.Advanced]: 'Advanced',
 		[LevelOptions.Expert]: 'Expert',
 	};
-	return levelMap[level];
+	return expMap[experience];
 };
 
-const getMostPreferredType = (experiences?: any[]): TypeOptions => {
-	const preferredExp = experiences?.reduce((highest, current) => {
+const getMostPreferredType = (proficiencies?: any[]): Proficiency => {
+	const preferredExp = proficiencies?.reduce((highest, current) => {
 		return current.preference > highest.preference ? current : highest;
 	});
 	return preferredExp.type;
@@ -135,14 +136,14 @@ export const generateTeamSchedule = async (team: Team, events: MinistryEvent[]) 
 
     ${buildVolunteerListPrompt(usersWithServeHistory)}
 
-    Events To Schedule For:
+    Schedule volunteers for the following events
     ${buildEventDetailsPrompt(events)}
 
-    Team Requirements:
+    Place Volunteers based on these team requirements
     ${buildTeamRequirementsPrompt(team)}
 
     I need to schedule ${events.length} events, ensuring we have a mix of experience levels and no one is overworked. Who should be scheduled for the upcoming events, considering volunteer availability, experience, preferences, and recent scheduling patterns?
-    Also include your reasoning for scheduling each person.
+    Include your reasoning for scheduling each person as well as their selected role.
 
     Return the data in a format as depicted in the following example. Return only a JSON string.
     {
@@ -155,15 +156,15 @@ export const generateTeamSchedule = async (team: Team, events: MinistryEvent[]) 
                     team: 1,
                     at_capacity: true,
                     scheduled_users: [
-                        {id: 1, reason: "I scheduled this person because..."},
-                        {id: 9, reason: "I scheduled this person because..."},
-                        {id: 20, reason: "I scheduled this person because..."},
-                        {id: 24, reason: "I scheduled this person because..."},
-                        {id: 35, reason: "I scheduled this person because..."},
-                        {id: 41, reason: "I scheduled this person because..."},
-                        {id: 53, reason: "I scheduled this person because..."},
-                        {id: 60, reason: "I scheduled this person because..."},
-                        {id: 62, reason: "I scheduled this person because..."}
+                        {id: 1, role: "Their selected role" reason: "I scheduled this person because..."},
+                        {id: 9, role: "Their selected role" reason: "I scheduled this person because..."},
+                        {id: 20, role: "Their selected role" reason: "I scheduled this person because..."},
+                        {id: 24, role: "Their selected role" reason: "I scheduled this person because..."},
+                        {id: 35, role: "Their selected role" reason: "I scheduled this person because..."},
+                        {id: 41, role: "Their selected role" reason: "I scheduled this person because..."},
+                        {id: 53, role: "Their selected role" reason: "I scheduled this person because..."},
+                        {id: 60, role: "Their selected role" reason: "I scheduled this person because..."},
+                        {id: 62, role: "Their selected role" reason: "I scheduled this person because..."}
                     ]
                 },
             },
@@ -175,15 +176,15 @@ export const generateTeamSchedule = async (team: Team, events: MinistryEvent[]) 
                     team: 1,
                     at_capacity: true,
                     scheduled_users: [
-                        {id: 1, reason: "I scheduled this person because..."},
-                        {id: 9, reason: "I scheduled this person because..."},
-                        {id: 20, reason: "I scheduled this person because..."},
-                        {id: 24, reason: "I scheduled this person because..."},
-                        {id: 35, reason: "I scheduled this person because..."},
-                        {id: 41, reason: "I scheduled this person because..."},
-                        {id: 53, reason: "I scheduled this person because..."},
-                        {id: 60, reason: "I scheduled this person because..."},
-                        {id: 62, reason: "I scheduled this person because..."}
+                        {id: 1, role: "Their selected role" reason: "I scheduled this person because..."},
+                        {id: 9, role: "Their selected role" reason: "I scheduled this person because..."},
+                        {id: 20, role: "Their selected role" reason: "I scheduled this person because..."},
+                        {id: 24, role: "Their selected role" reason: "I scheduled this person because..."},
+                        {id: 35, role: "Their selected role" reason: "I scheduled this person because..."},
+                        {id: 41, role: "Their selected role" reason: "I scheduled this person because..."},
+                        {id: 53, role: "Their selected role" reason: "I scheduled this person because..."},
+                        {id: 60, role: "Their selected role" reason: "I scheduled this person because..."},
+                        {id: 62, role: "Their selected role" reason: "I scheduled this person because..."}
                     ]
                 },
             },
@@ -195,15 +196,15 @@ export const generateTeamSchedule = async (team: Team, events: MinistryEvent[]) 
                     team: 1,
                     at_capacity: true,
                     scheduled_users: [
-                        {id: 1, reason: "I scheduled this person because..."},
-                        {id: 9, reason: "I scheduled this person because..."},
-                        {id: 20, reason: "I scheduled this person because..."},
-                        {id: 24, reason: "I scheduled this person because..."},
-                        {id: 35, reason: "I scheduled this person because..."},
-                        {id: 41, reason: "I scheduled this person because..."},
-                        {id: 53, reason: "I scheduled this person because..."},
-                        {id: 60, reason: "I scheduled this person because..."},
-                        {id: 62, reason: "I scheduled this person because..."}
+                        {id: 1, role: "Their selected role" reason: "I scheduled this person because..."},
+                        {id: 9, role: "Their selected role" reason: "I scheduled this person because..."},
+                        {id: 20, role: "Their selected role" reason: "I scheduled this person because..."},
+                        {id: 24, role: "Their selected role" reason: "I scheduled this person because..."},
+                        {id: 35, role: "Their selected role" reason: "I scheduled this person because..."},
+                        {id: 41, role: "Their selected role" reason: "I scheduled this person because..."},
+                        {id: 53, role: "Their selected role" reason: "I scheduled this person because..."},
+                        {id: 60, role: "Their selected role" reason: "I scheduled this person because..."},
+                        {id: 62, role: "Their selected role" reason: "I scheduled this person because..."}
                     ]
                 },
             },
@@ -211,9 +212,9 @@ export const generateTeamSchedule = async (team: Team, events: MinistryEvent[]) 
     }
     `;
 
-	// console.log(prompt);
-    console.log('Submitting to GPT API...');
-	return await submitPrompt(prompt);
+    console.log(`Automatically scheduling ${team.title}...`);
+    console.log(prompt)
+	// return await submitPrompt(prompt);
 };
 
 /**
@@ -252,24 +253,25 @@ export const generateTeamSchedule = async (team: Team, events: MinistryEvent[]) 
     19. Peter id: 19 (Availability: 2x a month | Proficiencies: Beginner Bass, Beginner Guitar | Preference: Prefers Bass | Recent Serve Amount: Served 1 time recently)
     20. Quinn id: 20 (Availability: 1x a month | Proficiencies: Beginner Drums, Beginner Piano | Preference: Prefers Drums | Recent Serve Amount: Served 2 times recently)
 
-  Events To Schedule For:
+  Schedule volunteers for the following events:
     1. id: 5, date: 2023-10-08, event_team_id: 46
     2. id: 6, date: 2023-10-15, event_team_id: 47
     3. id: 7, date: 2023-10-22, event_team_id: 48
 
-  Team Requirements:
-  - Role: Vocals. Number needed: 4
-  - Role: Keys, Number needed: 1
-  - Role: Bass, Number needed: 1
-  - Role: Electric Guitar, Number needed: 1
-  - Role: Acoustic Guitar Number needed: 1
-  - Role: Drums, Number needed: 1
-  - Role: Band Aux, Number needed: 1
+  Place Volunteers based on these team requirements:
+  - Role: Vocals. Min # needed: 4
+  - Role: Keys, Min # needed: 1
+  - Role: Bass, Min # needed: 1
+  - Role: Electric Guitar, Min # needed: 1
+  - Role: Acoustic Guitar Min # needed: 1
+  - Role: Drums, Min # needed: 1
+  - Role: Band Aux, Min # needed: 1
 
   I need to schedule 3 events for this month, ensuring we have a mix of experience levels and no one is overworked. Who should be scheduled for the upcoming events, considering volunteer availability, experience, preferences, and recent scheduling patterns?
+    Also include your reasoning for scheduling each person.
 
   Return the data in a format as depicted in the following example. Return only JSON.
-  [
+  {
     events: [
         {
             id: 5,
@@ -302,6 +304,6 @@ export const generateTeamSchedule = async (team: Team, events: MinistryEvent[]) 
             },
         },
     ]
-  ]
+}
 
  */
