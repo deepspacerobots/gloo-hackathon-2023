@@ -4,19 +4,17 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import { ModeNight, WbSunny } from '@mui/icons-material';
-import ProTip from './ProTip';
 import EventEditor from '@/pages/eventEditor';
 import { ThemeProvider } from '@emotion/react';
 import { AppBar, CssBaseline, IconButton, Toolbar } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import './app.scss';
-import UserProfile from './components/UserProfile/UserProfile';
 
 function Copyright() {
 	return (
-		<Typography variant="body2" color="text.secondary" align="center">
+		<Typography variant='body2' color='text.secondary' align='center'>
 			{'Copyright © '}
-			<Link color="inherit" href="https://mui.com/">
+			<Link color='inherit' href='https://mui.com/'>
 				Your Website
 			</Link>{' '}
 			{new Date().getFullYear()}.
@@ -39,10 +37,10 @@ export default function App() {
 		<ThemeProvider theme={theme}>
 			<CssBaseline />
 			<Box sx={{ flexGrow: 1 }}>
-				<AppBar position="static">
+				<AppBar position='static'>
 					<Toolbar>
-						<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-							Eletric AI
+						<Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
+							Accord.US
 						</Typography>
 						<IconButton
 							onClick={() => {
