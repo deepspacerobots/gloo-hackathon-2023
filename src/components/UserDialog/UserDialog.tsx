@@ -28,7 +28,7 @@ function SimpleDialog(props: SimpleDialogProps) {
 }
 
 export interface UserDialogProps {
-	user: User;
+	user: any;
 }
 
 export default function UserDialog(props: UserDialogProps) {
