@@ -10,13 +10,13 @@ import {
 	Team,
 	User,
 } from '@/db/types';
-import { ReactNode, createContext, useContext, useState } from 'react';
+import { createContext, ReactNode, useContext, useState } from 'react';
 
 type Props = {
 	children: string | ReactNode | JSX.Element;
 };
 
-type DBContextType = {
+export type DBContextType = {
 	db: DBSchema;
 	getOrganization: (organizationId: number) => Organization | undefined;
 	setOrganization: (payload: Organization) => Organization;
@@ -24,6 +24,7 @@ type DBContextType = {
 	getPastEvents: () => MinistryEvent[];
 	getFutureEvents: () => MinistryEvent[];
 	setEvent: (payload: MinistryEvent) => MinistryEvent;
+	setEventTeams: (eventId: number, eventTeams: EventTeam[]) => EventTeam[];
 	getEventTeam: (eventTeamId: number) => EventTeam | undefined;
 	getMinistry: (ministryId: number) => Ministry | undefined;
 	setMinistry: (payload: Ministry) => Ministry;
@@ -49,7 +50,7 @@ type DBContextType = {
 const DBContext = createContext<DBContextType>({} as any);
 
 const DBProvider = ({ children }: Props): JSX.Element => {
-	const [db, setDb] = useState<Database>(preexistingData);
+	const [db, setDb] = useState<DBSchema>(preexistingData);
 
 	const getOrganization = (
 		organizationId: number
@@ -130,6 +131,21 @@ const DBProvider = ({ children }: Props): JSX.Element => {
 		newDb.events.push(payload);
 		setDb(newDb);
 		return payload;
+	};
+
+	const setEventTeams = (
+		eventId: number,
+		eventTeams: EventTeam[]
+	): EventTeam[] => {
+		const newDb = structuredClone(db);
+		const event = newDb.events.find((e) => e.id === eventId);
+		if (event) {
+			event.eventTeams = eventTeams;
+			console.log({ event: event });
+		}
+
+		setDb(newDb);
+		return eventTeams;
 	};
 
 	const getEventTeam = (eventTeamId: number): EventTeam | undefined => {
@@ -308,8 +324,25 @@ const DBProvider = ({ children }: Props): JSX.Element => {
 		eventId: number,
 		users: number[] | null[]
 	) => {
-		//let eventToUpdate = db.events.find(e => e.id === eventId)?.eventTeams.find(e => e === teamId)?.scheduled_users;
-		//eventToUpdate = users;
+		console.log({ teamId, eventId, users });
+
+		const newDb = structuredClone(db);
+
+		const event = newDb.events.find((e) => e.id === eventId);
+		console.log(event);
+		const eventTeam = event?.eventTeams.find(
+			(e) => (e as EventTeam).team === teamId
+		) as EventTeam;
+
+		console.log(eventTeam);
+
+		if (eventTeam) {
+			// @ts-ignore
+			eventTeam.scheduled_users = users;
+		}
+
+		//console.log(eventToUpdate);
+		setDb(newDb);
 	};
 
 	const provide = {
@@ -320,6 +353,7 @@ const DBProvider = ({ children }: Props): JSX.Element => {
 		getPastEvents,
 		getFutureEvents,
 		setEvent,
+		setEventTeams,
 		getEventTeam,
 		getMinistry,
 		setMinistry,
