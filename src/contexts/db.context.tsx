@@ -1,4 +1,4 @@
-import DB, { Database } from '@/db/db';
+import { DBSchema, preexistingData } from '@/db/db';
 import {
 	EventTeam,
 	Experience,
@@ -17,7 +17,7 @@ type Props = {
 };
 
 type DBContextType = {
-	db: Database;
+	db: DBSchema;
 	getOrganization: (organizationId: number) => Organization | undefined;
 	setOrganization: (payload: Organization) => Organization;
 	getEvent: (eventId: number) => MinistryEvent | undefined;
@@ -39,12 +39,17 @@ type DBContextType = {
 	setUser: (payload: User) => User;
 	getExperience: (experienceId: number) => Experience | undefined;
 	setExperience: (payload: Experience) => Experience;
+	setScheduledUsers: (
+		teamId: number,
+		eventId: number,
+		users: number[] | null[]
+	) => void;
 };
 
 const DBContext = createContext<DBContextType>({} as any);
 
 const DBProvider = ({ children }: Props): JSX.Element => {
-	const [db, setDb] = useState<Database>(DB);
+	const [db, setDb] = useState<Database>(preexistingData);
 
 	const getOrganization = (
 		organizationId: number
@@ -263,12 +268,6 @@ const DBProvider = ({ children }: Props): JSX.Element => {
 					(user.events as number[]).includes(event.id)
 				);
 			}
-
-			if (user.experiences?.length && typeof user.experiences[0] === 'number') {
-				user.experiences = db.experiences.filter((experience: Experience) =>
-					(user.experiences as number[]).includes(experience.id)
-				);
-			}
 		}
 
 		return user;
@@ -304,6 +303,15 @@ const DBProvider = ({ children }: Props): JSX.Element => {
 		return payload;
 	};
 
+	const setScheduledUsers = (
+		teamId: number,
+		eventId: number,
+		users: number[] | null[]
+	) => {
+		//let eventToUpdate = db.events.find(e => e.id === eventId)?.eventTeams.find(e => e === teamId)?.scheduled_users;
+		//eventToUpdate = users;
+	};
+
 	const provide = {
 		db,
 		getOrganization,
@@ -327,6 +335,7 @@ const DBProvider = ({ children }: Props): JSX.Element => {
 		setUser,
 		getExperience,
 		setExperience,
+		setScheduledUsers,
 	};
 
 	return <DBContext.Provider value={provide}>{children}</DBContext.Provider>;
