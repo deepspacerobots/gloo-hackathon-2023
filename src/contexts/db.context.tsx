@@ -2,12 +2,14 @@ import { DBSchema, preexistingData } from '@/db/db';
 import {
 	EventTeam,
 	Experience,
+	LevelOptions,
 	Ministry,
 	MinistryEvent,
 	Organization,
 	Requirement,
 	Role,
 	Team,
+	TypeOptions,
 	User,
 } from '@/db/types';
 import { createContext, ReactNode, useContext, useState } from 'react';
@@ -38,8 +40,17 @@ export type DBContextType = {
 	getUser: (userId: number) => User | undefined;
 	getUsers: () => User[];
 	setUser: (payload: User) => User;
-	getExperience: (experienceId: number) => Experience | undefined;
-	setExperience: (payload: Experience) => Experience;
+	setProficiencyExperience: (
+		userId: number,
+		pIndex: number,
+		value: number
+	) => void;
+	setProficiencyPreference: (
+		userId: number,
+		pIndex: number,
+		value: number
+	) => void;
+
 	setScheduledUsers: (
 		teamId: number,
 		eventId: number,
@@ -301,22 +312,34 @@ const DBProvider = ({ children }: Props): JSX.Element => {
 		return payload;
 	};
 
-	const getExperience = (experienceId: number): Experience | undefined => {
-		const experience = db.experiences.find(
-			(experience: Experience) => experience.id === experienceId
-		);
+	const setProficiencyExperience = (
+		userId: number,
+		pIndex: number,
+		value: number
+	) => {
+		const newDb = structuredClone(db);
+		const proficiency = newDb.users?.find((u) => u.id === userId)
+			?.proficiencies?.[pIndex];
+		if (proficiency) {
+			proficiency.experience = value;
+		}
 
-		return experience;
+		setDb(newDb);
 	};
 
-	const setExperience = (payload: Experience): Experience => {
-		payload.id = db.experiences[db.experiences.length - 1].id + 1;
-
+	const setProficiencyPreference = (
+		userId: number,
+		pIndex: number,
+		value: number
+	) => {
 		const newDb = structuredClone(db);
-		newDb.experiences.push(payload);
-		setDb(newDb);
+		const proficiency = newDb.users?.find((u) => u.id === userId)
+			?.proficiencies?.[pIndex];
+		if (proficiency) {
+			proficiency.preference = value;
+		}
 
-		return payload;
+		setDb(newDb);
 	};
 
 	const setScheduledUsers = (
@@ -367,8 +390,8 @@ const DBProvider = ({ children }: Props): JSX.Element => {
 		getUser,
 		getUsers,
 		setUser,
-		getExperience,
-		setExperience,
+		setProficiencyExperience,
+		setProficiencyPreference,
 		setScheduledUsers,
 	};
 
