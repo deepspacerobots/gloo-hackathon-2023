@@ -23,4 +23,18 @@
 	&:hover {
 		cursor: pointer;
 	}
+
+	.volunteersDisplay {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		.searchInput {
+			width: 100%;
+		}
+
+		.showMore {
+			width: 50%;
+		}
+	}
 }
