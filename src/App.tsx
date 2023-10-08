@@ -9,6 +9,7 @@ import { ThemeProvider } from '@emotion/react';
 import { AppBar, CssBaseline, IconButton, Toolbar } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import './app.scss';
+import { Logo } from '../public/logo/Logo';
 
 function Copyright() {
 	return (
@@ -29,6 +30,7 @@ export default function App() {
 			mode: isDarkTheme ? 'dark' : 'light',
 		},
 	});
+	console.log(theme.palette.primary.main);
 	const themeIcon = () => {
 		if (isDarkTheme) return <WbSunny />;
 		return <ModeNight />;
@@ -40,7 +42,7 @@ export default function App() {
 				<AppBar position='static'>
 					<Toolbar>
 						<Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
-							Accord.US
+							<Logo color={theme.palette.text.primary} />
 						</Typography>
 						<IconButton
 							onClick={() => {
