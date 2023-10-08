@@ -21,6 +21,13 @@
 	opacity: 0.3;
 }
 
+.loadingContainer {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
 .teamTable {
 	overflow-x: hidden !important;
 }

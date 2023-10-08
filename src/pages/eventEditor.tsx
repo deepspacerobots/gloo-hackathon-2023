@@ -9,6 +9,7 @@ import {
 	Card,
 	CardContent,
 	CardHeader,
+	CircularProgress,
 	Divider,
 	FormControl,
 	Grid,
@@ -49,6 +50,8 @@ export default function EventEditor() {
 	const [allVolunteers, setAllVolunteers] = useState(getUsers());
 	const [userDragging, setUserDragging] = useState<null | User>(null);
 	const [unassignedRoles, setUnassignedRoles] = useState(0);
+	const [eventsLoading, setEventsLoading] = useState(false);
+
 	useEffect(() => {
 		// add event teams to event
 		let unassignedRolesCount = 0;
@@ -153,6 +156,7 @@ export default function EventEditor() {
 							userDragging={userDragging}
 							setUserDragging={setUserDragging}
 							events={futureEvents}
+							eventsLoading={eventsLoading}
 						/>
 					))}
 				</Grid>
@@ -163,6 +167,7 @@ export default function EventEditor() {
 						volunteers={allVolunteers}
 						userDragging={userDragging}
 						setUserDragging={setUserDragging}
+						setEventsLoading={setEventsLoading}
 					/>
 				</Grid>
 			</Hidden>
@@ -177,6 +182,7 @@ function EventCard({
 	userDragging,
 	setUserDragging,
 	events,
+	eventsLoading,
 }: {
 	eventId: number;
 	eventName: string;
@@ -184,6 +190,7 @@ function EventCard({
 	userDragging: null | User;
 	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
 	events: MinistryEvent[];
+	eventsLoading: boolean;
 }) {
 	const { db, getEvent, getAllEvents } = useDBContext();
 	const [isExpanded, setIsExpanded] = useState(false);
@@ -205,46 +212,32 @@ function EventCard({
 						<Typography>
 							{eventName} - {formattedEventDate}
 						</Typography>
-						<Accordion
-							className={'outerAccordion'}
-							disableGutters
-							expanded={!isExpanded}
-							onChange={() => {
-								setIsExpanded(!isExpanded);
-							}}
-						>
-							<AccordionSummary
-								style={{ height: 0, minHeight: 0 }}
-							></AccordionSummary>
-
-							<AccordionDetails>
-								<Grid container spacing={2}>
-									{teams?.map((team: Team) => (
-										<TeamCardSecondary key={team.id} teamName={team.title} />
-									))}
-								</Grid>
-							</AccordionDetails>
-						</Accordion>
 					</Stack>
 				</AccordionSummary>
 
 				<AccordionDetails>
-					<Grid container rowSpacing={1} spacing={1}>
-						{teams?.map((team: Team) => (
-							<TeamCard
-								key={team.id}
-								teamName={team.title}
-								roles={team.roles as number[]}
-								roles_required={team.roles_required as number[]}
-								userDragging={userDragging}
-								setUserDragging={setUserDragging}
-								eventId={eventId}
-								teamId={team.id}
-								events={events}
-								event={event as MinistryEvent}
-							/>
-						))}
-					</Grid>
+					{eventsLoading ? (
+						<div className="loadingContainer">
+							<CircularProgress color="secondary" />
+						</div>
+					) : (
+						<Grid container rowSpacing={1} spacing={1}>
+							{teams?.map((team: Team) => (
+								<TeamCard
+									key={team.id}
+									teamName={team.title}
+									roles={team.roles as number[]}
+									roles_required={team.roles_required as number[]}
+									userDragging={userDragging}
+									setUserDragging={setUserDragging}
+									eventId={eventId}
+									teamId={team.id}
+									events={events}
+									event={event as MinistryEvent}
+								/>
+							))}
+						</Grid>
+					)}
 				</AccordionDetails>
 			</Accordion>
 		</Grid>
@@ -442,10 +435,12 @@ function VolunteerCard({
 	volunteers,
 	userDragging,
 	setUserDragging,
+	setEventsLoading,
 }: {
 	volunteers: User[];
 	userDragging: null | User;
 	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
+	setEventsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
 	const chunkVolunteers = (volunteersToChunk: User[]): User[][] => {
 		const chunkSize = 30;
@@ -525,6 +520,7 @@ function VolunteerCard({
 	const teams = getAllTeams();
 
 	const aiAssignAll = async () => {
+		setEventsLoading(true);
 		// Not reliable yet. Team three often gives a bad response and throws an error :( "SyntaxError: Unexpected token 'B', "Based on t"... is not valid JSON"
 		// Also, worship team responses are still wonky. Ex. scheduling TWO bass players. Maybe GPT4 model would be better?
 		// let schedules = [];
@@ -536,33 +532,39 @@ function VolunteerCard({
 		// }
 		// console.log({schedules})
 
-		const worshipSchedules = exampleWorshipTeamSchedules.events.map((event) => {
-			return {
-				teamId: event.eventTeam.team,
-				eventId: event.id,
-				users: event.eventTeam.scheduled_users.map((user) => user.id),
-			};
-		});
-		const techSchedules = exampleTechTeamSchedules.events.map((event) => {
-			return {
-				teamId: event.eventTeam.team,
-				eventId: event.id,
-				users: event.eventTeam.scheduled_users.map((user) => user.id),
-			};
-		});
-		const prayerSchedules = examplePrayerTeamSchedules.events.map((event) => {
-			return {
-				teamId: event.eventTeam.team,
-				eventId: event.id,
-				users: event.eventTeam.scheduled_users.map((user) => user.id),
-			};
-		});
+		setTimeout(() => {
+			const worshipSchedules = exampleWorshipTeamSchedules.events.map(
+				(event) => {
+					return {
+						teamId: event.eventTeam.team,
+						eventId: event.id,
+						users: event.eventTeam.scheduled_users.map((user) => user.id),
+					};
+				}
+			);
+			const techSchedules = exampleTechTeamSchedules.events.map((event) => {
+				return {
+					teamId: event.eventTeam.team,
+					eventId: event.id,
+					users: event.eventTeam.scheduled_users.map((user) => user.id),
+				};
+			});
+			const prayerSchedules = examplePrayerTeamSchedules.events.map((event) => {
+				return {
+					teamId: event.eventTeam.team,
+					eventId: event.id,
+					users: event.eventTeam.scheduled_users.map((user) => user.id),
+				};
+			});
 
-		batchUpdateScheduledUsers([
-			...worshipSchedules,
-			...techSchedules,
-			...prayerSchedules,
-		]);
+			batchUpdateScheduledUsers([
+				...worshipSchedules,
+				...techSchedules,
+				...prayerSchedules,
+			]);
+
+			setEventsLoading(false);
+		}, 3500);
 	};
 
 	const unassignAll = () => {
