@@ -311,11 +311,15 @@ function TeamCard({
 									const userId = eventTeam?.scheduled_users?.[index];
 
 									let userName = '';
+									let userFirst = '';
+									let userLast = '';
 									let profilePic = '';
 									
 									if (typeof userId === 'number') {
 										const user = getUser(userId);
 										userName = user ? `${user.firstName} ${user.lastName}` : '';
+										userFirst = user?.firstName as string;
+										userLast = user?.lastName as string;
 										profilePic = user?.profilePhoto as string;
 									}
 
@@ -327,13 +331,15 @@ function TeamCard({
 											setUserDragging={setUserDragging}
 											roleIndex={index}
 											usersName={userName}
+											userFirstName={userFirst}
+											userLastName={userLast}
 											userProfilePhoto={profilePic as string}
 											setUserToEvent={() => {
 												//@ts-ignore
 												const newUsersInRoles = [
 													...event?.eventTeams.find(
-														(data: any) => data.team === teamId
-													)?.scheduled_users,
+														(data: any): data is EventTeam => typeof data === 'object' && data.team === teamId
+													)?.scheduled_users || [],
 												];
 												//@ts-ignore
 												newUsersInRoles[index] = userDragging.id;
@@ -381,6 +387,8 @@ function EventPosition({
 	roleIndex,
 	setUserToEvent,
 	usersName,
+	userFirstName,
+	userLastName,
 	userProfilePhoto,
 }: {
 	position: string;
@@ -389,6 +397,8 @@ function EventPosition({
 	roleIndex: number;
 	setUserToEvent: () => void;
 	usersName: string;
+	userFirstName: string;
+	userLastName: string;
 	userProfilePhoto: string;
 }) {
 	const [styles, setStyle] = useState('');
@@ -433,9 +443,12 @@ function EventPosition({
 								title={usersName}
 								key={`avatar ${usersName}`}
 							>
-								<Avatar
-									alt={usersName}
-									src={userProfilePhoto}
+								<UserDialog
+									user={{
+										firstName: userFirstName,
+										lastName: userLastName,
+										profilePhoto: userProfilePhoto
+									}}
 								/>
 							</Tooltip>
 						): null}
