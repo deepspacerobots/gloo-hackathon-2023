@@ -38,9 +38,9 @@ import Box from '@mui/material/Box';
 import { Close } from '@mui/icons-material';
 import UserDialog from '@/components/UserDialog/UserDialog';
 import {
-	exampleWorshipTeamSchedules,
-	exampleTechTeamSchedules,
 	examplePrayerTeamSchedules,
+	exampleTechTeamSchedules,
+	exampleWorshipTeamSchedules,
 } from '../api/example-responses';
 import { useGPT } from '@/hooks/useGPT';
 
@@ -53,19 +53,31 @@ export default function EventEditor() {
 	const [eventsLoading, setEventsLoading] = useState(false);
 
 	useEffect(() => {
-		// add event teams to event
-		let unassignedRolesCount = 0;
+		let totalRoleCount = 0;
 		futureEvents.forEach((event) => {
 			event.teams.forEach((team) => {
 				// @ts-ignore
 				team.roles_required.forEach((a, index) => {
-					unassignedRolesCount++;
+					totalRoleCount++;
 				});
 			});
-
-			setUnassignedRoles(unassignedRolesCount);
 		});
-	}, []);
+		console.log(totalRoleCount);
+		let countOfAllAssignedRoles = 0;
+		db.events.slice(4).forEach(event => {
+			// @ts-ignore
+			event.eventTeams.forEach((eventTeam: EventTeam) => {
+				console.log(eventTeam.scheduled_users);
+				eventTeam.scheduled_users.forEach(user => {
+					if (user !== undefined) {
+						countOfAllAssignedRoles++;
+					}
+				});
+			});
+		});
+		console.log(totalRoleCount, countOfAllAssignedRoles);
+		setUnassignedRoles(totalRoleCount - countOfAllAssignedRoles);
+	}, [db.events]);
 
 	return (
 		<Grid container spacing={2}>
@@ -176,14 +188,14 @@ export default function EventEditor() {
 }
 
 function EventCard({
-	eventId,
-	eventName,
-	eventDate,
-	userDragging,
-	setUserDragging,
-	events,
-	eventsLoading,
-}: {
+										 eventId,
+										 eventName,
+										 eventDate,
+										 userDragging,
+										 setUserDragging,
+										 events,
+										 eventsLoading,
+									 }: {
 	eventId: number;
 	eventName: string;
 	eventDate: string;
@@ -217,8 +229,8 @@ function EventCard({
 
 				<AccordionDetails>
 					{eventsLoading ? (
-						<div className="loadingContainer">
-							<CircularProgress color="secondary" />
+						<div className='loadingContainer'>
+							<CircularProgress color='secondary' />
 						</div>
 					) : (
 						<Grid container rowSpacing={1} spacing={1}>
@@ -245,16 +257,16 @@ function EventCard({
 }
 
 function TeamCard({
-	teamName,
-	roles,
-	roles_required,
-	userDragging,
-	setUserDragging,
-	eventId,
-	teamId,
-	events,
-	event,
-}: {
+										teamName,
+										roles,
+										roles_required,
+										userDragging,
+										setUserDragging,
+										eventId,
+										teamId,
+										events,
+										event,
+									}: {
 	teamName: string;
 	roles: number[];
 	roles_required: number[];
@@ -268,7 +280,7 @@ function TeamCard({
 	const { setScheduledUsers, batchUpdateScheduledUsers, getRole, getUser } =
 		useDBContext();
 	const fullRoles = roles_required.map((role: number) =>
-		getRole(role)
+		getRole(role),
 	) as Role[];
 
 	const [disabled, setDisabled] = useState(false);
@@ -288,14 +300,14 @@ function TeamCard({
 
 	return (
 		<Grid item xs={12} md={4}>
-			<Card variant="outlined">
+			<Card variant='outlined'>
 				<CardContent className={disabled ? 'disabled' : ''}>
 					<Typography mb={2}>Team: {teamName}</Typography>
-					<TableContainer component={Paper} className="teamTable">
-						<Table size="small">
+					<TableContainer component={Paper} className='teamTable'>
+						<Table size='small'>
 							<TableHead>
 								<TableRow>
-									<TableCell sx={{ fontSize: "0.8rem", fontWeight: "bold", opacity: 0.8 }}>Position</TableCell>
+									<TableCell sx={{ fontSize: '0.8rem', fontWeight: 'bold', opacity: 0.8 }}>Position</TableCell>
 									<TableCell></TableCell>
 								</TableRow>
 							</TableHead>
@@ -305,7 +317,7 @@ function TeamCard({
 									//@ts-ignore
 									const eventTeam = event?.eventTeams.find(
 										(data: any): data is EventTeam =>
-											typeof data === 'object' && data.team === teamId
+											typeof data === 'object' && data.team === teamId,
 									);
 
 									const userId = eventTeam?.scheduled_users?.[index];
@@ -314,7 +326,7 @@ function TeamCard({
 									let userFirst = '';
 									let userLast = '';
 									let profilePic = '';
-									
+
 									if (typeof userId === 'number') {
 										const user = getUser(userId);
 										userName = user ? `${user.firstName} ${user.lastName}` : '';
@@ -350,10 +362,10 @@ function TeamCard({
 												const allEventTeamsForEvent =
 													newEventObj[
 														newEventObj.findIndex((e: any) => e.id === eventId)
-													].eventTeams;
+														].eventTeams;
 												const eventTeamForEvent =
 													allEventTeamsForEvent.findIndex(
-														(e: any) => e.id === teamId
+														(e: any) => e.id === teamId,
 													);
 											}}
 										/>
@@ -371,7 +383,7 @@ function TeamCard({
 function TeamCardSecondary({ teamName }: { teamName: string }) {
 	return (
 		<Grid item xs={12} md={4}>
-			<Card variant="outlined">
+			<Card variant='outlined'>
 				<CardContent>
 					<Typography mb={2}>Team: {teamName}</Typography>
 				</CardContent>
@@ -432,7 +444,7 @@ function EventPosition({
 				<Typography>{position}</Typography>
 			</TableCell> */}
 
-			<TableCell component="th" scope="row" sx={{ '&:hover': { cursor: 'pointer' } }}>
+			<TableCell component='th' scope='row' sx={{ '&:hover': { cursor: 'pointer' } }}>
 				<div>
 					<Typography>{position}</Typography>
 				</div>
@@ -451,7 +463,7 @@ function EventPosition({
 									}}
 								/>
 							</Tooltip>
-						): null}
+						) : null}
 						<Typography>{usersName}</Typography>
 					</div>
 				) : null}
@@ -464,11 +476,11 @@ function EventPosition({
 }
 
 function VolunteerCard({
-	volunteers,
-	userDragging,
-	setUserDragging,
-	setEventsLoading,
-}: {
+												 volunteers,
+												 userDragging,
+												 setUserDragging,
+												 setEventsLoading,
+											 }: {
 	volunteers: User[];
 	userDragging: null | User;
 	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
@@ -499,7 +511,7 @@ function VolunteerCard({
 
 	const [filter, setFilter] = useState(0);
 	const [filteredVolunteers, setFilteredVolunteers] = useState<User[][]>(
-		chunkVolunteers(volunteers)
+		chunkVolunteers(volunteers),
 	);
 	const [volunteerFilterInputValue, setVolunteerFilterInputValue] =
 		useState('');
@@ -538,7 +550,7 @@ function VolunteerCard({
 	useEffect(() => {
 		const filteredVolunteersByTeam = filterVolunteersByTeam();
 		const filteredVolunteersByName = filterVolunteersByName(
-			filteredVolunteersByTeam
+			filteredVolunteersByTeam,
 		);
 
 		const chunkedVolunteers = chunkVolunteers(filteredVolunteersByName);
@@ -572,7 +584,7 @@ function VolunteerCard({
 						eventId: event.id,
 						users: event.eventTeam.scheduled_users.map((user) => user.id),
 					};
-				}
+				},
 			);
 			const techSchedules = exampleTechTeamSchedules.events.map((event) => {
 				return {
@@ -605,14 +617,14 @@ function VolunteerCard({
 				teamId: (team as Team).id,
 				eventId: event.id,
 				users: [],
-			}))
+			})),
 		);
 		batchUpdateScheduledUsers(clearedSchedules);
 	};
 
 	return (
 		<Grid item className={'volunteerCard'}>
-			<Card variant="outlined">
+			<Card variant='outlined'>
 				<CardContent>
 					{/*<CardHeader title={'Assign Volunteers'}></CardHeader>*/}
 					<Stack spacing={1}>
@@ -627,8 +639,8 @@ function VolunteerCard({
 								<Grid container spacing={1}>
 									<Grid item>
 										<Button
-											variant="contained"
-											color="success"
+											variant='contained'
+											color='success'
 											onClick={() => {
 												aiAssignAll();
 											}}
@@ -638,7 +650,7 @@ function VolunteerCard({
 									</Grid>
 
 									<Grid item>
-										<Button color="error" onClick={() => unassignAll()}>
+										<Button color='error' onClick={() => unassignAll()}>
 											Unassign All
 										</Button>
 									</Grid>
@@ -657,9 +669,9 @@ function VolunteerCard({
 								<FormControl fullWidth>
 									<InputLabel>Team</InputLabel>
 									<Select
-										size="small"
+										size='small'
 										value={filter}
-										label="Team"
+										label='Team'
 										//@ts-ignore
 										onChange={(e) => setFilter(e.target.value)}
 									>
@@ -671,7 +683,7 @@ function VolunteerCard({
 								</FormControl>
 
 								<Button
-									color="error"
+									color='error'
 									onClick={() => setFilter(0)}
 									disabled={filter === 0}
 								>
@@ -687,12 +699,12 @@ function VolunteerCard({
 								subheader={'Click and drag volunteers to manually assign them'}
 							/>
 
-							<CardContent className="volunteersDisplay">
-								<Box mb={2} className="searchInput">
+							<CardContent className='volunteersDisplay'>
+								<Box mb={2} className='searchInput'>
 									<FormControl fullWidth>
 										<InputLabel
 											size={'small'}
-											htmlFor="search-for-volunteer-input"
+											htmlFor='search-for-volunteer-input'
 										>
 											Search For Volunteer
 										</InputLabel>
@@ -703,14 +715,14 @@ function VolunteerCard({
 											size={'small'}
 											label={'Search For Volunteer'}
 											endAdornment={
-												<InputAdornment position="end">
+												<InputAdornment position='end'>
 													<IconButton
 														size={'small'}
 														onClick={() => {
 															setVolunteerFilterInputValue('');
 														}}
 													>
-														<Close fontSize="inherit" />
+														<Close fontSize='inherit' />
 													</IconButton>
 												</InputAdornment>
 											}
@@ -725,7 +737,7 @@ function VolunteerCard({
 									container
 									rowSpacing={1}
 									spacing={1}
-									className="volunteerGrid"
+									className='volunteerGrid'
 								>
 									{filteredVolunteers.map((chunk, chunkIdx) => {
 										if (chunkIdx < numChunks) {
@@ -750,7 +762,7 @@ function VolunteerCard({
 
 								{filteredVolunteers.length > numChunks && (
 									<Button
-										className="showMore"
+										className='showMore'
 										onClick={() => setNumChunks(numChunks + 1)}
 									>
 										Show More
