@@ -4,7 +4,6 @@ import {
 	Accordion,
 	AccordionDetails,
 	AccordionSummary,
-	Avatar,
 	Button,
 	Card,
 	CardContent,
@@ -62,12 +61,10 @@ export default function EventEditor() {
 				});
 			});
 		});
-		console.log(totalRoleCount);
 		let countOfAllAssignedRoles = 0;
 		db.events.slice(4).forEach(event => {
 			// @ts-ignore
 			event.eventTeams.forEach((eventTeam: EventTeam) => {
-				console.log(eventTeam.scheduled_users);
 				eventTeam.scheduled_users.forEach(user => {
 					if (user !== undefined) {
 						countOfAllAssignedRoles++;
@@ -75,7 +72,6 @@ export default function EventEditor() {
 				});
 			});
 		});
-		console.log(totalRoleCount, countOfAllAssignedRoles);
 		setUnassignedRoles(totalRoleCount - countOfAllAssignedRoles);
 	}, [db.events]);
 
@@ -350,7 +346,7 @@ function TeamCard({
 												//@ts-ignore
 												const newUsersInRoles = [
 													...event?.eventTeams.find(
-														(data: any): data is EventTeam => typeof data === 'object' && data.team === teamId
+														(data: any): data is EventTeam => typeof data === 'object' && data.team === teamId,
 													)?.scheduled_users || [],
 												];
 												//@ts-ignore
@@ -393,16 +389,16 @@ function TeamCardSecondary({ teamName }: { teamName: string }) {
 }
 
 function EventPosition({
-	position,
-	userDragging,
-	setUserDragging,
-	roleIndex,
-	setUserToEvent,
-	usersName,
-	userFirstName,
-	userLastName,
-	userProfilePhoto,
-}: {
+												 position,
+												 userDragging,
+												 setUserDragging,
+												 roleIndex,
+												 setUserToEvent,
+												 usersName,
+												 userFirstName,
+												 userLastName,
+												 userProfilePhoto,
+											 }: {
 	position: string;
 	userDragging: null | User;
 	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
@@ -449,7 +445,7 @@ function EventPosition({
 					<Typography>{position}</Typography>
 				</div>
 				{usersName.length ? (
-					<div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 10 }}>
+					<Box style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 10 }}>
 						{usersName.length ? (
 							<Tooltip
 								title={usersName}
@@ -459,13 +455,13 @@ function EventPosition({
 									user={{
 										firstName: userFirstName,
 										lastName: userLastName,
-										profilePhoto: userProfilePhoto
+										profilePhoto: userProfilePhoto,
 									}}
 								/>
 							</Tooltip>
 						) : null}
 						<Typography>{usersName}</Typography>
-					</div>
+					</Box>
 				) : null}
 			</TableCell>
 			<TableCell>
