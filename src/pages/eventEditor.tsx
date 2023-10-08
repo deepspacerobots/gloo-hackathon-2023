@@ -44,8 +44,7 @@ import {
 import { useGPT } from '@/hooks/useGPT';
 
 export default function EventEditor() {
-	const { db, getFutureEvents, getAllTeams, getUsers } =
-		useDBContext();
+	const { db, getFutureEvents, getAllTeams, getUsers } = useDBContext();
 	const futureEvents = getFutureEvents();
 	const [allVolunteers, setAllVolunteers] = useState(getUsers());
 	const [userDragging, setUserDragging] = useState<null | User>(null);
@@ -273,8 +272,11 @@ function TeamCard({
 	events: MinistryEvent[];
 	event: MinistryEvent;
 }) {
-	const { setScheduledUsers, batchUpdateScheduledUsers, getRole, getUser } = useDBContext();
-	const fullRoles = roles_required.map((role: number) => getRole(role)) as Role[];
+	const { setScheduledUsers, batchUpdateScheduledUsers, getRole, getUser } =
+		useDBContext();
+	const fullRoles = roles_required.map((role: number) =>
+		getRole(role)
+	) as Role[];
 
 	return (
 		<Grid item xs={12} md={4}>
@@ -294,18 +296,19 @@ function TeamCard({
 								{fullRoles?.map((role: Role, index) => {
 									//@ts-ignore
 									const eventTeam = event?.eventTeams.find(
-										(data: any): data is EventTeam => typeof data === 'object' && data.team === teamId
+										(data: any): data is EventTeam =>
+											typeof data === 'object' && data.team === teamId
 									);
-									
+
 									const userId = eventTeam?.scheduled_users?.[index];
-									
+
 									let userName = '';
-									
+
 									if (typeof userId === 'number') {
 										const user = getUser(userId);
 										userName = user ? `${user.firstName} ${user.lastName}` : '';
 									}
-									
+
 									return (
 										<EventPosition
 											key={index}
@@ -317,12 +320,16 @@ function TeamCard({
 											userProfilePhoto={userDragging?.profilePhoto as string}
 											setUserToEvent={() => {
 												//@ts-ignore
-												const newUsersInRoles = [...event?.eventTeams.find((data: any) => data.team === teamId)?.scheduled_users];
+												const newUsersInRoles = [
+													...event?.eventTeams.find(
+														(data: any) => data.team === teamId
+													)?.scheduled_users,
+												];
 												//@ts-ignore
 												newUsersInRoles[index] = userDragging.id;
 												batchUpdateScheduledUsers([
-													{teamId, eventId, users: [...newUsersInRoles]}
-												])
+													{ teamId, eventId, users: [...newUsersInRoles] },
+												]);
 												const newEventObj = JSON.parse(JSON.stringify(events));
 												const allEventTeamsForEvent =
 													newEventObj[
@@ -364,7 +371,7 @@ function EventPosition({
 	roleIndex,
 	setUserToEvent,
 	usersName,
-	userProfilePhoto
+	userProfilePhoto,
 }: {
 	position: string;
 	userDragging: null | User;
@@ -496,7 +503,8 @@ function VolunteerCard({
 		setFilteredVolunteers(chunkedVolunteers);
 	}, [filter, volunteerFilterInputValue, numChunks]);
 
-	const { getFutureEvents, getAllTeams, batchUpdateScheduledUsers } = useDBContext();
+	const { getFutureEvents, getAllTeams, batchUpdateScheduledUsers } =
+		useDBContext();
 	const { generateTeamSchedule } = useGPT();
 	const [futureEvents, setEvents] = useState(getFutureEvents());
 	const teams = getAllTeams();
@@ -506,48 +514,48 @@ function VolunteerCard({
 		// Also, worship team responses are still wonky. Ex. scheduling TWO bass players. Maybe GPT4 model would be better?
 		// let schedules = [];
 		// for (const team of teams) {
-		
+
 		// 	const teamSchedule = await generateTeamSchedule(team, futureEvents);
 		// 	console.log(teamSchedule)
 		// 	schedules.push(teamSchedule);
 		// }
 		// console.log({schedules})
 
-		const worshipSchedules = exampleWorshipTeamSchedules.events.map(event => {
+		const worshipSchedules = exampleWorshipTeamSchedules.events.map((event) => {
 			return {
 				teamId: event.eventTeam.team,
 				eventId: event.id,
-				users: event.eventTeam.scheduled_users.map(user => user.id)
-			}
+				users: event.eventTeam.scheduled_users.map((user) => user.id),
+			};
 		});
-		const techSchedules = exampleTechTeamSchedules.events.map(event => {
+		const techSchedules = exampleTechTeamSchedules.events.map((event) => {
 			return {
 				teamId: event.eventTeam.team,
 				eventId: event.id,
-				users: event.eventTeam.scheduled_users.map(user => user.id)
-			}
+				users: event.eventTeam.scheduled_users.map((user) => user.id),
+			};
 		});
-		const prayerSchedules = examplePrayerTeamSchedules.events.map(event => {
+		const prayerSchedules = examplePrayerTeamSchedules.events.map((event) => {
 			return {
 				teamId: event.eventTeam.team,
 				eventId: event.id,
-				users: event.eventTeam.scheduled_users.map(user => user.id)
-			}
+				users: event.eventTeam.scheduled_users.map((user) => user.id),
+			};
 		});
 
 		batchUpdateScheduledUsers([
 			...worshipSchedules,
 			...techSchedules,
-			...prayerSchedules
+			...prayerSchedules,
 		]);
 	};
 
 	const unassignAll = () => {
-		const clearedSchedules = futureEvents.flatMap(event => 
-			event.teams.map(team => ({ 
-				teamId: (team as Team).id, 
-				eventId: event.id, 
-				users: [] 
+		const clearedSchedules = futureEvents.flatMap((event) =>
+			event.teams.map((team) => ({
+				teamId: (team as Team).id,
+				eventId: event.id,
+				users: [],
 			}))
 		);
 		batchUpdateScheduledUsers(clearedSchedules);
@@ -581,7 +589,9 @@ function VolunteerCard({
 									</Grid>
 
 									<Grid item>
-										<Button color="error" onClick={() => unassignAll()}>Unassign All</Button>
+										<Button color="error" onClick={() => unassignAll()}>
+											Unassign All
+										</Button>
 									</Grid>
 								</Grid>
 							</CardContent>
