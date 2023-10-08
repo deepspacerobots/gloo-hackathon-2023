@@ -21,6 +21,7 @@ export type DBContextType = {
 	getOrganization: (organizationId: number) => Organization | undefined;
 	setOrganization: (payload: Organization) => Organization;
 	getEvent: (eventId: number) => MinistryEvent | undefined;
+	getAllEvents: () => MinistryEvent[] | undefined;
 	getPastEvents: () => MinistryEvent[];
 	getFutureEvents: () => MinistryEvent[];
 	setEvent: (payload: MinistryEvent) => MinistryEvent;
@@ -104,6 +105,10 @@ const DBProvider = ({ children }: Props): JSX.Element => {
 
 		return event;
 	};
+
+	const getAllEvents = () => {
+		return db.events.map(event => getEvent(event.id));
+	}
 
 	const getPastEvents = (): MinistryEvent[] => {
 		const events = db.events;
@@ -327,22 +332,24 @@ const DBProvider = ({ children }: Props): JSX.Element => {
 		console.log({ teamId, eventId, users });
 
 		const newDb = structuredClone(db);
+		console.log(newDb)
 
 		const event = newDb.events.find((e) => e.id === eventId);
-		console.log(event);
+		// console.log(event);
 		const eventTeam = event?.eventTeams.find(
 			(e) => (e as EventTeam).team === teamId
 		) as EventTeam;
 
-		console.log(eventTeam);
+		// console.log(eventTeam);
 
 		if (eventTeam) {
 			// @ts-ignore
 			eventTeam.scheduled_users = users;
+			setDb(newDb);
 		}
 
 		//console.log(eventToUpdate);
-		setDb(newDb);
+		
 	};
 
 	const provide = {
@@ -350,6 +357,7 @@ const DBProvider = ({ children }: Props): JSX.Element => {
 		getOrganization,
 		setOrganization,
 		getEvent,
+		getAllEvents,
 		getPastEvents,
 		getFutureEvents,
 		setEvent,

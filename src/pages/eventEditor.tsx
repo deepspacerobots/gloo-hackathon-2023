@@ -198,11 +198,11 @@ function EventCard({
 	events: MinistryEvent[];
 }) {
 	//const db = useDBContext();
-	const { db, getEvent } = useDBContext();
+	const { db, getEvent, getAllEvents } = useDBContext();
 	const [isExpanded, setIsExpanded] = useState(false);
 
 	const fadfasdfgarstgewrrhtawegrtwe = getEvent(eventId);
-	const event = events.find((e) => e.id === eventId);
+	const event = getEvent(eventId);
 	const formattedEventDate = new Date(eventDate).toDateString();
 	const teams = event?.teams as Team[];
 	const teams2 = event?.eventTeams as EventTeam[];
@@ -286,15 +286,6 @@ function TeamCard({
 }) {
 	const { db, setScheduledUsers, getRole, getUser } = useDBContext();
 	const fullRoles = roles.map((role: number) => getRole(role)) as Role[];
-	// const event = db.getEvent(eventId);
-	const [usersInRoles, setUsersInRoles] = useState(
-		Array.from(fullRoles, (role, i) => {
-			return null;
-		})
-	);
-	useEffect(() => {
-		setScheduledUsers(teamId, eventId, [...usersInRoles]);
-	}, [usersInRoles]);
 
 	return (
 		<Grid item xs={12} md={4}>
@@ -317,7 +308,8 @@ function TeamCard({
 											?.scheduled_users[index]
 									);
 									const userName =
-										usersInRoles[index] !== null
+										event?.eventTeams.find((data) => data.team === teamId)
+										?.scheduled_users[index] !== undefined
 											? `${
 													getUser(
 														event?.eventTeams.find(
@@ -332,12 +324,6 @@ function TeamCard({
 													)?.lastName
 											  }`
 											: '';
-									const userName2 =
-										usersInRoles[index] !== null
-											? `${getUser(usersInRoles[index])?.firstName} ${
-													getUser(usersInRoles[index])?.lastName
-											  }`
-											: '';
 									return (
 										<EventPosition
 											key={role.id}
@@ -347,9 +333,9 @@ function TeamCard({
 											roleIndex={index}
 											usersName={userName}
 											setUserToEvent={() => {
-												const newUsersInRoles = [...usersInRoles];
+												const newUsersInRoles = [...event?.eventTeams.find((data) => data.team === teamId)?.scheduled_users];
 												newUsersInRoles[index] = userDragging.id;
-												setUsersInRoles(newUsersInRoles);
+												setScheduledUsers(teamId, eventId, [...newUsersInRoles]);
 												const newEventObj = JSON.parse(JSON.stringify(events));
 												const allEventTeamsForEvent =
 													newEventObj[
@@ -517,20 +503,57 @@ function VolunteerCard({
 	}, [filter, volunteerFilterInputValue, numChunks]);
 
 	//const db = useDBContext();
-	const { db, getFutureEvents, getAllTeams } = useDBContext();
+	const { db, getFutureEvents, getAllTeams, setScheduledUsers, getRole, getUser } = useDBContext();
 	const [events, setEvents] = useState(getFutureEvents());
 	const teams = getAllTeams();
 
 	const aiAssignAll = async () => {
+		console.log('AI Assign')
 		// let schedules = [];
 		// for (const team of teams) {
 		// 	const teamSchedule = await generateTeamSchedule(team, events);
 		// 	schedules.push(teamSchedule);
 		// }
+		setTimeout(() => {
+			setScheduledUsers(1, 5, [3,7,8,12,16,9,2]);
+		}, 100)
+		// setTimeout(() => {
+		// 	setScheduledUsers(2, 5, [7,25,52,14,8,12]);
+		// }, 200)
+		// setTimeout(() => {
+		// 	setScheduledUsers(3, 5, [4,6]);
+		// }, 300)
+
+		// setScheduledUsers(teams[0].id, events[1].id, [19,18,1,17,24,11]);
+		// setScheduledUsers(teams[1].id, events[1].id, [3,7,16,9,2,10]);
+		// setScheduledUsers(teams[2].id, events[1].id, [3,7]);
+
+		// setScheduledUsers(teams[0].id, events[2].id, [19,18,1,17,24,11]);
+		// setScheduledUsers(teams[1].id, events[2].id, [3,7,16,9,2,10]);
+		// setScheduledUsers(teams[2].id, events[2].id, [3,7]);
+
 		console.log({
 			worshipTeamSchedules,
 			techTeamSchedules,
 			prayerTeamSchedules,
+		});
+	};
+
+	const unassignAll = () => {
+		console.log('unassign all')
+		console.log(db.events)
+		db.events.forEach((event) => {
+			const eventTeams: EventTeam[] = [];
+
+			event.eventTeams.forEach((team) => {
+				// const scheduledUsersInitial: number[] = [];
+				// // @ts-ignore
+				// team.roles.forEach((a, index) => {
+				// 	scheduledUsersInitial.push(undefined);
+				// });
+				setScheduledUsers(team.team, event.id, []);
+			});
+
 		});
 	};
 
@@ -562,7 +585,7 @@ function VolunteerCard({
 									</Grid>
 
 									<Grid item>
-										<Button color="error">Unassign All</Button>
+										<Button color="error" onClick={() => unassignAll()}>Unassign All</Button>
 									</Grid>
 								</Grid>
 							</CardContent>
