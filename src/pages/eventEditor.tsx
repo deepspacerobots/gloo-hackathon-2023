@@ -33,40 +33,45 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useEffect, useState } from 'react';
 import { useDBContext } from '@/contexts/db.context';
 import { Database as DatabaseType } from '@/db/db';
-import { MinistryEvent, Role, Team, User } from '@/db/types';
+import { EventTeam, MinistryEvent, Role, Team, User } from '@/db/types';
 import Box from '@mui/material/Box';
 import { generateTeamSchedule } from '@/api/gpt-service';
 import { Close } from '@mui/icons-material';
 import UserDialog from '@/components/UserDialog/UserDialog';
+import {
+	worshipTeamSchedules,
+	techTeamSchedules,
+	prayerTeamSchedules,
+} from '../api/example-responses';
 
 export default function EventEditor() {
-	const db = useDBContext();
-	const [events, setEvents] = useState(db.getFutureEvents());
-	const teams = db.getAllTeams();
-	// starting to test schedule generation, just team 1 users
-	generateTeamSchedule(teams[0], events);
-	const [allVolunteers, setAllVolunteers] = useState(db.getUsers());
+	//const db = useDBContext();
+	const { db, getFutureEvents, getAllTeams, getUsers, setEventTeams } =
+		useDBContext();
+	// const [events, setEvents] = useState(db.getFutureEvents());
+	const events = getFutureEvents();
+	const teams = getAllTeams();
+	const [allVolunteers, setAllVolunteers] = useState(getUsers());
 	const [userDragging, setUserDragging] = useState<null | User>(null);
+	const [unassignedRoles, setUnassignedRoles] = useState(0);
 	useEffect(() => {
 		// add event teams to event
 		let newTeamId = 46;
+		let unassignedRolesCount = 0;
 		events.forEach((event) => {
+			const eventTeams: EventTeam[] = [];
+
 			event.teams.forEach((team) => {
-				const scheduledUsersInitial = [];
-				team.roles.forEach((a, index) => {
-					scheduledUsersInitial.push(index + 1);
-				});
+				const scheduledUsersInitial: number[] = [];
 				// @ts-ignore
-				event.eventTeams.push({
-					id: newTeamId,
-					team: team.id,
-					at_capacity: false,
-					scheduled_users: scheduledUsersInitial,
+				team.roles.forEach((a, index) => {
+					scheduledUsersInitial.push(null);
+					unassignedRolesCount++;
 				});
-				newTeamId++;
 			});
+
+			setUnassignedRoles(unassignedRolesCount);
 		});
-		console.log(events);
 	}, []);
 
 	return (
@@ -90,7 +95,7 @@ export default function EventEditor() {
 												}}
 											>
 												<Typography variant={'h6'}>Events</Typography>
-												<Typography variant={'h2'} color={'secondary'}>
+												<Typography variant={'h2'} color={'success.main'}>
 													{events.length}
 												</Typography>
 											</div>
@@ -104,8 +109,15 @@ export default function EventEditor() {
 												}}
 											>
 												<Typography variant={'h6'}>Unassigned</Typography>
-												<Typography variant={'h2'} color={'secondary'}>
-													32
+												<Typography
+													variant={'h2'}
+													color={
+														unassignedRoles === 0
+															? 'success.main'
+															: 'error.main'
+													}
+												>
+													{unassignedRoles}
 												</Typography>
 											</div>
 										</Grid>
@@ -118,8 +130,8 @@ export default function EventEditor() {
 												}}
 											>
 												<Typography variant={'h6'}>Volunteers</Typography>
-												<Typography variant={'h2'} color={'secondary'}>
-													{db.getUsers().length}
+												<Typography variant={'h2'} color={'success.main'}>
+													{getUsers().length}
 												</Typography>
 											</div>
 										</Grid>
@@ -132,8 +144,8 @@ export default function EventEditor() {
 												}}
 											>
 												<Typography variant={'h6'}>Teams</Typography>
-												<Typography variant={'h2'} color={'secondary'}>
-													3
+												<Typography variant={'h2'} color={'success.main'}>
+													{getAllTeams().length}
 												</Typography>
 											</div>
 										</Grid>
@@ -151,7 +163,6 @@ export default function EventEditor() {
 							db={db}
 							userDragging={userDragging}
 							setUserDragging={setUserDragging}
-							setEvents={setEvents}
 							events={events}
 						/>
 					))}
@@ -174,11 +185,8 @@ function EventCard({
 	eventId,
 	eventName,
 	eventDate,
-	db,
 	userDragging,
 	setUserDragging,
-	updateEvent,
-	setEvents,
 	events,
 }: {
 	eventId: number;
@@ -187,14 +195,17 @@ function EventCard({
 	db: DatabaseType;
 	userDragging: null | User;
 	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
-	setEvents: React.Dispatch<React.SetStateAction<MinistryEvent[]>>;
 	events: MinistryEvent[];
 }) {
+	//const db = useDBContext();
+	const { db, getEvent } = useDBContext();
 	const [isExpanded, setIsExpanded] = useState(false);
 
-	const event = db.getEvent(eventId);
+	const fadfasdfgarstgewrrhtawegrtwe = getEvent(eventId);
+	const event = events.find((e) => e.id === eventId);
 	const formattedEventDate = new Date(eventDate).toDateString();
 	const teams = event?.teams as Team[];
+	const teams2 = event?.eventTeams as EventTeam[];
 
 	return (
 		<Grid item xs={12}>
@@ -239,13 +250,12 @@ function EventCard({
 								key={team.id}
 								teamName={team.title}
 								roles={team.roles as number[]}
-								db={db}
 								userDragging={userDragging}
 								setUserDragging={setUserDragging}
 								eventId={eventId}
 								teamId={team.id}
-								setEvents={setEvents}
 								events={events}
+								event={event as MinistryEvent}
 							/>
 						))}
 					</Grid>
@@ -258,28 +268,33 @@ function EventCard({
 function TeamCard({
 	teamName,
 	roles,
-	db,
 	userDragging,
 	setUserDragging,
 	eventId,
 	teamId,
-	setEvents,
+	events,
+	event,
 }: {
 	teamName: string;
 	roles: number[];
-	db: DatabaseType;
 	userDragging: null | User;
 	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
 	eventId: number;
 	teamId: number;
-	setEvents: React.Dispatch<React.SetStateAction<MinistryEvent[]>>;
 	events: MinistryEvent[];
+	event: MinistryEvent;
 }) {
-	const fullRoles = roles.map((role: number) => db.getRole(role)) as Role[];
-	const event = db.getEvent(eventId);
+	const { db, setScheduledUsers, getRole, getUser } = useDBContext();
+	const fullRoles = roles.map((role: number) => getRole(role)) as Role[];
+	// const event = db.getEvent(eventId);
 	const [usersInRoles, setUsersInRoles] = useState(
-		Array.from(fullRoles, () => null)
+		Array.from(fullRoles, (role, i) => {
+			return null;
+		})
 	);
+	useEffect(() => {
+		setScheduledUsers(teamId, eventId, [...usersInRoles]);
+	}, [usersInRoles]);
 
 	return (
 		<Grid item xs={12} md={4}>
@@ -287,7 +302,7 @@ function TeamCard({
 				<CardContent>
 					<Typography mb={2}>Team: {teamName}</Typography>
 					<TableContainer component={Paper}>
-						<Table size="small" aria-label="a dense table">
+						<Table size="small">
 							<TableHead>
 								<TableRow>
 									<TableCell>Position</TableCell>
@@ -297,11 +312,32 @@ function TeamCard({
 
 							<TableBody>
 								{fullRoles?.map((role: Role, index) => {
-									const userObj = db.getUser(
+									const userObj = getUser(
 										event?.eventTeams.find((data) => data.team === teamId)
 											?.scheduled_users[index]
 									);
-									const userName = `${userObj?.firstName} ${userObj?.lastName}`;
+									const userName =
+										usersInRoles[index] !== null
+											? `${
+													getUser(
+														event?.eventTeams.find(
+															(data) => data.team === teamId
+														)?.scheduled_users[index]
+													)?.firstName
+											  } ${
+													getUser(
+														event?.eventTeams.find(
+															(data) => data.team === teamId
+														)?.scheduled_users[index]
+													)?.lastName
+											  }`
+											: '';
+									const userName2 =
+										usersInRoles[index] !== null
+											? `${getUser(usersInRoles[index])?.firstName} ${
+													getUser(usersInRoles[index])?.lastName
+											  }`
+											: '';
 									return (
 										<EventPosition
 											key={role.id}
@@ -309,18 +345,20 @@ function TeamCard({
 											userDragging={userDragging}
 											setUserDragging={setUserDragging}
 											roleIndex={index}
-											usersName={
-												usersInRoles[index] !== null
-													? `${db.getUser(usersInRoles[index])?.firstName} ${
-															db.getUser(usersInRoles[index])?.lastName
-													  }`
-													: ''
-											}
+											usersName={userName}
 											setUserToEvent={() => {
 												const newUsersInRoles = [...usersInRoles];
 												newUsersInRoles[index] = userDragging.id;
 												setUsersInRoles(newUsersInRoles);
-												// setEvents();
+												const newEventObj = JSON.parse(JSON.stringify(events));
+												const allEventTeamsForEvent =
+													newEventObj[
+														newEventObj.findIndex((e) => e.id === eventId)
+													].eventTeams;
+												const eventTeamForEvent =
+													allEventTeamsForEvent.findIndex(
+														(e) => e.id === teamId
+													);
 											}}
 										/>
 									);
@@ -362,7 +400,8 @@ function EventPosition({
 	usersName: string;
 }) {
 	const [styles, setStyle] = useState('');
-	const db = useDBContext();
+	//const db = useDBContext();
+	const { db } = useDBContext();
 	const [displayName, setDisplayName] = useState('');
 	return (
 		<TableRow
@@ -407,24 +446,94 @@ function VolunteerCard({
 	userDragging: null | User;
 	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
 }) {
-	const [filter, setFilter] = useState<any>('All Teams');
-	const [filteredVolunteers, setFilteredVolunteers] = useState(volunteers);
+	const chunkVolunteers = (volunteersToChunk: User[]): User[][] => {
+		const chunkSize = 30;
+		const maxChunks = Math.ceil(volunteersToChunk.length / chunkSize);
+		const chunkedVolunteers: User[][] = [];
+		let chunk: User[] = [];
+
+		for (let i = 0; i < maxChunks; i++) {
+			chunk = [];
+
+			for (let j = 0; j < chunkSize; j++) {
+				const currentIdx = i * chunkSize + j;
+
+				if (volunteersToChunk[currentIdx]) {
+					chunk.push(volunteersToChunk[currentIdx]);
+				}
+			}
+
+			chunkedVolunteers.push(chunk);
+		}
+
+		return chunkedVolunteers;
+	};
+
+	const [filter, setFilter] = useState(0);
+	const [filteredVolunteers, setFilteredVolunteers] = useState<User[][]>(
+		chunkVolunteers(volunteers)
+	);
 	const [volunteerFilterInputValue, setVolunteerFilterInputValue] =
 		useState('');
+	const [numChunks, setNumChunks] = useState(1);
+
+	const filterVolunteersByTeam = (): User[] => {
+		if (filter === 0) {
+			return volunteers;
+		}
+
+		return volunteers.filter((volunteer: User) => {
+			return volunteer.teams.find((team: Team | number) => {
+				if (typeof team === 'number') {
+					return team === filter;
+				}
+
+				return team.id === filter;
+			});
+		});
+	};
+
+	const filterVolunteersByName = (volunteersByTeam: User[]): User[] => {
+		return volunteersByTeam.filter((volunteer) => {
+			return (
+				volunteer.firstName
+					.toLowerCase()
+					.includes(volunteerFilterInputValue.toLowerCase()) ||
+				volunteer.lastName
+					.toLowerCase()
+					.includes(volunteerFilterInputValue.toLowerCase())
+			);
+		});
+	};
+
 	useEffect(() => {
-		setFilteredVolunteers(
-			volunteers.filter((volunteer) => {
-				return (
-					volunteer.firstName
-						.toLowerCase()
-						.includes(volunteerFilterInputValue) ||
-					volunteer.lastName
-						.toLowerCase()
-						.includes(volunteerFilterInputValue.toLowerCase())
-				);
-			})
+		const filteredVolunteersByTeam = filterVolunteersByTeam();
+		const filteredVolunteersByName = filterVolunteersByName(
+			filteredVolunteersByTeam
 		);
-	}, [volunteerFilterInputValue]);
+
+		const chunkedVolunteers = chunkVolunteers(filteredVolunteersByName);
+		setFilteredVolunteers(chunkedVolunteers);
+	}, [filter, volunteerFilterInputValue, numChunks]);
+
+	//const db = useDBContext();
+	const { db, getFutureEvents, getAllTeams } = useDBContext();
+	const [events, setEvents] = useState(getFutureEvents());
+	const teams = getAllTeams();
+
+	const aiAssignAll = async () => {
+		// let schedules = [];
+		// for (const team of teams) {
+		// 	const teamSchedule = await generateTeamSchedule(team, events);
+		// 	schedules.push(teamSchedule);
+		// }
+		console.log({
+			worshipTeamSchedules,
+			techTeamSchedules,
+			prayerTeamSchedules,
+		});
+	};
+
 	return (
 		<Grid item className={'volunteerCard'}>
 			<Card variant="outlined">
@@ -437,29 +546,35 @@ function VolunteerCard({
 								title={'Assistant'}
 								subheader={'Let AI assign your volunteers'}
 							/>
+
 							<CardContent>
 								<Grid container spacing={1}>
 									<Grid item>
 										<Button
 											variant="contained"
 											color="success"
-											onClick={() => {}}
+											onClick={() => {
+												aiAssignAll();
+											}}
 										>
 											Assign All
 										</Button>
 									</Grid>
+
 									<Grid item>
 										<Button color="error">Unassign All</Button>
 									</Grid>
 								</Grid>
 							</CardContent>
 						</Card>
+
 						{/*Filter Card*/}
 						<Card>
 							<CardHeader
 								title={'Filter'}
 								subheader={'See only who is part of a selected team'}
 							/>
+
 							<CardContent>
 								<FormControl fullWidth>
 									<InputLabel>Team</InputLabel>
@@ -467,35 +582,34 @@ function VolunteerCard({
 										size="small"
 										value={filter}
 										label="Team"
-										onChange={(e) => {
-											console.log(e.target.value);
-											setFilter(e.target.value);
-										}}
+										onChange={(e) => setFilter(e.target.value)}
 									>
-										<MenuItem value={'All Teams'}>All Teams</MenuItem>
-										<MenuItem value={'Music Team'}>Music Team</MenuItem>
-										<MenuItem value={'Tech Team'}>Tech Team</MenuItem>
+										<MenuItem value={0}>All Teams</MenuItem>
+										<MenuItem value={1}>Worship Team</MenuItem>
+										<MenuItem value={2}>Tech Team</MenuItem>
+										<MenuItem value={3}>Pastoral Care Team</MenuItem>
 									</Select>
 								</FormControl>
+
 								<Button
 									color="error"
-									onClick={() => {
-										setFilter('All Teams');
-									}}
-									disabled={filter === 'All Teams'}
+									onClick={() => setFilter(0)}
+									disabled={filter === 0}
 								>
 									Reset
 								</Button>
 							</CardContent>
 						</Card>
+
 						{/*Available Volunteers Card*/}
 						<Card>
 							<CardHeader
 								title={'Available Volunteers'}
 								subheader={'Click and drag volunteers to manually assign them'}
 							/>
-							<CardContent>
-								<Box mb={2}>
+
+							<CardContent className="volunteersDisplay">
+								<Box mb={2} className="searchInput">
 									<FormControl fullWidth>
 										<InputLabel
 											size={'small'}
@@ -503,6 +617,7 @@ function VolunteerCard({
 										>
 											Search For Volunteer
 										</InputLabel>
+
 										<OutlinedInput
 											id={'search-for-volunteer-input'}
 											value={volunteerFilterInputValue}
@@ -527,25 +642,43 @@ function VolunteerCard({
 									</FormControl>
 								</Box>
 
-								<Grid container rowSpacing={1} spacing={1}>
-									{filteredVolunteers.map((user, i) => {
-										return (
-											<Grid
-												draggable
-												onDragStart={(e) => {
-													setUserDragging(user);
-												}}
-												onDragEnd={(e) => {}}
-												item
-												key={`avatar ${i}`}
-											>
-												<Tooltip title={`${user.firstName} ${user.lastName}`}>
-													<UserDialog user={user} />
+								<Grid
+									container
+									rowSpacing={1}
+									spacing={1}
+									className="volunteerGrid"
+								>
+									{filteredVolunteers.map((chunk, chunkIdx) => {
+										if (chunkIdx < numChunks) {
+											return chunk.map((user: User) => (
+												<Tooltip
+													title={`${user.firstName} ${user.lastName}`}
+													key={`avatar ${user.id}`}
+												>
+													<Grid
+														draggable
+														onDragStart={(e) => {
+															setUserDragging(user);
+														}}
+														onDragEnd={(e) => {}}
+														item
+													>
+														<UserDialog user={user} />
+													</Grid>
 												</Tooltip>
-											</Grid>
-										);
+											));
+										}
 									})}
 								</Grid>
+
+								{filteredVolunteers.length > numChunks && (
+									<Button
+										className="showMore"
+										onClick={() => setNumChunks(numChunks + 1)}
+									>
+										Show More
+									</Button>
+								)}
 							</CardContent>
 						</Card>
 					</Stack>

@@ -17,7 +17,7 @@ export type User = {
 	messages: number[] | Message[];
 	blackoutDates: DateTime[];
 	preferredNumWeeksServing: number;
-	experiences: number[] | Experience[];
+	proficiencies?: Proficiency[];
 };
 
 export enum RoleOptions {
@@ -62,6 +62,12 @@ export type Experience = {
 	level: LevelOptions;
 	preference: PreferenceOptions;
 	details?: string;
+};
+
+export type Proficiency = {
+	type: TypeOptions;
+	experience: LevelOptions;
+	preference: PreferenceOptions;
 };
 
 export enum TypeOptions {
