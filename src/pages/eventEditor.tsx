@@ -32,7 +32,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useEffect, useState } from 'react';
 import { useDBContext } from '@/contexts/db.context';
-import { Database as DatabaseType, preexistingData } from '@/db/db';
+import { Database as DatabaseType } from '@/db/db';
 import { EventTeam, MinistryEvent, Role, Team, User } from '@/db/types';
 import Box from '@mui/material/Box';
 import { generateTeamSchedule } from '@/api/gpt-service';
@@ -314,11 +314,7 @@ function TeamCard({
 										event?.eventTeams.find((data) => data.team === teamId)
 											?.scheduled_users[index]
 									);
-									console.log(
-										event?.eventTeams.find((data) => data.team === teamId)
-											?.scheduled_users
-									);
-									const userName =
+									const userName2 =
 										usersInRoles[index] !== null
 											? `${
 													db.getUser(
@@ -332,6 +328,12 @@ function TeamCard({
 															(data) => data.team === teamId
 														)?.scheduled_users[index]
 													)?.lastName
+											  }`
+											: '';
+									const userName =
+										usersInRoles[index] !== null
+											? `${db.getUser(usersInRoles[index])?.firstName} ${
+													db.getUser(usersInRoles[index])?.lastName
 											  }`
 											: '';
 									return (

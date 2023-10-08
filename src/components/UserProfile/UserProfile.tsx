@@ -58,17 +58,6 @@ const UserProfile = (props: Props) => {
 					<Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
 						Experiences:
 					</Typography>
-					<Box sx={{ display: 'flex' }}>
-						{(user.experiences as Experience[]).map((e: Experience) => {
-							return (
-								<Chip
-									key={`experience-${e.id}`}
-									label={e.type}
-									variant="outlined"
-								/>
-							);
-						})}
-					</Box>
 				</CardContent>
 				<CardActions>
 					<Button size="small">Learn More</Button>
