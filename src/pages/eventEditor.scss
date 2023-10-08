@@ -16,6 +16,22 @@
 	background-blend-mode: darken;
 }
 
+.disabled {
+	pointer-events: none;
+	opacity: 0.3;
+}
+
+.loadingContainer {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.teamTable {
+	overflow-x: hidden !important;
+}
+
 .volunteerCard {
 	position: sticky;
 	top: 1rem;
@@ -35,6 +51,7 @@
 
 		.volunteerGrid {
 			margin-bottom: 1rem;
+			margin-left: 0.75rem;
 		}
 
 		.showMore {
