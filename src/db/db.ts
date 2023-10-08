@@ -16,7 +16,7 @@ import {
 	User,
 } from './types';
 
-type DBSchema = {
+export type DBSchema = {
 	organizations: Organization[];
 	events: MinistryEvent[];
 	ministries: Ministry[];
@@ -125,6 +125,13 @@ export class Database {
 		payload.id = this.events[this.events.length - 1].id + 1;
 		this.events.push(payload);
 		return payload;
+	}
+
+	setScheduledUsers(teamId: number, eventId: number, users: number[] | null[]) {
+		let eventToUpdate = this.events
+			.find((e) => e.id === eventId)
+			.eventTeams.find((e) => e.team === teamId)?.scheduled_users;
+		eventToUpdate = users;
 	}
 
 	getEventTeam(eventTeamId: number): EventTeam | undefined {
