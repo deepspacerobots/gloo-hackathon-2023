@@ -30,7 +30,6 @@ export default function App() {
 			mode: isDarkTheme ? 'dark' : 'light',
 		},
 	});
-	console.log(theme.palette.primary.main);
 	const themeIcon = () => {
 		if (isDarkTheme) return <WbSunny />;
 		return <ModeNight />;

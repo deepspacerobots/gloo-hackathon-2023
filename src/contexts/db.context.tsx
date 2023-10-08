@@ -46,6 +46,7 @@ export type DBContextType = {
 		eventId: number,
 		users: number[] | null[]
 	) => void;
+	batchUpdateScheduledUsers: (updates: any[]) => void;
 };
 
 const DBContext = createContext<DBContextType>({} as any);
@@ -325,32 +326,38 @@ const DBProvider = ({ children }: Props): JSX.Element => {
 	};
 
 	const setScheduledUsers = (
+		db: any, // Passing the current DB state directly
 		teamId: number,
 		eventId: number,
 		users: number[] | null[]
-	) => {
-		console.log({ teamId, eventId, users });
-
-		const newDb = structuredClone(db);
-		console.log(newDb)
-
-		const event = newDb.events.find((e) => e.id === eventId);
-		// console.log(event);
-		const eventTeam = event?.eventTeams.find(
-			(e) => (e as EventTeam).team === teamId
-		) as EventTeam;
-
-		// console.log(eventTeam);
-
-		if (eventTeam) {
-			// @ts-ignore
-			eventTeam.scheduled_users = users;
-			setDb(newDb);
+	  ) => {
+		if (!db || !db.events) {
+			return;
 		}
 
-		//console.log(eventToUpdate);
-		
-	};
+		const event = db.events.find((e: any) => e.id === eventId);
+		const eventTeam = event?.eventTeams.find(
+		  (e: any) => e.team === teamId
+		);
+	  
+		if (eventTeam) {
+		  eventTeam.scheduled_users = users;
+		}
+	  };
+	  
+
+	  const batchUpdateScheduledUsers = (updates: any[]) => {
+		const newDb = structuredClone(db); // Make a clone of the current DB state
+	  
+		updates.forEach(update => {
+		  const { teamId, eventId, users } = update;
+		  setScheduledUsers(newDb, teamId, eventId, users); // Pass the newDb state directly
+		});
+	  
+		setDb(newDb); // Set the state once after all updates are applied
+	  };
+	  
+	  
 
 	const provide = {
 		db,
@@ -378,8 +385,10 @@ const DBProvider = ({ children }: Props): JSX.Element => {
 		getExperience,
 		setExperience,
 		setScheduledUsers,
+		batchUpdateScheduledUsers
 	};
 
+	//@ts-ignore
 	return <DBContext.Provider value={provide}>{children}</DBContext.Provider>;
 };
 

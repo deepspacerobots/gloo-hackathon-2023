@@ -32,10 +32,8 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useEffect, useState } from 'react';
 import { useDBContext } from '@/contexts/db.context';
-import { Database as DatabaseType } from '@/db/db';
 import { EventTeam, MinistryEvent, Role, Team, User } from '@/db/types';
 import Box from '@mui/material/Box';
-import { generateTeamSchedule } from '@/api/gpt-service';
 import { Close } from '@mui/icons-material';
 import UserDialog from '@/components/UserDialog/UserDialog';
 import {
@@ -43,29 +41,23 @@ import {
 	techTeamSchedules,
 	prayerTeamSchedules,
 } from '../api/example-responses';
+import { useGPT } from '@/hooks/useGPT';
 
 export default function EventEditor() {
-	//const db = useDBContext();
 	const { db, getFutureEvents, getAllTeams, getUsers, setEventTeams } =
 		useDBContext();
-	// const [events, setEvents] = useState(db.getFutureEvents());
-	const events = getFutureEvents();
-	const teams = getAllTeams();
+	console.log(db)
+	const futureEvents = getFutureEvents();
 	const [allVolunteers, setAllVolunteers] = useState(getUsers());
 	const [userDragging, setUserDragging] = useState<null | User>(null);
 	const [unassignedRoles, setUnassignedRoles] = useState(0);
 	useEffect(() => {
 		// add event teams to event
-		let newTeamId = 46;
 		let unassignedRolesCount = 0;
-		events.forEach((event) => {
-			const eventTeams: EventTeam[] = [];
-
+		futureEvents.forEach((event) => {
 			event.teams.forEach((team) => {
-				const scheduledUsersInitial: number[] = [];
 				// @ts-ignore
-				team.roles.forEach((a, index) => {
-					scheduledUsersInitial.push(null);
+				team.roles_required.forEach((a, index) => {
 					unassignedRolesCount++;
 				});
 			});
@@ -96,7 +88,7 @@ export default function EventEditor() {
 											>
 												<Typography variant={'h6'}>Events</Typography>
 												<Typography variant={'h2'} color={'success.main'}>
-													{events.length}
+													{futureEvents.length}
 												</Typography>
 											</div>
 										</Grid>
@@ -154,16 +146,15 @@ export default function EventEditor() {
 							</Card>
 						</Box>
 					</Grid>
-					{events?.map((event: MinistryEvent) => (
+					{futureEvents?.map((event: MinistryEvent) => (
 						<EventCard
 							key={event.id}
 							eventId={event.id}
 							eventName={event.title}
 							eventDate={event.date}
-							db={db}
 							userDragging={userDragging}
 							setUserDragging={setUserDragging}
-							events={events}
+							events={futureEvents}
 						/>
 					))}
 				</Grid>
@@ -192,20 +183,16 @@ function EventCard({
 	eventId: number;
 	eventName: string;
 	eventDate: string;
-	db: DatabaseType;
 	userDragging: null | User;
 	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
 	events: MinistryEvent[];
 }) {
-	//const db = useDBContext();
 	const { db, getEvent, getAllEvents } = useDBContext();
 	const [isExpanded, setIsExpanded] = useState(false);
 
-	const fadfasdfgarstgewrrhtawegrtwe = getEvent(eventId);
 	const event = getEvent(eventId);
 	const formattedEventDate = new Date(eventDate).toDateString();
 	const teams = event?.teams as Team[];
-	const teams2 = event?.eventTeams as EventTeam[];
 
 	return (
 		<Grid item xs={12}>
@@ -250,6 +237,7 @@ function EventCard({
 								key={team.id}
 								teamName={team.title}
 								roles={team.roles as number[]}
+								roles_required={team.roles_required as number[]}
 								userDragging={userDragging}
 								setUserDragging={setUserDragging}
 								eventId={eventId}
@@ -268,6 +256,7 @@ function EventCard({
 function TeamCard({
 	teamName,
 	roles,
+	roles_required,
 	userDragging,
 	setUserDragging,
 	eventId,
@@ -277,6 +266,7 @@ function TeamCard({
 }: {
 	teamName: string;
 	roles: number[];
+	roles_required: number[];
 	userDragging: null | User;
 	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
 	eventId: number;
@@ -284,8 +274,8 @@ function TeamCard({
 	events: MinistryEvent[];
 	event: MinistryEvent;
 }) {
-	const { db, setScheduledUsers, getRole, getUser } = useDBContext();
-	const fullRoles = roles.map((role: number) => getRole(role)) as Role[];
+	const { setScheduledUsers, batchUpdateScheduledUsers, getRole, getUser } = useDBContext();
+	const fullRoles = roles_required.map((role: number) => getRole(role)) as Role[];
 
 	return (
 		<Grid item xs={12} md={4}>
@@ -303,47 +293,43 @@ function TeamCard({
 
 							<TableBody>
 								{fullRoles?.map((role: Role, index) => {
-									const userObj = getUser(
-										event?.eventTeams.find((data) => data.team === teamId)
-											?.scheduled_users[index]
+									const eventTeam = event?.eventTeams.find(
+										(data: any): data is EventTeam => typeof data === 'object' && data.team === teamId
 									);
-									const userName =
-										event?.eventTeams.find((data) => data.team === teamId)
-										?.scheduled_users[index] !== undefined
-											? `${
-													getUser(
-														event?.eventTeams.find(
-															(data) => data.team === teamId
-														)?.scheduled_users[index]
-													)?.firstName
-											  } ${
-													getUser(
-														event?.eventTeams.find(
-															(data) => data.team === teamId
-														)?.scheduled_users[index]
-													)?.lastName
-											  }`
-											: '';
+									
+									const userId = eventTeam?.scheduled_users?.[index];
+									
+									let userName = '';
+									
+									if (typeof userId === 'number') {
+										const user = getUser(userId);
+										userName = user ? `${user.firstName} ${user.lastName}` : '';
+									}
+									
 									return (
 										<EventPosition
-											key={role.id}
+											key={index}
 											position={role.type}
 											userDragging={userDragging}
 											setUserDragging={setUserDragging}
 											roleIndex={index}
 											usersName={userName}
 											setUserToEvent={() => {
-												const newUsersInRoles = [...event?.eventTeams.find((data) => data.team === teamId)?.scheduled_users];
+												//@ts-ignore
+												const newUsersInRoles = [...event?.eventTeams.find((data: any) => data.team === teamId)?.scheduled_users];
+												//@ts-ignore
 												newUsersInRoles[index] = userDragging.id;
-												setScheduledUsers(teamId, eventId, [...newUsersInRoles]);
+												batchUpdateScheduledUsers([
+													{teamId, eventId, users: [...newUsersInRoles]}
+												])
 												const newEventObj = JSON.parse(JSON.stringify(events));
 												const allEventTeamsForEvent =
 													newEventObj[
-														newEventObj.findIndex((e) => e.id === eventId)
+														newEventObj.findIndex((e: any) => e.id === eventId)
 													].eventTeams;
 												const eventTeamForEvent =
 													allEventTeamsForEvent.findIndex(
-														(e) => e.id === teamId
+														(e: any) => e.id === teamId
 													);
 											}}
 										/>
@@ -469,6 +455,7 @@ function VolunteerCard({
 		}
 
 		return volunteers.filter((volunteer: User) => {
+			//@ts-ignore
 			return volunteer.teams.find((team: Team | number) => {
 				if (typeof team === 'number') {
 					return team === filter;
@@ -503,58 +490,58 @@ function VolunteerCard({
 	}, [filter, volunteerFilterInputValue, numChunks]);
 
 	//const db = useDBContext();
-	const { db, getFutureEvents, getAllTeams, setScheduledUsers, getRole, getUser } = useDBContext();
-	const [events, setEvents] = useState(getFutureEvents());
+	const { db, getFutureEvents, getAllTeams, setScheduledUsers, batchUpdateScheduledUsers, getRole, getUser } = useDBContext();
+	const { generateTeamSchedule } = useGPT();
+	const [futureEvents, setEvents] = useState(getFutureEvents());
 	const teams = getAllTeams();
 
 	const aiAssignAll = async () => {
 		console.log('AI Assign')
 		// let schedules = [];
 		// for (const team of teams) {
-		// 	const teamSchedule = await generateTeamSchedule(team, events);
+		// 	const teamSchedule = await generateTeamSchedule(team, futureEvents);
 		// 	schedules.push(teamSchedule);
 		// }
-		setTimeout(() => {
-			setScheduledUsers(1, 5, [3,7,8,12,16,9,2]);
-		}, 100)
-		// setTimeout(() => {
-		// 	setScheduledUsers(2, 5, [7,25,52,14,8,12]);
-		// }, 200)
-		// setTimeout(() => {
-		// 	setScheduledUsers(3, 5, [4,6]);
-		// }, 300)
 
-		// setScheduledUsers(teams[0].id, events[1].id, [19,18,1,17,24,11]);
-		// setScheduledUsers(teams[1].id, events[1].id, [3,7,16,9,2,10]);
-		// setScheduledUsers(teams[2].id, events[1].id, [3,7]);
-
-		// setScheduledUsers(teams[0].id, events[2].id, [19,18,1,17,24,11]);
-		// setScheduledUsers(teams[1].id, events[2].id, [3,7,16,9,2,10]);
-		// setScheduledUsers(teams[2].id, events[2].id, [3,7]);
-
-		console.log({
-			worshipTeamSchedules,
-			techTeamSchedules,
-			prayerTeamSchedules,
+		const worshipSchedules = worshipTeamSchedules.events.map(event => {
+			return {
+				teamId: event.eventTeam.team,
+				eventId: event.id,
+				users: event.eventTeam.scheduled_users.map(user => user.id)
+			}
 		});
+		const techSchedules = techTeamSchedules.events.map(event => {
+			return {
+				teamId: event.eventTeam.team,
+				eventId: event.id,
+				users: event.eventTeam.scheduled_users.map(user => user.id)
+			}
+		});
+		const prayerSchedules = prayerTeamSchedules.events.map(event => {
+			return {
+				teamId: event.eventTeam.team,
+				eventId: event.id,
+				users: event.eventTeam.scheduled_users.map(user => user.id)
+			}
+		});
+
+		batchUpdateScheduledUsers([
+			...worshipSchedules,
+			...techSchedules,
+			...prayerSchedules
+		]);
 	};
 
 	const unassignAll = () => {
 		console.log('unassign all')
-		console.log(db.events)
-		db.events.forEach((event) => {
-			const eventTeams: EventTeam[] = [];
-
-			event.eventTeams.forEach((team) => {
-				// const scheduledUsersInitial: number[] = [];
-				// // @ts-ignore
-				// team.roles.forEach((a, index) => {
-				// 	scheduledUsersInitial.push(undefined);
-				// });
-				setScheduledUsers(team.team, event.id, []);
-			});
-
-		});
+		const clearedSchedules = futureEvents.flatMap(event => 
+			event.teams.map(team => ({ 
+				teamId: (team as Team).id, 
+				eventId: event.id, 
+				users: [] 
+			}))
+		);
+		batchUpdateScheduledUsers(clearedSchedules);
 	};
 
 	return (
@@ -605,6 +592,7 @@ function VolunteerCard({
 										size="small"
 										value={filter}
 										label="Team"
+										//@ts-ignore
 										onChange={(e) => setFilter(e.target.value)}
 									>
 										<MenuItem value={0}>All Teams</MenuItem>
