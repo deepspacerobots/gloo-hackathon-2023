@@ -25,7 +25,7 @@ export const worshipTeamSchedules = {
             date: '2023-10-15',
             eventTeam: {
                 id: 46,
-                team: 2,
+                team: 1,
                 at_capacity: true,
                 scheduled_users: [
                     {id: 19, role: "Keys", reason: "Chloe prefers keys, has advanced proficiency and is within her monthly availability."},
@@ -45,7 +45,7 @@ export const worshipTeamSchedules = {
             date: '2023-10-22',
             eventTeam: {
                 id: 47,
-                team: 3,
+                team: 1,
                 at_capacity: true,
                 scheduled_users: [
                     {id: 6, role: "Keys", reason: "Grace has not been overworked recently, prefers keys with advanced proficiency."},
@@ -70,7 +70,7 @@ export const techTeamSchedules = {
             date: '2023-10-10',
             eventTeam: {
                 id: 45,
-                team: 1,
+                team: 2,
                 at_capacity: true,
                 scheduled_users: [
                     {id: 7, role: "Lighting", reason: "James has intermediate proficiency in lighting, prefers it and has served only once recently."},
@@ -106,7 +106,7 @@ export const techTeamSchedules = {
             date: '2023-10-22',
             eventTeam: {
                 id: 47,
-                team: 3,
+                team: 2,
                 at_capacity: true,
                 scheduled_users: [
                     {id: 33, role: "Tech General", reason: "Benjamin is scheduled for his intermediate proficiency and preference for tech general, aligning with the team's needs."},
@@ -129,7 +129,7 @@ export const prayerTeamSchedules = {
             date: '2023-10-10',
             eventTeam: {
                 id: 45,
-                team: 1,
+                team: 3,
                 at_capacity: true,
                 scheduled_users: [
                     {id: 4, role: "Prayer", reason: "Sarah is scheduled for prayer as it aligns with her preference and beginner proficiency, and she can serve up to 4 times a month."},
@@ -145,7 +145,7 @@ export const prayerTeamSchedules = {
             date: '2023-10-15',
             eventTeam: {
                 id: 46,
-                team: 2,
+                team: 3,
                 at_capacity: true,
                 scheduled_users: [
                     {id: 22, role: "Prayer", reason: "Olivia is scheduled for prayer as she has advanced proficiency and it is her preference; she has one more availability this month."},
