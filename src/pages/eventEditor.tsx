@@ -314,7 +314,7 @@ function TeamCard({
 											setUserDragging={setUserDragging}
 											roleIndex={index}
 											usersName={userName}
-											userProfilePhoto={userDragging?.profilePhoto}
+											userProfilePhoto={userDragging?.profilePhoto as string}
 											setUserToEvent={() => {
 												//@ts-ignore
 												const newUsersInRoles = [...event?.eventTeams.find((data: any) => data.team === teamId)?.scheduled_users];
