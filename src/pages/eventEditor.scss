@@ -1,22 +1,44 @@
 .border {
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 5px;
+	border: 1px solid rgba(0, 0, 0, 0.15);
+	border-radius: 5px;
 }
 
 .position {
-  border: 1px solid rgba(0, 0, 0, 1);
+	border: 1px solid rgba(0, 0, 0, 1);
 }
 
 .outerAccordion {
-  box-shadow: none !important;
+	box-shadow: none !important;
 }
 
 .dragOver {
-  background-color: rgba(0, 0, 0, 0.4);
-  background-blend-mode: darken;
+	background-color: rgba(0, 0, 0, 0.4);
+	background-blend-mode: darken;
 }
 
 .volunteerCard {
-  position: sticky;
-  top: 1rem;
+	position: sticky;
+	top: 1rem;
+
+	&:hover {
+		cursor: pointer;
+	}
+
+	.volunteersDisplay {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		.searchInput {
+			width: 100%;
+		}
+
+		.volunteerGrid {
+			margin-bottom: 1rem;
+		}
+
+		.showMore {
+			width: 50%;
+		}
+	}
 }

@@ -38,7 +38,11 @@ import Box from '@mui/material/Box';
 import { generateTeamSchedule } from '@/api/gpt-service';
 import { Close } from '@mui/icons-material';
 import UserDialog from '@/components/UserDialog/UserDialog';
-import { worshipTeamSchedules, techTeamSchedules, prayerTeamSchedules } from '../api/example-responses';
+import {
+	worshipTeamSchedules,
+	techTeamSchedules,
+	prayerTeamSchedules,
+} from '../api/example-responses';
 
 export default function EventEditor() {
 	//const db = useDBContext();
@@ -442,10 +446,33 @@ function VolunteerCard({
 	userDragging: null | User;
 	setUserDragging: React.Dispatch<React.SetStateAction<User | null>>;
 }) {
+	const chunkVolunteers = (volunteersToChunk: User[]): User[][] => {
+		const chunkSize = 30;
+		const maxChunks = Math.ceil(volunteersToChunk.length / chunkSize);
+		const chunkedVolunteers: User[][] = [];
+		let chunk: User[] = [];
+
+		for (let i = 0; i < maxChunks; i++) {
+			chunk = [];
+
+			for (let j = 0; j < chunkSize; j++) {
+				const currentIdx = i * chunkSize + j;
+				chunk.push(volunteersToChunk[currentIdx]);
+			}
+
+			chunkedVolunteers.push(chunk);
+		}
+
+		return chunkedVolunteers;
+	};
+
 	const [filter, setFilter] = useState(0);
-	const [filteredVolunteers, setFilteredVolunteers] = useState(volunteers);
+	const [filteredVolunteers, setFilteredVolunteers] = useState<User[][]>(
+		chunkVolunteers(volunteers)
+	);
 	const [volunteerFilterInputValue, setVolunteerFilterInputValue] =
 		useState('');
+	const [numChunks, setNumChunks] = useState(1);
 
 	const filterVolunteersByTeam = (): User[] => {
 		if (filter === 0) {
@@ -481,8 +508,10 @@ function VolunteerCard({
 		const filteredVolunteersByName = filterVolunteersByName(
 			filteredVolunteersByTeam
 		);
-		setFilteredVolunteers(filteredVolunteersByName);
-	}, [filter, volunteerFilterInputValue]);
+
+		const chunkedVolunteers = chunkVolunteers(filteredVolunteersByName);
+		setFilteredVolunteers(chunkedVolunteers);
+	}, [filter, volunteerFilterInputValue, numChunks]);
 
 	//const db = useDBContext();
 	const { db, getFutureEvents, getAllTeams } = useDBContext();
@@ -498,8 +527,8 @@ function VolunteerCard({
 		console.log({
 			worshipTeamSchedules,
 			techTeamSchedules,
-			prayerTeamSchedules
-		})
+			prayerTeamSchedules,
+		});
 	};
 
 	return (
@@ -576,8 +605,8 @@ function VolunteerCard({
 								subheader={'Click and drag volunteers to manually assign them'}
 							/>
 
-							<CardContent>
-								<Box mb={2}>
+							<CardContent className="volunteersDisplay">
+								<Box mb={2} className="searchInput">
 									<FormControl fullWidth>
 										<InputLabel
 											size={'small'}
@@ -610,10 +639,15 @@ function VolunteerCard({
 									</FormControl>
 								</Box>
 
-								<Grid container rowSpacing={1} spacing={1}>
-									{filteredVolunteers.map((user, i) => {
-										if (i < 29) {
-											return (
+								<Grid
+									container
+									rowSpacing={1}
+									spacing={1}
+									className="volunteerGrid"
+								>
+									{filteredVolunteers.map((chunk, chunkIdx) => {
+										if (chunkIdx < numChunks) {
+											return chunk.map((user: User) => (
 												<Tooltip
 													title={`${user.firstName} ${user.lastName}`}
 													key={`avatar ${i} ${user.id}`}
@@ -629,19 +663,17 @@ function VolunteerCard({
 														<UserDialog user={user} />
 													</Grid>
 												</Tooltip>
-											);
-										} else if (i === 29) {
-											return (
-												<Grid draggable={false} item>
-													<Avatar
-														alt="More users avatar"
-														src="/img/profile-pics/ellipsis.png"
-													/>
-												</Grid>
-											);
+											));
 										}
 									})}
 								</Grid>
+
+								<Button
+									className="showMore"
+									onClick={() => setNumChunks(numChunks + 1)}
+								>
+									Show More
+								</Button>
 							</CardContent>
 						</Card>
 					</Stack>
