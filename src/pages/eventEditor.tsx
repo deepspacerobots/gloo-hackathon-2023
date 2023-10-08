@@ -283,7 +283,7 @@ function TeamCard({
 			<Card variant="outlined">
 				<CardContent>
 					<Typography mb={2}>Team: {teamName}</Typography>
-					<TableContainer component={Paper}>
+					<TableContainer component={Paper} className="teamTable">
 						<Table size="small">
 							<TableHead>
 								<TableRow>
