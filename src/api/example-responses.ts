@@ -1,4 +1,6 @@
-export const worshipTeamSchedules = {
+import { AISingleTeamSchedule } from "@/hooks/useGPT";
+
+export const exampleWorshipTeamSchedules: AISingleTeamSchedule = {
     events: [
         {
             id: 5,
@@ -63,7 +65,7 @@ export const worshipTeamSchedules = {
     ]
 };
 
-export const techTeamSchedules = {
+export const exampleTechTeamSchedules = {
     events: [
         {
             id: 5,
@@ -122,7 +124,7 @@ export const techTeamSchedules = {
     ]
 };
 
-export const prayerTeamSchedules = {
+export const examplePrayerTeamSchedules = {
     events: [
         {
             id: 5,

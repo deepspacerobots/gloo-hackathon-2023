@@ -37,16 +37,15 @@ import Box from '@mui/material/Box';
 import { Close } from '@mui/icons-material';
 import UserDialog from '@/components/UserDialog/UserDialog';
 import {
-	worshipTeamSchedules,
-	techTeamSchedules,
-	prayerTeamSchedules,
+	exampleWorshipTeamSchedules,
+	exampleTechTeamSchedules,
+	examplePrayerTeamSchedules,
 } from '../api/example-responses';
 import { useGPT } from '@/hooks/useGPT';
 
 export default function EventEditor() {
-	const { db, getFutureEvents, getAllTeams, getUsers, setEventTeams } =
+	const { db, getFutureEvents, getAllTeams, getUsers } =
 		useDBContext();
-	console.log(db)
 	const futureEvents = getFutureEvents();
 	const [allVolunteers, setAllVolunteers] = useState(getUsers());
 	const [userDragging, setUserDragging] = useState<null | User>(null);
@@ -293,6 +292,7 @@ function TeamCard({
 
 							<TableBody>
 								{fullRoles?.map((role: Role, index) => {
+									//@ts-ignore
 									const eventTeam = event?.eventTeams.find(
 										(data: any): data is EventTeam => typeof data === 'object' && data.team === teamId
 									);
@@ -489,35 +489,38 @@ function VolunteerCard({
 		setFilteredVolunteers(chunkedVolunteers);
 	}, [filter, volunteerFilterInputValue, numChunks]);
 
-	//const db = useDBContext();
-	const { db, getFutureEvents, getAllTeams, setScheduledUsers, batchUpdateScheduledUsers, getRole, getUser } = useDBContext();
+	const { getFutureEvents, getAllTeams, batchUpdateScheduledUsers } = useDBContext();
 	const { generateTeamSchedule } = useGPT();
 	const [futureEvents, setEvents] = useState(getFutureEvents());
 	const teams = getAllTeams();
 
 	const aiAssignAll = async () => {
-		console.log('AI Assign')
+		// Not reliable yet. Team three often gives a bad response and throws an error :( "SyntaxError: Unexpected token 'B', "Based on t"... is not valid JSON"
+		// Also, worship team responses are still wonky. Ex. scheduling TWO bass players. Maybe GPT4 model would be better?
 		// let schedules = [];
 		// for (const team of teams) {
+		
 		// 	const teamSchedule = await generateTeamSchedule(team, futureEvents);
+		// 	console.log(teamSchedule)
 		// 	schedules.push(teamSchedule);
 		// }
+		// console.log({schedules})
 
-		const worshipSchedules = worshipTeamSchedules.events.map(event => {
+		const worshipSchedules = exampleWorshipTeamSchedules.events.map(event => {
 			return {
 				teamId: event.eventTeam.team,
 				eventId: event.id,
 				users: event.eventTeam.scheduled_users.map(user => user.id)
 			}
 		});
-		const techSchedules = techTeamSchedules.events.map(event => {
+		const techSchedules = exampleTechTeamSchedules.events.map(event => {
 			return {
 				teamId: event.eventTeam.team,
 				eventId: event.id,
 				users: event.eventTeam.scheduled_users.map(user => user.id)
 			}
 		});
-		const prayerSchedules = prayerTeamSchedules.events.map(event => {
+		const prayerSchedules = examplePrayerTeamSchedules.events.map(event => {
 			return {
 				teamId: event.eventTeam.team,
 				eventId: event.id,
@@ -533,7 +536,6 @@ function VolunteerCard({
 	};
 
 	const unassignAll = () => {
-		console.log('unassign all')
 		const clearedSchedules = futureEvents.flatMap(event => 
 			event.teams.map(team => ({ 
 				teamId: (team as Team).id, 

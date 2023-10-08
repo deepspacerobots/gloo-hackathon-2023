@@ -13,28 +13,16 @@ type UserWithServeHistory = User & {
 };
 
 export type AISingleTeamSchedule = {
-    events: [
-        {
-            id: number;
-            date: string;
-            eventTeam: {
-                id: number,
-                team: 1,
-                at_capacity: true,
-                scheduled_users: [
-                    {id: 1, reason: "I scheduled this person because..."},
-                    {id: 9, reason: "I scheduled this person because..."},
-                    {id: 20, reason: "I scheduled this person because..."},
-                    {id: 24, reason: "I scheduled this person because..."},
-                    {id: 35, reason: "I scheduled this person because..."},
-                    {id: 41, reason: "I scheduled this person because..."},
-                    {id: 53, reason: "I scheduled this person because..."},
-                    {id: 60, reason: "I scheduled this person because..."},
-                    {id: 62, reason: "I scheduled this person because..."}
-                ]
-            }
+    events: {
+        id: number;
+        date: string;
+        eventTeam: {
+            id: number,
+            team: number,
+            at_capacity: boolean,
+            scheduled_users: { id: number; role: string; reason: string }[]
         }
-    ]
+    }[]
 };
 
 export const useGPT = () => {
@@ -114,7 +102,7 @@ export const useGPT = () => {
         return preferredExp.type;
     };
 
-    const generateTeamSchedule = async (team: Team, events: MinistryEvent[]) => {
+    const generateTeamSchedule = async (team: Team, events: MinistryEvent[]): Promise<AISingleTeamSchedule> => {
         const teamMemberIds = team.users;
         const fullUsers = teamMemberIds.map((id) => getUser(id as number));
         const pastEvents = getPastEvents();
@@ -220,8 +208,8 @@ export const useGPT = () => {
         `;
     
         console.log(`Automatically scheduling ${team.title}...`);
-        console.log(prompt)
-        // return await submitPrompt(prompt);
+        // console.log(prompt)
+        return await submitPrompt(prompt);
     };
 
     useEffect(() => {
