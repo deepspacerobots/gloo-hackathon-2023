@@ -16,6 +16,11 @@
 	background-blend-mode: darken;
 }
 
+.disabled {
+	pointer-events: none;
+	opacity: 0.3;
+}
+
 .teamTable {
 	overflow-x: hidden !important;
 }

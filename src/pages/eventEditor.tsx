@@ -278,10 +278,25 @@ function TeamCard({
 		getRole(role)
 	) as Role[];
 
+	const [disabled, setDisabled] = useState(false);
+
+	useEffect(() => {
+		if (userDragging === null) {
+			setDisabled(false);
+			return;
+		}
+
+		const teams = userDragging.teams;
+
+		if (teams) {
+			setDisabled(!(userDragging?.teams as number[])?.includes(teamId));
+		}
+	}, [userDragging]);
+
 	return (
 		<Grid item xs={12} md={4}>
 			<Card variant="outlined">
-				<CardContent>
+				<CardContent className={disabled ? 'disabled' : ''}>
 					<Typography mb={2}>Team: {teamName}</Typography>
 					<TableContainer component={Paper} className="teamTable">
 						<Table size="small">
@@ -687,10 +702,8 @@ function VolunteerCard({
 												>
 													<Grid
 														draggable
-														onDragStart={(e) => {
-															setUserDragging(user);
-														}}
-														onDragEnd={(e) => {}}
+														onDragStart={() => setUserDragging(user)}
+														onDragEnd={() => setUserDragging(null)}
 														item
 													>
 														<UserDialog user={user} />
