@@ -314,14 +314,14 @@ function TeamCard({
 										event?.eventTeams.find((data) => data.team === teamId)
 											?.scheduled_users[index],
 									);
-									const userName2 = usersInRoles[index] !== null
+									const userName = usersInRoles[index] !== null
 										? `${db.getUser(event?.eventTeams.find((data) => data.team === teamId)
 											?.scheduled_users[index])?.firstName} ${
 											db.getUser(event?.eventTeams.find((data) => data.team === teamId)
 												?.scheduled_users[index])?.lastName
 										}`
 										: '';
-									const userName = usersInRoles[index] !== null
+									const userName2 = usersInRoles[index] !== null
 										? `${db.getUser(usersInRoles[index])?.firstName} ${
 											db.getUser(usersInRoles[index])?.lastName
 										}`

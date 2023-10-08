@@ -10,7 +10,7 @@ import {
 	Team,
 	User,
 } from '@/db/types';
-import { ReactNode, createContext, useContext, useState } from 'react';
+import { createContext, ReactNode, useContext, useState } from 'react';
 
 type Props = {
 	children: string | ReactNode | JSX.Element;
@@ -42,7 +42,7 @@ type DBContextType = {
 	setScheduledUsers: (
 		teamId: number,
 		eventId: number,
-		users: number[] | null[]
+		users: number[] | null[],
 	) => void;
 };
 
@@ -52,15 +52,15 @@ const DBProvider = ({ children }: Props): JSX.Element => {
 	const [db, setDb] = useState<Database>(preexistingData);
 
 	const getOrganization = (
-		organizationId: number
+		organizationId: number,
 	): Organization | undefined => {
 		const organization = db.organizations.find(
-			(organization: Organization) => organization.id === organizationId
+			(organization: Organization) => organization.id === organizationId,
 		);
 
 		if (typeof organization?.seniorPastor == 'number') {
 			organization.seniorPastor = db.users.find(
-				(user: User) => organization.seniorPastor === user.id
+				(user: User) => organization.seniorPastor === user.id,
 			);
 		}
 
@@ -78,25 +78,25 @@ const DBProvider = ({ children }: Props): JSX.Element => {
 
 	const getEvent = (eventId: number): MinistryEvent | undefined => {
 		const event = db.events.find(
-			(event: MinistryEvent) => event.id === eventId
+			(event: MinistryEvent) => event.id === eventId,
 		);
 
 		if (event) {
 			if (event.ministries?.length && typeof event.ministries[0] === 'number') {
 				event.ministries = db.ministries.filter((ministry: Ministry) =>
-					(event.ministries as number[]).includes(ministry.id)
+					(event.ministries as number[]).includes(ministry.id),
 				);
 			}
 
 			if (event.teams?.length && typeof event.teams[0] === 'number') {
 				event.teams = db.teams.filter((team: Team) =>
-					(event.teams as number[]).includes(team.id)
+					(event.teams as number[]).includes(team.id),
 				);
 			}
 
 			if (event.eventTeams?.length && typeof event.eventTeams[0] === 'number') {
 				event.eventTeams = db.eventTeams.filter((eventTeam: EventTeam) =>
-					(event.eventTeams as number[]).includes(eventTeam.id)
+					(event.eventTeams as number[]).includes(eventTeam.id),
 				);
 			}
 		}
@@ -134,19 +134,19 @@ const DBProvider = ({ children }: Props): JSX.Element => {
 
 	const getEventTeam = (eventTeamId: number): EventTeam | undefined => {
 		const eventTeam = db.eventTeams.find(
-			(eventTeam) => eventTeam.id === eventTeamId
+			(eventTeam) => eventTeam.id === eventTeamId,
 		);
 		return eventTeam;
 	};
 
 	const getMinistry = (ministryId: number): Ministry | undefined => {
 		const ministry = db.ministries.find(
-			(ministry: Ministry) => ministry.id === ministryId
+			(ministry: Ministry) => ministry.id === ministryId,
 		);
 
 		if (ministry?.teams?.length && typeof ministry.teams[0] === 'number') {
 			ministry.teams = db.teams.filter((team: Team) =>
-				(ministry.teams as number[]).includes(team.id)
+				(ministry.teams as number[]).includes(team.id),
 			);
 		}
 
@@ -167,19 +167,19 @@ const DBProvider = ({ children }: Props): JSX.Element => {
 		if (team) {
 			if (team.roles?.length && typeof team.roles[0] === 'number') {
 				team.roles = db.roles.filter((role: Role) =>
-					(team.roles as number[]).includes(role.id)
+					(team.roles as number[]).includes(role.id),
 				);
 			}
 
 			if (typeof team?.teamLead === 'number') {
 				team.teamLead = db.users.find(
-					(user: User) => team.teamLead === user.id
+					(user: User) => team.teamLead === user.id,
 				);
 			}
 
 			if (team.users.length) {
 				team.users = db.users.filter((user: User) =>
-					(team.users as number[]).includes(user.id)
+					(team.users as number[]).includes(user.id),
 				);
 			}
 		}
@@ -219,19 +219,19 @@ const DBProvider = ({ children }: Props): JSX.Element => {
 
 	const getRequirement = (requirementId: number): Requirement | undefined => {
 		const requirement = db.requirements.find(
-			(requirement: Requirement) => requirement.id === requirementId
+			(requirement: Requirement) => requirement.id === requirementId,
 		);
 
 		if (requirement) {
 			if (typeof requirement?.event === 'number') {
 				requirement.event = db.events.find(
-					(event: MinistryEvent) => requirement.event === event.id
+					(event: MinistryEvent) => requirement.event === event.id,
 				);
 			}
 
 			if (typeof requirement?.ministry === 'number') {
 				requirement.ministry = db.ministries.find(
-					(ministry: Ministry) => requirement.ministry === ministry.id
+					(ministry: Ministry) => requirement.ministry === ministry.id,
 				);
 			}
 		}
@@ -253,19 +253,19 @@ const DBProvider = ({ children }: Props): JSX.Element => {
 		if (user) {
 			if (typeof user?.relatedVolunteer === 'number') {
 				user.relatedVolunteer = db.users.find(
-					(userIteration: User) => user.relatedVolunteer === userIteration.id
+					(userIteration: User) => user.relatedVolunteer === userIteration.id,
 				);
 			}
 
 			if (user.teams?.length && typeof user.teams[0] === 'number') {
 				user.teams = db.teams.filter((team: Team) =>
-					(user.teams as number[]).includes(team.id)
+					(user.teams as number[]).includes(team.id),
 				);
 			}
 
 			if (user.events?.length && typeof user.events[0] === 'number') {
 				user.events = db.events.filter((event: MinistryEvent) =>
-					(user.events as number[]).includes(event.id)
+					(user.events as number[]).includes(event.id),
 				);
 			}
 		}
@@ -287,7 +287,7 @@ const DBProvider = ({ children }: Props): JSX.Element => {
 
 	const getExperience = (experienceId: number): Experience | undefined => {
 		const experience = db.experiences.find(
-			(experience: Experience) => experience.id === experienceId
+			(experience: Experience) => experience.id === experienceId,
 		);
 
 		return experience;
@@ -306,10 +306,10 @@ const DBProvider = ({ children }: Props): JSX.Element => {
 	const setScheduledUsers = (
 		teamId: number,
 		eventId: number,
-		users: number[] | null[]
+		users: number[] | null[],
 	) => {
-		//let eventToUpdate = db.events.find(e => e.id === eventId)?.eventTeams.find(e => e === teamId)?.scheduled_users;
-		//eventToUpdate = users;
+		let eventToUpdate = db.events.find(e => e.id === eventId)?.eventTeams.find(e => e === teamId)?.scheduled_users;
+		eventToUpdate = users;
 	};
 
 	const provide = {
